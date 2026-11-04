@@ -1,1 +1,10 @@
-Prototype 3: GPS-ready PWA package. Requires hosting at an HTTPS website to enable Android location permission and install as an app. Do not simply extract this ZIP and open index.html expecting GPS to work. First visit online at the HTTPS site, then install using the Android browser menu; subsequent visits can work offline. No hosting or cloud sync is included. Existing backups can be restored using Restore backup. Keep your prior backups until you verify restored photos and notes. Prototype 3 standalone HTML remains available separately and functions offline with town-based distance search.
+PUBLIC-SAFE CEMETERY FIELDBOOK PWA PACKAGE
+
+Upload the web app files in this ZIP to a public GitHub repository.
+The private Indiana_Burial_Records_Private.json file is intentionally EXCLUDED.
+Do not upload any backup JSON, GEDCOM, personal photographs, or private burial files to GitHub.
+
+After hosting over HTTPS, open the app on your device, use 'Load my burial list' and select the private JSON file; then use 'Restore backup' for your saved edits and photos.
+Browser storage remains device-specific and may be cleared, so retain copies in OneDrive.
+
+Layout update: burial results hidden until searching, backup tools moved above results. Upload the five public app files only. Keep your personal burial list and backups private. The installed app may need to be closed and reopened to show the update.
