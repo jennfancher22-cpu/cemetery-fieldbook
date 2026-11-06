@@ -113,6 +113,7 @@
 <div id="homeResults" class="home-results" hidden></div><div class="buttons"><button id="clearHome" type="button" class="secondary">Clear Home Person</button></div>
 <p id="homeDirectoryStatus" class="tiny">Select a GEDCOM to prepare its people directory automatically.</p>
 </div>
+<div id="gedcomImportAction" class="home-panel" hidden><h3 style="margin-top:0">3 · Import burial entries</h3><p class="hint">After selecting your Home Person above, import the burial records from the GEDCOM you already chose.</p><div class="buttons" id="gedcomImportButtons"></div></div>
 <h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p><h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your existing OneDrive backup and restore it in this version. Do not discard either version until you have verified the imported notes and photos.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The new full backup includes the original burial list, photos, notes, and change history. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This is a single-file offline test, not a synced app. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div></div></details></section>
 <footer>Fieldbook v7 GEDCOM SETUP TEST · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
@@ -669,7 +670,7 @@ $('pickGedcom').onclick=()=>$('gedcomFile').click();
 $('gedcomFile').onchange=async e=>{
  const file=e.target.files[0];if(!file)return;
  const status=$('gedcomStatus'),preview=$('gedcomPreview');
- preview.hidden=true;pendingGedcom=null;status.textContent='Reading your GEDCOM and preparing the people directory…';
+ preview.hidden=true;pendingGedcom=null;$('gedcomImportAction').hidden=true;$('gedcomImportButtons').replaceChildren();status.textContent='Reading your GEDCOM and preparing the people directory…';
  try{
   if(file.size>100*1024*1024)throw Error('This prototype accepts GEDCOM files up to 100 MB.');
   const gedcomText=await file.text();
@@ -692,8 +693,7 @@ $('gedcomFile').onchange=async e=>{
   }
   preview.append(counts,textNode('p','hint','The people directory is ready for Home Person selection. Cemetery names are inferred only when the burial place clearly identifies a cemetery. Nothing has been imported into burial records yet.'));
   for(const x of entries.slice(0,5))preview.append(textNode('div','ged-example',x.name+' · '+(x.cemetery||'Cemetery unknown')+' · '+(x.county||x.town||x.gedcomBurial||'No location')));
-  const actions=textNode('div','buttons');
-  const btn=textNode('button','','3 · Import '+entries.length+' burial entries');btn.type='button';
+  const btn=textNode('button','','Import '+entries.length+' burial entries');btn.type='button';
   btn.onclick=()=>{
    if(!pendingGedcom){alert('Choose a GEDCOM file first.');return;}
    if(!homePersonId || !directory.some(p=>p.id===homePersonId)){
@@ -713,10 +713,10 @@ $('gedcomFile').onchange=async e=>{
     refreshHomeDisplay();searchHomePeople();refreshOptions();render();
     $('privateSeedStatus').textContent=seed.length+' GEDCOM burial records loaded';
     status.textContent='Import complete: '+seed.length+' burial entries. Your Home Person and full people directory are saved. Export a full backup to protect your data.';
-    preview.hidden=true;
+    preview.hidden=true;$('gedcomImportAction').hidden=true;
    }catch(err){alert('Import could not be saved: '+err.message)}
   };
-  actions.append(btn);preview.append(actions);preview.hidden=false;
+  $('gedcomImportButtons').replaceChildren(btn);$('gedcomImportAction').hidden=false;preview.hidden=false;
   status.textContent='People directory ready ('+directory.length+' people). Step 2: Select your Home Person below. Step 3: Import burial entries from this same GEDCOM.';
  }catch(err){status.textContent='GEDCOM preview failed: '+err.message}
  finally{e.target.value=''};
