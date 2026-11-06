@@ -96,7 +96,15 @@
 .cemetery-group-count{font-size:11px;white-space:nowrap;border-radius:15px;padding:4px 8px;background:#fff;color:#33624d;font-weight:650}
 .cemetery-group-people{padding:5px 10px 10px}
 @media(max-width:540px){.cemetery-group>summary{padding:10px 8px;gap:7px}.cemetery-group-people{padding:3px 5px 7px}}
-</style><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="icon" type="image/svg+xml" href="icon.svg"></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#fff3cb;color:#765113">V7 STATE FILTER TEST · PRIVATE STORAGE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div></div></header><main>
+</style><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="icon" type="image/svg+xml" href="icon.svg"><style>
+/* v7 read-only relationship verification */
+.relationship-results{display:grid;gap:8px;margin-top:9px}
+.relationship-card{background:#fff;border:1px solid #d9e5dd;border-radius:10px;padding:11px}
+.relationship-card strong{color:#174a3b}
+.relationship-card .meta-line{font-size:12px;color:#546b60;margin:4px 0}
+.relationship-card .uncertain{font-size:12px;color:#8a6230;background:#fff7e8;border-radius:6px;padding:6px 8px;margin-top:7px}
+.relationship-card .rel-title{font-size:14px;font-weight:700;color:#174e40;margin:7px 0}
+</style></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#fff3cb;color:#765113">V7 RELATIONSHIP PREVIEW · PRIVATE STORAGE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div></div></header><main>
 <div class="stats"><div class="stat"><div id="sPeople" class="num">—</div><div class="small">Burial entries</div></div><div class="stat"><div id="sCem" class="num">—</div><div class="small">Cemeteries</div></div><div class="stat"><div id="sVisited" class="num">—</div><div class="small">Visited</div></div></div>
 <section class="panel" id="nearbyPanel"><details class="finder-fold" id="nearbyFold"><summary>📍 Find cemeteries nearby <span class="finder-sub">Search by distance</span></summary><div class="finder-body"><p class="hint">Straight-line distance, not driving distance. Works offline with saved cemetery coordinates. Choose a starting town or try your phone location.</p><div class="filters"><div><label for="startPlace">Starting point</label><select id="startPlace"><option value="39.7684,-86.1581">Indianapolis, IN</option><option value="38.9592,-85.8903" selected>Seymour, IN</option><option value="39.6128,-86.3742">Mooresville, IN</option><option value="39.2014,-85.9214">Columbus, IN</option><option value="custom">Custom coordinates</option></select></div><div><label for="radius">Within</label><select id="radius"><option>10</option><option selected>25</option><option>50</option><option>100</option><option>250</option><option>500</option></select></div><div><label for="startLat">Latitude</label><input id="startLat" type="number" step="any" placeholder="39.123"></div><div><label for="startLon">Longitude</label><input id="startLon" type="number" step="any" placeholder="-86.123"></div></div><div class="buttons" style="margin-top:10px"><button id="nearSearch">Find nearby cemeteries</button><button class="secondary" id="myLocation">Use phone GPS</button></div><div id="geoNote" class="hint" role="status"></div><div id="nearResults"></div></div></details></section><section class="panel" id="relativePanel"><details class="finder-fold" id="relativeFold" open><summary>🔎 Find a relative or cemetery <span class="finder-sub">Search names &amp; filters</span></summary><div class="finder-body"><div class="filters"><div class="wide"><input id="q" type="search" placeholder="Search name, cemetery, town, family line…" aria-label="Search"></div><div><label for="stateFilter">State</label><select id="stateFilter"><option value="">All states</option></select></div><div><label for="county">County</label><select id="county"><option value="">All counties</option></select></div><div><label for="cem">Cemetery</label><select id="cem"><option value="">All cemeteries</option></select></div><div><label for="status">Visit filter</label><select id="status"><option value="">All records</option><option value="unvisited">Not visited</option><option value="nophoto">Photo needed</option><option value="nogps">GPS needed</option></select></div></div><div class="buttons" style="margin-top:12px"><button id="add">+ Add discovery</button><button class="secondary" id="clear">Clear filters</button><button class="outline" id="showAll">Show all records</button><button class="secondary" type="button" id="showMatches">Show filtered results</button></div></div></details></section>
 <section class="panel" id="burialPanel"><div class="resulthead"><h2 style="margin:0">Burial records</h2><span class="tiny" id="count"></span></div><div class="burial-list-controls"><span class="hint">Tap a name to view details and edit.</span><div class="inline-controls"><button class="secondary" id="hideResultsTop" type="button">Hide results</button><button class="secondary" id="clearResultsTop" type="button">Clear filters</button></div></div><div id="out"></div><div class="burial-list-controls"><button id="more" class="secondary" hidden>Show more</button><div class="inline-controls"><button class="secondary" id="hideResultsBottom" type="button">Hide results</button><button class="secondary" id="clearResultsBottom" type="button">Clear filters</button></div></div></section>
@@ -114,8 +122,17 @@
 <p id="homeDirectoryStatus" class="tiny">Select a GEDCOM to prepare its people directory automatically.</p>
 </div>
 <div id="gedcomImportAction" class="home-panel"><h3 style="margin-top:0">3 · Import burial entries</h3><p class="hint" id="gedcomImportHint">Choose a GEDCOM in Step 1 to prepare the burial preview. Then select your Home Person in Step 2 before importing.</p><div class="buttons" id="gedcomImportButtons"><button type="button" class="secondary" disabled>Choose a GEDCOM file first</button></div></div>
+<div class="home-panel" id="relationshipPreviewPanel">
+<h3 style="margin-top:0">4 · Preview relationship and shared ancestors</h3>
+<p class="hint">Compare a few known relatives with your family tree before applying calculations to thousands of burials. Uses the Home Person and parent-child links saved from your GEDCOM. This is a <strong>read-only preview</strong>: it does not alter burial records or existing family-line notes.</p>
+<label for="relationshipSearch">Search a buried person by name or GEDCOM ID</label>
+<input id="relationshipSearch" type="search" placeholder="Try Amy Hillman, William Poland, or a GEDCOM ID" autocomplete="off">
+<div class="buttons"><button type="button" class="secondary" id="relationshipSample">Show sample relatives</button></div>
+<div id="relationshipStatus" class="hint" role="status"></div>
+<div id="relationshipResults" class="relationship-results"></div>
+</div>
 <h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p><h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your existing OneDrive backup and restore it in this version. Do not discard either version until you have verified the imported notes and photos.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The new full backup includes the original burial list, photos, notes, and change history. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This is a single-file offline test, not a synced app. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div></div></details></section>
-<footer>Fieldbook v7 STATE FILTER TEST 2 · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 RELATIONSHIP TEST 2 · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -739,4 +756,75 @@ $('gedcomFile').onchange=async e=>{
  finally{e.target.value=''};
 };
 
+</script><script>
+// Read-only v7 relationship validation. No burial/FTM data are edited here.
+(function(){
+const $rel=id=>document.getElementById(id);
+const relSearch=$rel('relationshipSearch'), relResults=$rel('relationshipResults'), relStatus=$rel('relationshipStatus');
+const relationshipSampleNames=['Amy Hillman','William Poland','Georgia Pauline Davis','Elizabeth Houghman'];
+function ordinal(n){const v=n%100;return n+(v>=11&&v<=13?'th':({1:'st',2:'nd',3:'rd'}[n%10]||'th'));}
+function greatLabel(n){if(n===1)return '';if(n===2)return 'grand';if(n===3)return 'great-grand';return ordinal(n-2)+' great-grand';}
+function ancestorMap(personId,index){
+ // Each entry has shortest known parent-child path through GEDCOM FAMC links.
+ const m=new Map(),q=[{id:personId,depth:0,path:[personId]}];
+ for(let i=0;i<q.length;i++){
+   const x=q[i];if(!x.id||m.has(x.id)||x.depth>32)continue;
+   m.set(x.id,x);const p=index.get(x.id);if(!p)continue;
+   for(const parentId of [p.father,p.mother])if(parentId&&!x.path.includes(parentId)&&!m.has(parentId))q.push({id:parentId,depth:x.depth+1,path:[...x.path,parentId]});
+ }
+ return m;
+}
+function relationshipLabel(a,b){
+ // a = home -> shared ancestor, b = buried individual -> shared ancestor.
+ if(a===0&&b===0)return 'Home Person';
+ if(b===0)return greatLabel(a)+'parent / direct ancestor';
+ if(a===0)return greatLabel(b)+'child / direct descendant';
+ if(a===1&&b===1)return 'Sibling (full/half not determined)';
+ if(a===1&&b>1)return b===2?'Niece/nephew (full/half not determined)':(b===3?'Great-niece/nephew':ordinal(b-3)+' great-niece/nephew');
+ if(b===1&&a>1)return a===2?'Aunt/uncle (full/half not determined)':(a===3?'Great-aunt/uncle':ordinal(a-3)+' great-aunt/uncle');
+ const degree=Math.min(a,b)-1,removed=Math.abs(a-b);
+ return ordinal(degree)+' cousin'+(removed?' '+removed+' time'+(removed===1?'':'s')+' removed':'');
+}
+function calculateRelationship(personId,index,homeAnc){
+ const targetAnc=ancestorMap(personId,index),common=[];
+ for(const [id,h] of homeAnc){const t=targetAnc.get(id);if(t)common.push({id,homeDepth:h.depth,otherDepth:t.depth,total:h.depth+t.depth,path:h.path});}
+ if(!common.length)return null;
+ common.sort((a,b)=>a.total-b.total||Math.max(a.homeDepth,a.otherDepth)-Math.max(b.homeDepth,b.otherDepth));
+ const bestScore=common[0].total,closest=common.filter(x=>x.total===bestScore);
+ const h=closest[0];
+ const home=index.get(homePersonId);const sideSet=new Set();
+ for(const a of closest){const parentId=a.path[1];if(parentId&&parentId===home?.father)sideSet.add('Paternal');if(parentId&&parentId===home?.mother)sideSet.add('Maternal');}
+ const side=sideSet.size===2?'Both maternal and paternal paths':sideSet.size===1?[...sideSet][0]:'Side undetermined';
+ return {label:relationshipLabel(h.homeDepth,h.otherDepth),ancestors:closest.map(x=>index.get(x.id)?.name||x.id),depths:[h.homeDepth,h.otherDepth],side,possibleMultiple:closest.length>2||closest.some(x=>x.homeDepth!==h.homeDepth||x.otherDepth!==h.otherDepth)};
+}
+function card(r,index,homeAnc){
+ const d=document.createElement('div');d.className='relationship-card';
+ const h=document.createElement('strong');h.textContent=r.name+(r.dates?' ('+r.dates+')':'');d.append(h);
+ const id=document.createElement('div');id.className='meta-line';id.textContent=(r.gedcomId||'No GEDCOM ID')+' · '+[r.cemetery,r.county,r.state].filter(Boolean).join(', ');d.append(id);
+ if(!r.gedcomId||!index.has(r.gedcomId)){const x=document.createElement('div');x.className='uncertain';x.textContent='Cannot calculate: this burial is not linked to a person in the loaded GEDCOM directory.';d.append(x);return d;}
+ const rel=calculateRelationship(r.gedcomId,index,homeAnc);
+ if(!rel){const x=document.createElement('div');x.className='uncertain';x.textContent='No documented common ancestor through the imported parent-child links. This does not prove the people are unrelated.';d.append(x);return d;}
+ const title=document.createElement('div');title.className='rel-title';title.textContent=rel.label;d.append(title);
+ const anc=document.createElement('div');anc.className='meta-line';anc.textContent='Closest shared ancestor'+(rel.ancestors.length!==1?'s':'')+': '+rel.ancestors.join('; ');d.append(anc);
+ const side=document.createElement('div');side.className='meta-line';side.textContent=rel.side+' · Generations from home / buried person: '+rel.depths.join(' / ');d.append(side);
+ if(rel.possibleMultiple){const x=document.createElement('div');x.className='uncertain';x.textContent='Multiple equally close ancestral paths found. Review them in your genealogy program before assigning a single MRCA.';d.append(x);}
+ return d;
+}
+function previewRelationship(sample=false){
+ relResults.replaceChildren();
+ if(!allGedcomPeople.length){relStatus.textContent='First choose a GEDCOM and import its people directory.';return;}
+ if(!homePersonId){relStatus.textContent='Choose your Home Person before calculating relationships.';return;}
+ const index=new Map(allGedcomPeople.map(p=>[p.id,p]));
+ if(!index.has(homePersonId)){relStatus.textContent='Home Person is missing from the loaded directory. Choose them again.';return;}
+ const homeAnc=ancestorMap(homePersonId,index),term=relSearch.value.trim().toLowerCase();
+ if(!term&&!sample){relStatus.textContent='Enter part of a name or GEDCOM ID, or choose Show sample relatives.';return;}
+ let candidates=all().filter(r=>r.gedcomId && (term?(r.name.toLowerCase().includes(term)||r.gedcomId.toLowerCase().includes(term)):relationshipSampleNames.some(n=>r.name.toLowerCase().includes(n.toLowerCase())))).slice(0,12);
+ relStatus.textContent=candidates.length+' burial record'+(candidates.length===1?'':'s')+' to compare. Relationships are GEDCOM-derived suggestions, not independently verified.';
+ if(!candidates.length){const p=document.createElement('p');p.className='hint';p.textContent='No matching imported burial records. Try a different name or GEDCOM ID.';relResults.append(p);return;}
+ for(const r of candidates)relResults.append(card(r,index,homeAnc));
+}
+$rel('relationshipSample').addEventListener('click',()=>{relSearch.value='';previewRelationship(true);});
+relSearch.addEventListener('input',()=>previewRelationship(false));
+relStatus.textContent='Select your Home Person and search for someone buried in your GEDCOM.';
+})();
 </script></body></html>
