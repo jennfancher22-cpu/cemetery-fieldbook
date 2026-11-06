@@ -1,7 +1,16 @@
-Cemetery Fieldbook v5 GitHub Pages release
+Cemetery Fieldbook v6 — Release Candidate (test before publishing)
 
-Upload the four application files in the root of your existing cemetery-fieldbook GitHub repository. Do not upload this README if you want to retain your current README. Never upload your GEDCOM, Indiana burial list, exported backups or photos to GitHub.
+Contains only public application code. Does NOT include GEDCOM files, burial records, photographs, or backups.
 
-Changes: v4 hidden-until-search layout retained, complete activity history, changes to enter in tree, corrected CSV with GEDCOM ID and original/new values.
+Local test: Open index.html from extracted folder in Chrome. Local file storage is separate from the installed app. Do not assume local testing will inherit your data. Restore a COPY of your recent full backup, and import your private burial list if needed.
 
-Before replacing files, keep your full Android app backup in OneDrive. Do not clear application storage or uninstall. After deploying, verify original entries, changes and photos before relying on the new version. Earlier edits will not automatically have change-log history.
+GitHub: Once tested, upload only index.html, service-worker.js, manifest.webmanifest, icon.svg, README.txt to repository root. Commit on main and verify Pages deployment success. Never upload private JSON, GEDCOM, backup or photographs.
+
+New: smarter net-change reporting; 3-tab Excel tree report; Excel activity history; compact grouped reports; compact burial rows; aligned statuses; hide separate from clear filters; collapsible Find sections; clickable FG indicators.
+
+Known limitations: no automatic sync between devices, GPS permission needs testing, deleted-discovery semantics need dedicated test. The backup contains fieldwork, photos and change log, but private baseline burial list is stored separately and must already exist in the target browser. Preserve older backups.
+
+Cemetery Fieldbook v6 public release (2026-11-06).
+Includes compact navigation and grouped burial/report views, smarter net tree changes, Excel exports, Find a Grave indicator, and photo-attachment history and tree reports.
+Only upload the five files in this folder to the public GitHub repository. Never upload a GEDCOM, burial list, photos, or backup.
+Before updating, export a full backup. After deployment verify existing records and photo attachments on both devices.

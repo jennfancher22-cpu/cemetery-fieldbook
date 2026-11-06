@@ -1,12 +1,54 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#124c47"><title>Cemetery Fieldbook · v5 Tree Reports</title><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#124c47"><title>Cemetery Fieldbook · v6 Release Candidate</title><style>
 :root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#172f2b;background:#f4f6f1}*{box-sizing:border-box}body{margin:0}header{background:#124c47;color:white;padding:20px 16px 17px}header .wrap{max-width:880px;margin:auto}h1{font-size:24px;letter-spacing:-.6px;margin:0 0 4px}.sub{color:#cde5db;font-size:13px}main{max-width:880px;margin:auto;padding:14px 12px 80px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 14px}.stat{background:white;border:1px solid #dce5dd;border-radius:12px;text-align:center;padding:12px 5px}.num{font-size:23px;font-weight:800;color:#124c47}.small{font-size:12px;color:#58716a}.panel{background:#fff;border:1px solid #dce5dd;border-radius:15px;padding:14px;margin-bottom:13px;box-shadow:0 2px 12px #16392b09}h2{font-size:16px;margin:0 0 10px}input,select,textarea{font:inherit;width:100%;border:1px solid #b8cbc1;background:white;color:#1a332d;border-radius:10px;padding:11px 12px;min-height:44px}textarea{min-height:80px}label{font-size:13px;font-weight:600;display:block;margin:8px 0 4px}.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px}.filters .wide{grid-column:1/-1}.buttons{display:flex;flex-wrap:wrap;gap:8px}button,.btn{border:0;border-radius:10px;background:#14675e;color:white;font-weight:650;font-size:14px;min-height:42px;padding:10px 14px;cursor:pointer}button.secondary,.btn.secondary{background:#edf4ef;color:#14594e;border:1px solid #bfd5ca}button.outline{background:white;color:#14594e;border:1px solid #a6c7b5}button.danger{background:#fce8e5;color:#8a271e}button:active{transform:scale(.99)}.resulthead{display:flex;justify-content:space-between;align-items:center;gap:12px}.person{padding:13px 0;border-top:1px solid #e5ede7}.person:first-of-type{border-top:0}.person h3{font-size:16px;margin:0 0 3px}.meta{font-size:13px;color:#566f67;line-height:1.6}.chips{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.chip{background:#eaf2ed;border-radius:6px;padding:3px 7px;font-size:11px;color:#295d4e}.chip.done{background:#d9ecdb;color:#1f5d38}.chip.not{background:#f3eee4;color:#81663b}.cemtitle{font-size:13px;font-weight:800;color:#286b5b;text-transform:uppercase;letter-spacing:.05em;margin:15px 0 7px}.right{margin-left:auto}.tiny{font-size:12px;color:#64756e}.empty{text-align:center;padding:25px 5px;color:#64756e}dialog{width:min(94vw,600px);max-height:90vh;border:0;border-radius:16px;padding:0;box-shadow:0 20px 70px #001c1c66}dialog::backdrop{background:#071d1bbb}.dialogbody{padding:17px;max-height:85vh;overflow:auto}.dialogtop{display:flex;align-items:center;justify-content:space-between}.dialogtop h2{margin:0}.checkrow{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin:12px 0}.checkrow label{font-weight:500;display:flex;align-items:center;gap:7px;border:1px solid #d6e3da;padding:10px;border-radius:9px;margin:0}.checkrow input{width:19px;min-height:19px;height:19px;accent-color:#14675e}.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 0}.photoitem{position:relative}.photoitem img{width:100%;height:100px;object-fit:cover;border-radius:8px}.photoitem button{position:absolute;right:2px;top:2px;min-height:25px;padding:3px 8px;background:#74281fe3}.nearcard{border-top:1px solid #dbe6df;padding:12px 0}.nearcard h3{font-size:15px;margin:0 0 3px}.coordedit{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:7px}.coordedit input{max-width:125px;min-width:110px}.coordedit button{min-height:36px;padding:7px 10px}footer{text-align:center;font-size:12px;color:#6a7973;padding:15px}.hint{font-size:12px;line-height:1.5;color:#60766d}.badge{display:inline-block;background:#d8ede2;border-radius:8px;font-size:11px;padding:3px 8px;font-weight:700;color:#236046}.topline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.notice{background:#fff6df;border:1px solid #efdeb4;border-radius:9px;padding:9px 10px;font-size:12px;margin:10px 0;color:#755c28}a{color:#11695c}#out{padding-top:2px}@media(min-width:700px){.filters{grid-template-columns:repeat(3,1fr)}.filters .wide{grid-column:1/-1}}
- .change-check{display:inline-flex;align-items:center;gap:8px;font-weight:500;margin:8px 12px 3px 0;cursor:pointer}.change-check input[type="checkbox"]{appearance:auto;width:18px;height:18px;min-height:18px;padding:0;margin:0;flex:none;accent-color:#14675e}.change-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.change-view-title{margin:14px 0 5px;font-size:15px}.change-muted{color:#64756e;font-size:12px} </style><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="icon" type="image/svg+xml" href="icon.svg"></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge">OFFLINE PROTOTYPE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div></div></header><main>
+ .person-group{border:1px solid #dce5dd;border-radius:11px;margin:9px 0;background:#fff;overflow:hidden}.person-group summary{list-style:none;cursor:pointer;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:10px}.person-group summary::-webkit-details-marker{display:none}.person-group summary::after{content:'▾';font-size:18px;color:#286b5b}.person-group[open] summary::after{content:'▴'}.person-group .group-body{border-top:1px solid #e6ece8;padding:8px 12px 12px}.person-group .group-item{padding:10px 0;border-bottom:1px solid #edf1ee}.person-group .group-item:last-child{border-bottom:none}.group-title{font-weight:700}.group-sub{font-size:12px;color:#62776c;margin-top:2px}.group-check{margin-top:5px}.report-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}.report-actions button{min-height:36px;padding:6px 11px;font-size:12px}.report-count{margin:9px 0;color:#4f6a5e;font-size:12px} .change-check{display:inline-flex;align-items:center;gap:8px;font-weight:500;margin:8px 12px 3px 0;cursor:pointer}.change-check input[type="checkbox"]{appearance:auto;width:18px;height:18px;min-height:18px;padding:0;margin:0;flex:none;accent-color:#14675e}.change-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.change-view-title{margin:14px 0 5px;font-size:15px}.change-muted{color:#64756e;font-size:12px} 
+/* v6 compact burial list and controls */
+.buttons{gap:6px} .buttons button,.buttons .btn{font-size:12px;min-height:36px;padding:7px 10px;border-radius:8px}
+.burial-item{border:1px solid #dce5dd;border-radius:10px;margin:6px 0;background:#fff;overflow:hidden}
+.burial-item>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px}
+.burial-item>summary::-webkit-details-marker{display:none}
+.burial-item>summary:after{content:'▾';font-size:15px;color:#58716a}
+.burial-item[open]>summary:after{content:'▴'}
+.burial-item .burial-detail{border-top:1px solid #e5ede7;padding:9px 10px}
+.burial-title{font-size:14px;font-weight:700;line-height:1.3}
+.burial-subtitle{font-size:11px;color:#58716a;margin-top:2px}
+.burial-summary-tags{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.burial-summary-tags .chip{font-size:10px;padding:2px 5px;margin:0}
+.burial-list-controls{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+@media(max-width:520px){.burial-summary-tags .chip{font-size:9px}.burial-title{font-size:13px}}
+
+/* v6 navigation and alignment iteration */
+.finder-fold>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:9px;font-size:18px;font-weight:750;color:#124c47;line-height:1.4}
+.finder-fold>summary::-webkit-details-marker{display:none}
+.finder-fold>summary::before{content:'▸';font-size:14px;color:#406e62}
+.finder-fold[open]>summary::before{content:'▾'}
+.finder-sub{margin-left:auto;font-size:11px;font-weight:500;color:#58716a}
+.finder-body{padding-top:10px}
+.inline-controls{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.inline-controls button{font-size:12px;padding:6px 9px;min-height:32px;border-radius:7px}
+.burial-item>summary{display:grid;grid-template-columns:minmax(0,1fr) 152px 14px;column-gap:10px;justify-content:initial}
+.burial-item>summary>div:first-child{min-width:0}
+.burial-item>summary:after{justify-self:end}
+.burial-summary-tags{width:152px;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;justify-items:center;gap:3px}
+/* Find a Grave indicator: only shown for records with a saved memorial URL. */
+.burial-name-line{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0}
+.fg-marker{display:inline-flex;align-items:center;justify-content:center;border:1px solid #b9d5c8;background:#e9f5ec;color:#21624a;border-radius:6px;min-width:27px;min-height:24px;padding:2px 5px;font-size:12px;line-height:1;text-decoration:none;white-space:nowrap;font-weight:800}
+.fg-marker:hover,.fg-marker:focus-visible{background:#d2eadd;outline-offset:2px}
+
+.burial-summary-tags .chip{justify-self:center;text-align:center;min-width:27px;margin:0}
+@media(max-width:540px){
+ .finder-fold>summary{font-size:15px}.finder-sub{font-size:10px}
+ .burial-item>summary{grid-template-columns:minmax(0,1fr) 116px 10px;gap:5px;padding:8px}
+ .burial-summary-tags{width:116px;gap:1px}
+ .burial-summary-tags .chip{font-size:9px;padding:2px;min-width:24px}
+ .inline-controls button{font-size:11px}
+}
+</style><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="icon" type="image/svg+xml" href="icon.svg"></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge">OFFLINE PROTOTYPE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div></div></header><main>
 <div class="stats"><div class="stat"><div id="sPeople" class="num">—</div><div class="small">Burial entries</div></div><div class="stat"><div id="sCem" class="num">—</div><div class="small">Cemeteries</div></div><div class="stat"><div id="sVisited" class="num">—</div><div class="small">Visited</div></div></div>
-<section class="panel" id="nearbyPanel"><h2>📍 Find cemeteries nearby</h2><p class="hint">Straight-line distance, not driving distance. Works offline with saved cemetery coordinates. Choose a starting town or try your phone location.</p><div class="filters"><div><label for="startPlace">Starting point</label><select id="startPlace"><option value="39.7684,-86.1581">Indianapolis, IN</option><option value="38.9592,-85.8903" selected>Seymour, IN</option><option value="39.6128,-86.3742">Mooresville, IN</option><option value="39.2014,-85.9214">Columbus, IN</option><option value="custom">Custom coordinates</option></select></div><div><label for="radius">Within</label><select id="radius"><option>10</option><option selected>25</option><option>50</option><option>100</option><option>250</option><option>500</option></select></div><div><label for="startLat">Latitude</label><input id="startLat" type="number" step="any" placeholder="39.123"></div><div><label for="startLon">Longitude</label><input id="startLon" type="number" step="any" placeholder="-86.123"></div></div><div class="buttons" style="margin-top:10px"><button id="nearSearch">Find nearby cemeteries</button><button class="secondary" id="myLocation">Use phone GPS</button></div><div id="geoNote" class="hint" role="status"></div><div id="nearResults"></div></section><section class="panel"><h2>Find a relative or cemetery</h2><div class="filters"><div class="wide"><input id="q" type="search" placeholder="Search name, cemetery, town, family line…" aria-label="Search"></div><div><label for="county">County</label><select id="county"><option value="">All counties</option></select></div><div><label for="cem">Cemetery</label><select id="cem"><option value="">All cemeteries</option></select></div><div><label for="status">Visit filter</label><select id="status"><option value="">All records</option><option value="unvisited">Not visited</option><option value="nophoto">Photo needed</option><option value="nogps">GPS needed</option><option value="baseline">Baseline ancestors</option></select></div></div><div class="buttons" style="margin-top:12px"><button id="add">+ Add discovery</button><button class="secondary" id="clear">Clear filters</button><button class="outline" id="showAll">Show all records</button></div></section>
-<section class="panel" id="changeLogPanel"><div class="resulthead"><h2 style="margin:0">📋 Cemetery change log</h2><span class="tiny" id="changeCount"></span></div><p class="hint">Keep a complete activity history, and review just the discoveries and corrections you still need to enter in your family tree. Tracking starts with edits made in v5.</p><div class="buttons"><button id="viewTreeChanges">Changes to enter in tree</button><button id="viewHistory" class="secondary">Complete activity history</button></div><div id="changeList" hidden></div><div class="buttons" id="changeTools" hidden style="margin-top:10px"><button id="downloadChangeCsv">Export tree changes (CSV)</button><button class="secondary" id="downloadHistoryCsv">Export full history (CSV)</button><button class="secondary" id="hideChangeLog">Hide reports</button></div></section><section class="panel"><h2>Protect your field notes</h2><p class="hint"><strong>Upgrading?</strong> Keep your existing OneDrive backup and restore it in this version. Do not discard either version until you have verified the imported notes and photos.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The backup includes photos. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This is a single-file offline test, not a synced app. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div></section>
-<section class="panel"><div class="resulthead"><h2 style="margin:0">Burial records</h2><span class="tiny" id="count"></span></div><div id="out"></div><div class="buttons" style="margin-top:10px"><button id="more" class="secondary" hidden>Show more</button></div></section>
-<section class="panel"><h2>Load your private burial list</h2><p class="hint">Your family burial list is NOT published on GitHub. Import your private <strong>Indiana_Burial_Records_Private.json</strong> once per browser/device. It stays in this browser's local storage. Next, restore your fieldwork backup below to bring back edits and photos.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></section>
-<footer>Fieldbook layout update · Private records stay on your device</footer></main>
+<section class="panel" id="nearbyPanel"><details class="finder-fold" id="nearbyFold"><summary>📍 Find cemeteries nearby <span class="finder-sub">Search by distance</span></summary><div class="finder-body"><p class="hint">Straight-line distance, not driving distance. Works offline with saved cemetery coordinates. Choose a starting town or try your phone location.</p><div class="filters"><div><label for="startPlace">Starting point</label><select id="startPlace"><option value="39.7684,-86.1581">Indianapolis, IN</option><option value="38.9592,-85.8903" selected>Seymour, IN</option><option value="39.6128,-86.3742">Mooresville, IN</option><option value="39.2014,-85.9214">Columbus, IN</option><option value="custom">Custom coordinates</option></select></div><div><label for="radius">Within</label><select id="radius"><option>10</option><option selected>25</option><option>50</option><option>100</option><option>250</option><option>500</option></select></div><div><label for="startLat">Latitude</label><input id="startLat" type="number" step="any" placeholder="39.123"></div><div><label for="startLon">Longitude</label><input id="startLon" type="number" step="any" placeholder="-86.123"></div></div><div class="buttons" style="margin-top:10px"><button id="nearSearch">Find nearby cemeteries</button><button class="secondary" id="myLocation">Use phone GPS</button></div><div id="geoNote" class="hint" role="status"></div><div id="nearResults"></div></div></details></section><section class="panel" id="relativePanel"><details class="finder-fold" id="relativeFold" open><summary>🔎 Find a relative or cemetery <span class="finder-sub">Search names &amp; filters</span></summary><div class="finder-body"><div class="filters"><div class="wide"><input id="q" type="search" placeholder="Search name, cemetery, town, family line…" aria-label="Search"></div><div><label for="county">County</label><select id="county"><option value="">All counties</option></select></div><div><label for="cem">Cemetery</label><select id="cem"><option value="">All cemeteries</option></select></div><div><label for="status">Visit filter</label><select id="status"><option value="">All records</option><option value="unvisited">Not visited</option><option value="nophoto">Photo needed</option><option value="nogps">GPS needed</option></select></div></div><div class="buttons" style="margin-top:12px"><button id="add">+ Add discovery</button><button class="secondary" id="clear">Clear filters</button><button class="outline" id="showAll">Show all records</button><button class="secondary" type="button" id="showMatches">Show filtered results</button></div></div></details></section>
+<section class="panel" id="burialPanel"><div class="resulthead"><h2 style="margin:0">Burial records</h2><span class="tiny" id="count"></span></div><div class="burial-list-controls"><span class="hint">Tap a name to view details and edit.</span><div class="inline-controls"><button class="secondary" id="hideResultsTop" type="button">Hide results</button><button class="secondary" id="clearResultsTop" type="button">Clear filters</button></div></div><div id="out"></div><div class="burial-list-controls"><button id="more" class="secondary" hidden>Show more</button><div class="inline-controls"><button class="secondary" id="hideResultsBottom" type="button">Hide results</button><button class="secondary" id="clearResultsBottom" type="button">Clear filters</button></div></div></section>
+<section class="panel" id="changeLogPanel"><div class="resulthead"><h2 style="margin:0">📋 Cemetery change log</h2><span class="tiny" id="changeCount"></span></div><p class="hint">Keep a complete activity history, and review just the discoveries and corrections you still need to enter in your family tree. Tracking starts with edits made in v5. v6 hides reversed and superseded field edits from outstanding tree updates, while preserving their activity history.</p><div class="buttons"><button id="viewTreeChanges">Changes to enter in tree</button><button id="viewHistory" class="secondary">Complete activity history</button></div><div id="changeList" hidden></div><div class="buttons" id="changeTools" hidden style="margin-top:10px"><button id="downloadChangeCsv">Export tree changes (Excel)</button><button class="secondary" id="downloadHistoryCsv">Export full history (Excel)</button><button class="secondary" id="hideChangeLog">Hide reports</button></div></section>
+<section class="panel" id="dataProtectionPanel"><h2>Data loading and protection</h2><h3>Load your private burial list</h3><p class="hint">Your family burial list is NOT published on GitHub. Import your private <strong>Indiana_Burial_Records_Private.json</strong> once per browser/device. It stays in this browser's local storage. Next, restore your fieldwork backup below to bring back edits and photos.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p><h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your existing OneDrive backup and restore it in this version. Do not discard either version until you have verified the imported notes and photos.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The backup includes photos. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This is a single-file offline test, not a synced app. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div></section>
+<footer>Fieldbook v6 photo history fix · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -22,7 +64,7 @@ try{const storedLog=JSON.parse(localStorage.getItem(CHANGE_KEY)||'[]');if(Array.
 const FIELD_NAMES={name:'Name',dates:'Dates',relation:'Relationship',side:'Family side',line:'Family line',state:'State',county:'County',town:'Town',cemetery:'Cemetery',plot:'Plot',findagrave:'Find a Grave link',notes:'Notes',visited:'Visited',stone:'Stone',photo:'Photo status',gps:'GPS status'};
 // Keep enteredFTM for compatibility with earlier v5 test backups.
 const ROUTINE_FIELDS=new Set(['visited','stone','photo','gps']);
-const ROUTINE_TYPES=new Set(['Photo attached','Photo deleted']);
+const ROUTINE_TYPES=new Set(['Photo deleted']);
 let changeView='tree';
 function defaultNeedsTree(x){
  if(typeof x.needsTree==='boolean')return x.needsTree;
@@ -34,7 +76,13 @@ function defaultNeedsTree(x){
  }
  return true;
 }
-function requiresTree(x){return typeof x.needsTree==='boolean'?x.needsTree:defaultNeedsTree(x)}
+// Older Fieldbook versions flagged attached photos as routine activity.
+// Treat those legacy photo attachments as tree work unless the user has explicitly
+// opted out since this correction. Preserve completed (entered) flags.
+function requiresTree(x){
+ if(x.type==='Photo attached'&&!x.treeChoiceExplicit)return true;
+ return typeof x.needsTree==='boolean'?x.needsTree:defaultNeedsTree(x);
+}
 function saveLog(){try{localStorage.setItem(CHANGE_KEY,JSON.stringify(changeLog))}catch(err){alert('Could not save the change log. Export a full backup: '+err.message)}}
 function addChange(type,person,personId,detail,needsTree){
  const entry={id:'evt-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),at:new Date().toISOString(),type,person,personId,detail,enteredFTM:false,needsTree:typeof needsTree==='boolean'?needsTree:!ROUTINE_TYPES.has(type)};
@@ -42,29 +90,98 @@ function addChange(type,person,personId,detail,needsTree){
 }
 function formatLogValue(v){if(typeof v==='boolean')return v?'Yes':'No';return v==null?'':String(v)}
 function changeLabel(txt,cbHandler,checked){const lbl=document.createElement('label');lbl.className='change-check';const cb=document.createElement('input');cb.type='checkbox';cb.checked=checked;cb.addEventListener('change',()=>cbHandler(cb.checked));lbl.append(cb,document.createTextNode(txt));return lbl}
+// v6: calculate outstanding tree work from the net result of successive field edits.
+// This is a read-only projection: all historical log events are retained unchanged.
+function outstandingTreeChanges(){
+ const oldestFirst=[...changeLog].reverse(), groups=new Map(), standalone=[];
+ for(const x of oldestFirst){
+  if(x.type!=='Record updated'){
+   if(x.type==='Photo attached'){
+    const removedLater=changeLog.some(y=>y.type==='Photo deleted'&&y.personId===x.personId&&y.detail===x.detail&&String(y.at)>String(x.at));
+    if(!removedLater&&!x.enteredFTM&&requiresTree(x))standalone.push(x);
+    continue;
+   }
+   if(requiresTree(x)&&!x.enteredFTM)standalone.push(x);
+   continue;
+  }
+  for(const part of exportDetails(x.detail)){
+   if(!part.field || !part.detail.includes(' → ')){
+    if(requiresTree(x)&&!x.enteredFTM)standalone.push(x);
+    continue;
+   }
+   const key=JSON.stringify([x.personId,part.field]);
+   if(!groups.has(key))groups.set(key,{person:x.person,personId:x.personId,field:part.field,firstOld:part.oldValue,latest:part.newValue,events:[],last:x});
+   const g=groups.get(key);g.events.push({event:x,oldValue:part.oldValue,newValue:part.newValue});g.latest=part.newValue;g.last=x;
+  }
+ }
+ const result=[...standalone];
+ for(const g of groups.values()){
+  // Previously entered edits become the reference value that the tree has.
+  let baseline=g.firstOld, lastEntered=-1;
+  g.events.forEach((item,i)=>{if(item.event.enteredFTM){baseline=item.newValue;lastEntered=i}});
+  const pending=g.events.slice(lastEntered+1);
+  if(!pending.length || !requiresTree(g.last) || baseline===g.latest)continue;
+  result.push({...g.last,detail:g.field+': '+baseline+' → '+g.latest,needsTree:true,enteredFTM:false,
+   _netField:g.field,_historyCount:pending.length,_sourceEvent:g.last});
+ }
+ return result.sort((a,b)=>String(b.at).localeCompare(String(a.at)));
+}
 function renderChangeLog(){
- const pending=changeLog.filter(x=>requiresTree(x)&&!x.enteredFTM);
- $('changeCount').textContent=pending.length+' to enter in tree';
+ const pending=outstandingTreeChanges();
+ const pendingPeople=new Set(pending.map(x=>x.personId||x.person||x.id));
+ $('changeCount').textContent=pendingPeople.size+' people to enter in tree';
  const el=$('changeList');if(el.hidden)return;
  el.replaceChildren();const inTree=changeView==='tree';
  el.append(textNode('h3','change-view-title',inTree?'Changes to enter in tree':'Complete activity history'));
  const entries=inTree?pending:changeLog;
  if(!entries.length){el.append(textNode('p','hint',inTree?'No outstanding tree updates.':'No changes recorded yet.'));return}
- entries.forEach(x=>{
-  const wrap=textNode('div','person');wrap.append(textNode('div','tiny',new Date(x.at).toLocaleString()+' · '+x.type));
-  wrap.append(textNode('h3','',x.person||'Unknown person'));wrap.append(textNode('div','meta',x.detail||''));
-  const row=textNode('div','change-actions');
-  row.append(changeLabel('Include in tree updates',v=>{x.needsTree=v;if(!v)x.enteredFTM=false;saveLog();renderChangeLog()},requiresTree(x)));
-  if(requiresTree(x))row.append(changeLabel('Entered in tree',v=>{x.enteredFTM=v;saveLog();renderChangeLog()},!!x.enteredFTM));
-  wrap.append(row);if(!inTree&&x.enteredFTM&&requiresTree(x))wrap.append(textNode('div','change-muted','Already entered in tree'));
-  el.append(wrap);
- });
+ const groups=new Map();
+ for(const x of entries){const key=x.personId||x.person||x.id;
+  if(!groups.has(key))groups.set(key,{person:x.person||'Unknown person',items:[],key});
+  groups.get(key).items.push(x);
+ }
+ el.append(textNode('p','report-count',groups.size+' people · '+entries.length+' recorded '+(inTree?'outstanding changes':'events')+'. Select a person to see details.'));
+ for(const group of groups.values()){
+  const box=document.createElement('details');box.className='person-group';
+  const summary=document.createElement('summary');
+  const title=document.createElement('span');title.append(textNode('div','group-title',group.person));
+  title.append(textNode('div','group-sub',group.items.length+' '+(inTree?'outstanding changes':'events')+' · '+new Date(group.items[0].at).toLocaleDateString()));
+  summary.append(title);box.append(summary);
+  const body=textNode('div','group-body');
+  for(const x of group.items){
+   const item=textNode('div','group-item');
+   item.append(textNode('div','tiny',new Date(x.at).toLocaleString()+' · '+x.type));
+   item.append(textNode('div','meta',x.detail||''));
+   if(x._netField&&x._historyCount>1)item.append(textNode('div','tiny','Net result after '+x._historyCount+' edits; earlier edits remain in history.'));
+   if(!inTree){
+    const actions=textNode('div','change-actions');
+    actions.append(changeLabel('Include in tree updates',v=>{const target=x._sourceEvent||x;target.needsTree=v;target.treeChoiceExplicit=true;if(!v)target.enteredFTM=false;saveLog();renderChangeLog()},requiresTree(x)));
+    if(requiresTree(x))actions.append(changeLabel('Entered in tree',v=>{(x._sourceEvent||x).enteredFTM=v;saveLog();renderChangeLog()},!!x.enteredFTM));
+    item.append(actions);
+   }
+   body.append(item);
+  }
+  if(inTree){
+   const actions=textNode('div','report-actions');
+   const done=document.createElement('button');done.className='secondary';done.textContent='Mark all these changes entered in tree';
+   done.addEventListener('click',()=>{
+    if(!confirm('Mark all '+group.items.length+' outstanding changes for '+group.person+' as entered in your tree?'))return;
+    for(const x of group.items){(x._sourceEvent||x).enteredFTM=true;
+     // A new discovery must be marked complete before its subsequent corrections count as updates.
+     if(x.type==='New discovery'){for(const event of changeLog)if(event.personId===x.personId&&event.type==='New discovery')event.enteredFTM=true;}
+    }
+    saveLog();renderChangeLog();
+   });actions.append(done);body.append(actions);
+  }
+  box.append(body);el.append(box);
+ }
 }
 function csvCell(x){return '"'+String(x==null?'':x).replace(/"/g,'""')+'"'}
 function setChangeView(view){changeView=view;$('changeList').hidden=false;$('changeTools').hidden=false;$('viewTreeChanges').className=view==='tree'?'':'secondary';$('viewHistory').className=view==='history'?'':'secondary';renderChangeLog()}
 $('viewTreeChanges').onclick=()=>setChangeView('tree');
 $('viewHistory').onclick=()=>setChangeView('history');
 $('hideChangeLog').onclick=()=>{$('changeList').hidden=true;$('changeTools').hidden=true};
+
 // Export an individual CSV row per changed field; historical log entries remain unchanged.
 function exportDetails(detail){
  const s=String(detail||'');
@@ -72,8 +189,36 @@ function exportDetails(detail){
  return parts.map(p=>{
    const colon=p.indexOf(': '), arrow=p.indexOf(' → ');
    if(colon>=0&&arrow>colon)return {field:p.slice(0,colon).trim(),oldValue:p.slice(colon+2,arrow),newValue:p.slice(arrow+3),detail:p};
+   // New discoveries contain field:value pairs rather than old → new transitions.
+   if(colon>=0)return {field:p.slice(0,colon).trim(),oldValue:'',newValue:p.slice(colon+2),detail:p};
    return {field:'',oldValue:'',newValue:'',detail:p};
  });
+}
+// Include all genealogical details for new discoveries, including dates and plot.
+// Older v5/v6 logs only recorded cemetery, county, and notes. For those logs,
+// supplement missing values from the current burial record without changing
+// historical activity entries. Never copy a later correction into the initial
+// discovery row when that field has a separate recorded correction.
+const DISCOVERY_FIELDS=[
+ ['dates','Dates'],['state','State'],['county','County'],['town','Town'],
+ ['cemetery','Cemetery'],['plot','Plot'],['relation','Relationship'],
+ ['side','Family side'],['line','Family line'],['findagrave','Find a Grave'],['notes','Notes']
+];
+function discoveryExportDetails(entry,person){
+ const existing=exportDetails(entry.detail).filter(d=>d.field);
+ const found=new Set(existing.map(d=>d.field.toLowerCase()));
+ const edited=new Set();
+ for(const event of changeLog){
+  if(event.personId!==entry.personId || event.type!=='Record updated')continue;
+  for(const d of exportDetails(event.detail))if(d.field)edited.add(d.field.toLowerCase());
+ }
+ for(const [key,label] of DISCOVERY_FIELDS){
+  if(found.has(label.toLowerCase())||edited.has(label.toLowerCase()))continue;
+  const value=person&&person[key]!=null?String(person[key]).trim():'';
+  if(!value)continue;
+  existing.push({field:label,oldValue:'',newValue:value,detail:label+': '+value});
+ }
+ return existing;
 }
 function exportChanges(entries,name){
  const header=['Date/time','Change type','Person','GEDCOM individual ID','Fieldbook record ID','Field changed','Original value','New value','Details','Needs tree update','Entered in tree'];
@@ -83,29 +228,213 @@ function exportChanges(entries,name){
    const person=people.get(x.personId);
    // A GEDCOM ID may be unavailable for a newly added discovery or unmatched individual.
    const gedcomId=person&&person.gedcomId?person.gedcomId:'';
-   for(const d of exportDetails(x.detail))rows.push([x.at,x.type,x.person,gedcomId,x.personId,d.field,d.oldValue,d.newValue,d.detail,requiresTree(x)?'Yes':'No',x.enteredFTM?'Yes':'No']);
+   for(const d of (x.type==='New discovery'?discoveryExportDetails(x,person):exportDetails(x.detail)))rows.push([x.at,x.type,x.person,gedcomId,x.personId,d.field,d.oldValue,d.newValue,d.detail,requiresTree(x)?'Yes':'No',x.enteredFTM?'Yes':'No']);
  }
  const csv='\ufeff'+rows.map(row=>row.map(csvCell).join(',')).join('\r\n');
  download(new Blob([csv],{type:'text/csv;charset=utf-8'}),name+'-'+new Date().toISOString().slice(0,10)+'.csv');
 }
-$('downloadChangeCsv').onclick=()=>exportChanges(changeLog.filter(x=>requiresTree(x)&&!x.enteredFTM),'cemetery-fieldbook-tree-changes');
-$('downloadHistoryCsv').onclick=()=>exportChanges(changeLog,'cemetery-fieldbook-complete-history');
+// v6 tree-entry worksheet: exactly one row per person with outstanding updates.
+// Existing people: only outstanding changed fields are populated.
+// New discoveries: include all recorded genealogical details and any subsequent edits.
+// Keep full activity history separate as a detailed Excel audit worksheet.
+const TREE_EXPORT_COLUMNS=[
+ ['Name','name'],['Dates','dates'],['State','state'],['County','county'],['Town','town'],
+ ['Cemetery','cemetery'],['Plot','plot'],['Relationship','relation'],['Family side','side'],
+ ['Family line','line'],['Find a Grave','findagrave'],['Notes','notes']
+];
+const TREE_FIELD_TO_KEY={
+ 'name':'name','dates':'dates','state':'state','county':'county',
+ 'town':'town','cemetery':'cemetery','plot':'plot','relationship':'relation',
+ 'family side':'side','family line':'line','find a grave':'findagrave',
+ 'find a grave link':'findagrave','notes':'notes'
+};
+// v6 workbook: 3 distinct workflows, offline-capable .xlsx generation.
+// Unlike CSV, .xlsx supports multiple worksheets in one download.
+const TREE_LABELS=['Name','Dates','State','County','Town','Cemetery','Plot','Relationship','Family side','Family line','Find a Grave','Notes'];
+const TREE_KEYS=['name','dates','state','county','town','cemetery','plot','relation','side','line','findagrave','notes'];
+function treeWorkSheets(){
+ const entries=outstandingTreeChanges(), people=new Map(all().map(p=>[p.id,p]));
+ const groups=new Map(), deleted=changeLog.filter(x=>x.type==='Discovery deleted');
+ const deletedIds=new Set(deleted.map(x=>x.personId));
+ for(const x of [...entries].reverse()){
+  if(deletedIds.has(x.personId))continue; // A new discovery removed before tree entry requires no tree action.
+  if(!['New discovery','Record updated','Photo attached'].includes(x.type))continue;
+  const id=x.personId||'unknown-'+x.id;
+  if(!groups.has(id))groups.set(id,{id,name:x.person||'',date:x.at||'',added:false,values:{},originals:{},photos:[],events:[]});
+  const r=groups.get(id);r.name=x.person||r.name;r.date=x.at||r.date;r.events.push(x);
+  if(x.type==='Photo attached'){r.photos.push(x.detail||'Attached photograph');continue;}
+  if(x.type==='New discovery'){
+   r.added=true;r.values.name=x.person||r.values.name;
+   for(const d of discoveryExportDetails(x,people.get(id))){
+    const k=TREE_FIELD_TO_KEY[String(d.field||'').toLowerCase()];
+    if(k&&d.newValue!=='')r.values[k]=d.newValue;
+   }
+  }else{
+   for(const d of exportDetails(x.detail)){
+    const k=TREE_FIELD_TO_KEY[String(d.field||'').toLowerCase()];
+    if(!k)continue;
+    if(!(k in r.originals))r.originals[k]=d.oldValue;
+    r.values[k]=d.newValue;
+   }
+  }
+ }
+ const base=['Change date','Person','GEDCOM individual ID','Fieldbook record ID'];
+ const aHeader=[...base,...TREE_LABELS,'Photographs to attach','Entered in tree'];
+ const uHeader=[...base,...TREE_LABELS.flatMap(x=>['Original '+x,'New '+x]),'Photographs to attach','Entered in tree'];
+ const dHeader=[...base,'Delete type','Details / reason','Entered in tree'];
+ const additions=[aHeader],updates=[uHeader],deletes=[dHeader];
+ for(const r of groups.values()){
+  const p=people.get(r.id),prefix=[r.date,r.name,p?.gedcomId||'',r.id];
+  if(r.added){
+   additions.push([...prefix,...TREE_KEYS.map(k=>Object.hasOwn(r.values,k)?r.values[k]:''),r.photos.join('; '),'No']);
+  }else{
+   // Populate only changed fields; other Original/New pairs stay blank.
+   updates.push([...prefix,...TREE_KEYS.flatMap(k=>Object.hasOwn(r.values,k)?[r.originals[k]||'',r.values[k]]:['','']),r.photos.join('; '),'No']);
+  }
+ }
+ // Deleting a field discovery that was never entered in the tree cancels the addition.
+ // A tree-delete action is relevant only if the discovery was previously marked entered.
+ for(const x of deleted){
+  const created=changeLog.find(y=>y.personId===x.personId&&y.type==='New discovery');
+  if(!created?.enteredFTM || x.enteredFTM || !requiresTree(x))continue;
+  deletes.push([x.at,x.person,'',x.personId,'Previously entered discovery',x.detail||'Discovery deleted','No']);
+ }
+ return [{name:'Additions',rows:additions},{name:'Updates',rows:updates},{name:'Deletes',rows:deletes}];
+}
+// Minimal OOXML writer using the built-in TextEncoder; no web request or external library.
+function spreadsheetColumn(n){let s='';for(n++;n;n=Math.floor((n-1)/26))s=String.fromCharCode(65+(n-1)%26)+s;return s}
+function excelEsc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'')}
+function makeSheetXML(rows){
+ const widths=rows[0].map(h=>{const s=String(h);return Math.min(37,Math.max(14,s.length+2))});
+ const cols='<cols>'+widths.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join('')+'</cols>';
+ const sheetData=rows.map((row,ri)=>`<row r="${ri+1}">`+row.map((v,ci)=>{
+  const a=spreadsheetColumn(ci)+(ri+1);
+  return `<c r="${a}" t="inlineStr" s="${ri===0?1:0}"><is><t xml:space="preserve">${excelEsc(v)}</t></is></c>`;
+ }).join('')+'</row>').join('');
+ const range=`A1:${spreadsheetColumn(rows[0].length-1)}${Math.max(rows.length,1)}`;
+ return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><dimension ref="${range}"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="16"/>${cols}<sheetData>${sheetData}</sheetData><autoFilter ref="${range}"/></worksheet>`;
+}
+function zipCRC(bytes){let c=-1;for(const b of bytes){c^=b;for(let i=0;i<8;i++)c=(c>>>1)^(c&1?0xedb88320:0)}return(c^(-1))>>>0}
+function packZip(contents){
+ const encoder=new TextEncoder(), parts=[], dirs=[];let pos=0;
+ function u16(view,off,val){view.setUint16(off,val,true)}
+ function u32(view,off,val){view.setUint32(off,val>>>0,true)}
+ for(const [filename,content] of contents){
+  const name=encoder.encode(filename),data=encoder.encode(content),crc=zipCRC(data),head=new Uint8Array(30+name.length),v=new DataView(head.buffer);
+  u32(v,0,0x04034b50);u16(v,4,20);u16(v,6,0x0800);u16(v,8,0);u32(v,14,crc);u32(v,18,data.length);u32(v,22,data.length);u16(v,26,name.length);head.set(name,30);
+  parts.push(head,data);
+  const dir=new Uint8Array(46+name.length),d=new DataView(dir.buffer);
+  u32(d,0,0x02014b50);u16(d,4,20);u16(d,6,20);u16(d,8,0x0800);u32(d,16,crc);u32(d,20,data.length);u32(d,24,data.length);u16(d,28,name.length);u32(d,42,pos);dir.set(name,46);dirs.push(dir);pos+=head.length+data.length;
+ }
+ const cdlen=dirs.reduce((s,x)=>s+x.length,0),end=new Uint8Array(22),e=new DataView(end.buffer);u32(e,0,0x06054b50);u16(e,8,dirs.length);u16(e,10,dirs.length);u32(e,12,cdlen);u32(e,16,pos);
+ return new Blob([...parts,...dirs,end],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+function downloadWorkbook(sheets,filename){
+ const workbook=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>`+sheets.map((s,i)=>`<sheet name="${s.name}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')+'</sheets></workbook>';
+ const relationships=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">`+sheets.map((s,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')+`<Relationship Id="rId${sheets.length+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`;
+ const types=`<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>`+sheets.map((s,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')+'</Types>';
+ const styles=`<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF14675E"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/></cellXfs></styleSheet>`;
+ const files=[['[Content_Types].xml',types],['_rels/.rels','<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'],['xl/workbook.xml',workbook],['xl/_rels/workbook.xml.rels',relationships],['xl/styles.xml',styles],...sheets.map((s,i)=>[`xl/worksheets/sheet${i+1}.xml`,makeSheetXML(s.rows)])];
+ download(packZip(files),filename+'-'+new Date().toISOString().slice(0,10)+'.xlsx');
+}
+function exportTreeWorkbook(){
+ downloadWorkbook(treeWorkSheets(),'cemetery-fieldbook-tree-changes');
+}
+function exportHistoryWorkbook(){
+ const people=new Map(all().map(p=>[p.id,p]));
+ const rows=[['Date/time','Action','Person','GEDCOM individual ID','Fieldbook record ID','Field changed','Original value','New value','Full details','Needs tree update','Entered in tree']];
+ for(const x of changeLog){
+  const person=people.get(x.personId);
+  const parts=x.type==='Photo attached'?[{field:'Photograph attached',oldValue:'',newValue:x.detail||'Attached photograph',detail:x.detail||''}]:x.type==='Photo deleted'?[{field:'Photograph deleted',oldValue:x.detail||'',newValue:'',detail:x.detail||''}]:x.type==='New discovery'?discoveryExportDetails(x,person):exportDetails(x.detail);
+  for(const d of parts.length?parts:[{field:'',oldValue:'',newValue:'',detail:''}]){
+   rows.push([x.at||'',x.type||'',x.person||'',person?.gedcomId||'',x.personId||'',d.field||'',d.oldValue||'',d.newValue||'',x.detail||'',requiresTree(x)?'Yes':'No',x.enteredFTM?'Yes':'No']);
+  }
+ }
+ downloadWorkbook([{name:'Activity History',rows}],'cemetery-fieldbook-complete-history');
+}
+$('downloadChangeCsv').textContent='Export tree changes (Excel)';
+$('downloadChangeCsv').onclick=exportTreeWorkbook;
+$('downloadHistoryCsv').textContent='Export full history (Excel)';
+$('downloadHistoryCsv').onclick=exportHistoryWorkbook;
 
-let updates={},extras=[],current=null,visible=65,db=null,showAllRecords=false;
+let updates={},extras=[],current=null,visible=65,db=null,showAllRecords=false,resultsSuppressed=false;
 try{const stored=JSON.parse(localStorage.getItem(KEY)||'{}');updates=stored.updates||{};extras=stored.extras||[]}catch(e){alert('Could not read saved records: '+e.message)}
 const all=()=>[...seed.map(r=>({...r,...(updates[r.id]||{})})),...extras];
 function persist(){try{localStorage.setItem(KEY,JSON.stringify({updates,extras}))}catch(e){alert('Unable to save edits. Export a backup now. '+e.message)}}
 function unique(key){return [...new Set(all().map(x=>x[key]).filter(Boolean))].sort((a,b)=>a.localeCompare(b))}
 function options(id,arr,placeholder){let s=$(id),old=s.value;s.replaceChildren(new Option(placeholder,''));arr.forEach(x=>s.add(new Option(x,x)));s.value=arr.includes(old)?old:''}
 function refreshOptions(){options('county',unique('county'),'All counties');options('cem',unique('cemetery'),'All cemeteries')}
-function matching(){const t=$('q').value.trim().toLowerCase(),county=$('county').value,cem=$('cem').value,status=$('status').value;return all().filter(r=>{if(county&&r.county!==county||cem&&r.cemetery!==cem)return false;if(t&&![r.name,r.dates,r.relation,r.line,r.cemetery,r.county,r.town,r.state,r.notes,r.plot].join(' ').toLowerCase().includes(t))return false;if(status==='unvisited'&&r.visited||status==='nophoto'&&r.photo||status==='nogps'&&r.gps||status==='baseline'&&!r.baseline)return false;return true})}
+function matching(){const t=$('q').value.trim().toLowerCase(),county=$('county').value,cem=$('cem').value,status=$('status').value;return all().filter(r=>{if(county&&r.county!==county||cem&&r.cemetery!==cem)return false;if(t&&![r.name,r.dates,r.relation,r.line,r.cemetery,r.county,r.town,r.state,r.notes,r.plot].join(' ').toLowerCase().includes(t))return false;if(status==='unvisited'&&r.visited||status==='nophoto'&&r.photo||status==='nogps'&&r.gps)return false;return true})}
 function textNode(tag,cls,value){const e=document.createElement(tag);if(cls)e.className=cls;e.textContent=value||'';return e}
-function render(){const hasFilter=!!($('q').value.trim()||$('county').value||$('cem').value||$('status').value);const shouldShow=hasFilter||showAllRecords;const rows=(shouldShow?matching():[]).sort((a,b)=>(a.cemetery||'').localeCompare(b.cemetery||'')||(a.name||'').localeCompare(b.name||''));$('sPeople').textContent=all().length;$('sCem').textContent=new Set(all().map(r=>[r.state,r.county,r.cemetery].join('|'))).size;$('sVisited').textContent=all().filter(r=>r.visited).length;$('count').textContent=shouldShow?rows.length+' matching':'Hidden until search';const out=$('out');out.replaceChildren();let last='';rows.slice(0,visible).forEach(r=>{const group=[r.cemetery,r.town,r.county,r.state].filter(Boolean).join(' · ');if(group!==last){out.append(textNode('div','cemtitle',group));last=group}const block=textNode('div','person');const name=textNode('h3','',r.name+(r.dates?' ('+r.dates+')':''));block.append(name);block.append(textNode('div','meta',[r.relation,r.line].filter(Boolean).join(' · ')));const chips=textNode('div','chips');[['Visited',r.visited],['Stone',r.stone],['Photo',r.photo],['GPS',r.gps]].forEach(([label,done])=>chips.append(textNode('span','chip '+(done?'done':'not'),(done?'✓ ':'○ ')+label)));if(r.baseline)chips.append(textNode('span','chip','★ Baseline'));block.append(chips);if(r.plot&&r.plot!=='N/A')block.append(textNode('div','tiny','Plot: '+r.plot));if(r.notes)block.append(textNode('div','meta',r.notes.length>160?r.notes.slice(0,160)+'…':r.notes));const actions=textNode('div','buttons');const edit=textNode('button','outline','View / Edit');edit.onclick=()=>openEditor(r.id);actions.append(edit);if(r.findagrave){const a=document.createElement('a');a.className='btn secondary';a.href=r.findagrave;a.target='_blank';a.rel='noopener';a.textContent='Find a Grave ↗';actions.append(a)}block.append(actions);out.append(block)});$('more').hidden=rows.length<=visible;if(!shouldShow)out.append(textNode('p','empty','Records are hidden until you search or select a filter. Tap Show all records to browse everything.'));else if(!rows.length)out.append(textNode('p','empty','No matching burials. Try a broader search.'))}
+function render(){
+const hasFilter=!!($('q').value.trim()||$('county').value||$('cem').value||$('status').value);
+const shouldShow=(hasFilter||showAllRecords)&&!resultsSuppressed;
+const rows=(shouldShow?matching():[]).sort((a,b)=>(a.cemetery||'').localeCompare(b.cemetery||'')||(a.name||'').localeCompare(b.name||''));
+$('sPeople').textContent=all().length;
+$('sCem').textContent=new Set(all().map(r=>[r.state,r.county,r.cemetery].join('|'))).size;
+$('sVisited').textContent=all().filter(r=>r.visited).length;
+$('count').textContent=shouldShow?rows.length+' matching':(resultsSuppressed&&hasFilter?'Results hidden · filters retained':'Hidden until search');
+const out=$('out');out.replaceChildren();
+let last='';
+rows.slice(0,visible).forEach(r=>{
+  const group=[r.cemetery,r.town,r.county,r.state].filter(Boolean).join(' · ');
+  if(group!==last){out.append(textNode('div','cemtitle',group));last=group}
+  const block=document.createElement('details');block.className='burial-item';
+  const summary=document.createElement('summary');
+  const info=document.createElement('div');
+  const nameLine=textNode('div','burial-name-line');
+  nameLine.append(textNode('span','burial-title',r.name+(r.dates?' ('+r.dates+')':'')));
+  // Link lives alongside the name, without toggling the record accordion.
+  if(r.findagrave){
+    try{
+      const u=new URL(r.findagrave);
+      if(['https:','http:'].includes(u.protocol)){
+        const fag=document.createElement('a');fag.className='fg-marker';fag.href=u.href;
+        fag.target='_blank';fag.rel='noopener noreferrer';fag.textContent='FG';
+        fag.title='Open Find a Grave memorial for '+r.name;
+        fag.setAttribute('aria-label','Open Find a Grave memorial for '+r.name);
+        fag.addEventListener('click',e=>e.stopPropagation());
+        nameLine.append(fag);
+      }
+    }catch(_){/* Unusable memorial URL: do not show a misleading link */}
+  }
+  info.append(nameLine);
+  if(r.relation)info.append(textNode('div','burial-subtitle',r.relation));
+  summary.append(info);
+  const badges=textNode('div','burial-summary-tags');
+  [['V',r.visited],['S',r.stone],['P',r.photo],['G',r.gps]].forEach(([label,done])=>badges.append(textNode('span','chip '+(done?'done':'not'),(done?'✓':'○')+label)));
+  summary.append(badges);block.append(summary);
+  const body=textNode('div','burial-detail');
+  body.append(textNode('div','meta',[r.relation,r.line].filter(Boolean).join(' · ')));
+  const chips=textNode('div','chips');[['Visited',r.visited],['Stone',r.stone],['Photo',r.photo],['GPS',r.gps]].forEach(([label,done])=>chips.append(textNode('span','chip '+(done?'done':'not'),(done?'✓ ':'○ ')+label)));
+  body.append(chips);
+  if(r.plot&&r.plot!=='N/A')body.append(textNode('div','tiny','Plot: '+r.plot));
+  if(r.notes)body.append(textNode('div','meta',r.notes.length>160?r.notes.slice(0,160)+'…':r.notes));
+  const actions=textNode('div','buttons');const edit=textNode('button','outline','View / Edit');edit.type='button';edit.onclick=()=>openEditor(r.id);actions.append(edit);
+  if(r.findagrave){const a=document.createElement('a');a.className='btn secondary';a.href=r.findagrave;a.target='_blank';a.rel='noopener';a.textContent='Find a Grave ↗';actions.append(a)}
+  body.append(actions);block.append(body);out.append(block);
+});
+$('more').hidden=rows.length<=visible;
+$('clearResultsTop').hidden=!hasFilter&&!showAllRecords;
+$('clearResultsBottom').hidden=!hasFilter&&!showAllRecords;
+$('hideResultsTop').hidden=!shouldShow;
+$('hideResultsBottom').hidden=!shouldShow;
+if(!shouldShow)out.append(textNode('p','empty',resultsSuppressed&&hasFilter?'Results hidden; your filters are saved. Tap Show filtered results above, or adjust a filter to reopen.':'Records are hidden until you search or select a filter. Tap Show all records to browse everything.'));
+else if(!rows.length)out.append(textNode('p','empty','No matching burials. Try a broader search.'));
+}
 function openEditor(id){current=id;const r=all().find(x=>x.id===id)||{id:'new',name:'',dates:'',relation:'',side:'',line:'',state:'Indiana',county:'',town:'',cemetery:'',plot:'',findagrave:'',notes:'',visited:false,stone:false,photo:false,gps:false};$('editTitle').textContent=id?'Edit burial record':'New cemetery discovery';for(const e of $('editForm').querySelectorAll('[name]')){e.type==='checkbox'?e.checked=!!r[e.name]:e.value=r[e.name]||''}$('delete').hidden=!id||!id.startsWith('new-');$('editNote').textContent=r.gedcomId?'GEDCOM reference: '+r.gedcomId+(r.gedcomBurial?' · Burial: '+r.gedcomBurial:''):'';$('photoFile').value='';renderPhotos();$('editor').showModal()}
 function closeEditor(){$('editor').close();current=null}
-$('editForm').onsubmit=e=>{e.preventDefault();const form=$('editForm'),r={};for(const el of form.querySelectorAll('[name]'))r[el.name]=el.type==='checkbox'?el.checked:el.value.trim();if(!r.name||!r.cemetery){alert('Name and cemetery are required');return}const before=current?all().find(x=>x.id===current):null;let changed=[];if(before){changed=Object.keys(r).filter(k=>formatLogValue(before[k])!==formatLogValue(r[k])).map(k=>({key:k,detail:(FIELD_NAMES[k]||k)+': '+formatLogValue(before[k])+' → '+formatLogValue(r[k])}))}if(current){if(current.startsWith('new-'))extras=extras.map(x=>x.id===current?{...x,...r}:x);else updates[current]={...(updates[current]||{}),...r}}else{r.id='new-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);r.source='Field discovery';extras.push(r)}persist();if(!before)addChange('New discovery',r.name,r.id,'Cemetery: '+r.cemetery+'; County: '+r.county+'; Notes: '+r.notes);else if(changed.length){const genealogical=changed.filter(x=>!ROUTINE_FIELDS.has(x.key));const routine=changed.filter(x=>ROUTINE_FIELDS.has(x.key));if(genealogical.length)addChange('Record updated',r.name,current,genealogical.map(x=>x.detail).join('; '),true);if(routine.length)addChange('Visit tracking updated',r.name,current,routine.map(x=>x.detail).join('; '),false)}closeEditor();refreshOptions();render()};
+$('editForm').onsubmit=e=>{e.preventDefault();const form=$('editForm'),r={};for(const el of form.querySelectorAll('[name]'))r[el.name]=el.type==='checkbox'?el.checked:el.value.trim();if(!r.name||!r.cemetery){alert('Name and cemetery are required');return}const before=current?all().find(x=>x.id===current):null;let changed=[];if(before){changed=Object.keys(r).filter(k=>formatLogValue(before[k])!==formatLogValue(r[k])).map(k=>({key:k,detail:(FIELD_NAMES[k]||k)+': '+formatLogValue(before[k])+' → '+formatLogValue(r[k])}))}if(current){if(current.startsWith('new-'))extras=extras.map(x=>x.id===current?{...x,...r}:x);else updates[current]={...(updates[current]||{}),...r}}else{r.id='new-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);r.source='Field discovery';extras.push(r)}persist();if(!before)addChange('New discovery',r.name,r.id,DISCOVERY_FIELDS.filter(([key])=>String(r[key]||'').trim()).map(([key,label])=>label+': '+r[key]).join('; '));else if(changed.length){const genealogical=changed.filter(x=>!ROUTINE_FIELDS.has(x.key));const routine=changed.filter(x=>ROUTINE_FIELDS.has(x.key));if(genealogical.length)addChange('Record updated',r.name,current,genealogical.map(x=>x.detail).join('; '),true);if(routine.length)addChange('Visit tracking updated',r.name,current,routine.map(x=>x.detail).join('; '),false)}closeEditor();refreshOptions();render()};
 $('close').onclick=$('cancel').onclick=closeEditor;$('delete').onclick=async()=>{if(!confirm('Delete this new discovery and its pictures?'))return;const removed=extras.find(x=>x.id===current);extras=extras.filter(x=>x.id!==current);await photoDeleteAll(current);persist();if(removed)addChange('Discovery deleted',removed.name,current,'Cemetery: '+removed.cemetery);closeEditor();refreshOptions();render()};
-$('add').onclick=()=>openEditor(null);$('clear').onclick=()=>{$('q').value='';$('county').value='';$('cem').value='';$('status').value='';showAllRecords=false;visible=65;render()};['q','county','cem','status'].forEach(id=>$(id).addEventListener(id==='q'?'input':'change',()=>{showAllRecords=false;visible=65;render()}));$('more').onclick=()=>{visible+=65;render()};$('showAll').onclick=()=>{showAllRecords=true;visible=65;render();document.getElementById('out').scrollIntoView({block:'start',behavior:'smooth'})};
+$('add').onclick=()=>openEditor(null);
+const clearBurialFilters=()=>{$('q').value='';$('county').value='';$('cem').value='';$('status').value='';showAllRecords=false;resultsSuppressed=false;visible=65;render()};
+const hideBurialResults=()=>{resultsSuppressed=true;render();$('burialPanel').scrollIntoView({block:'start',behavior:'smooth'})};
+['clear','clearResultsTop','clearResultsBottom'].forEach(id=>$(id).onclick=clearBurialFilters);
+['hideResultsTop','hideResultsBottom'].forEach(id=>$(id).onclick=hideBurialResults);
+['q','county','cem','status'].forEach(id=>$(id).addEventListener(id==='q'?'input':'change',()=>{showAllRecords=false;resultsSuppressed=false;visible=65;render()}));
+$('showMatches').onclick=()=>{resultsSuppressed=false;render();$('burialPanel').scrollIntoView({block:'start',behavior:'smooth'})};
+$('more').onclick=()=>{visible+=65;render()};
+$('showAll').onclick=()=>{showAllRecords=true;resultsSuppressed=false;visible=65;render();$('burialPanel').scrollIntoView({block:'start',behavior:'smooth'})};
 // Binary images are stored in IndexedDB; record changes are stored in localStorage.
 function openDB(){return new Promise((res,rej)=>{if(!indexedDB){rej(Error('IndexedDB unavailable'));return}const req=indexedDB.open('cemeteryFieldbookPhotos_v1',1);req.onupgradeneeded=()=>{req.result.createObjectStore('photos',{keyPath:'id'})};req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error)})}
 async function store(mode,act){if(!db)db=await openDB();return new Promise((res,rej)=>{let tx=db.transaction('photos',mode),s=tx.objectStore('photos');let q=act(s);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
