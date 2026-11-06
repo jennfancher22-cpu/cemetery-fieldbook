@@ -104,7 +104,7 @@
 .relationship-card .meta-line{font-size:12px;color:#546b60;margin:4px 0}
 .relationship-card .uncertain{font-size:12px;color:#8a6230;background:#fff7e8;border-radius:6px;padding:6px 8px;margin-top:7px}
 .relationship-card .rel-title{font-size:14px;font-weight:700;color:#174e40;margin:7px 0}
-</style></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#fff3cb;color:#765113">V7 RELATIONSHIP PREVIEW · PRIVATE STORAGE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div></div></header><main>
+</style></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#fff3cb;color:#765113">V7 RELATIONSHIPS IN RECORDS · PRIVATE STORAGE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div></div></header><main>
 <div class="stats"><div class="stat"><div id="sPeople" class="num">—</div><div class="small">Burial entries</div></div><div class="stat"><div id="sCem" class="num">—</div><div class="small">Cemeteries</div></div><div class="stat"><div id="sVisited" class="num">—</div><div class="small">Visited</div></div></div>
 <section class="panel" id="nearbyPanel"><details class="finder-fold" id="nearbyFold"><summary>📍 Find cemeteries nearby <span class="finder-sub">Search by distance</span></summary><div class="finder-body"><p class="hint">Straight-line distance, not driving distance. Works offline with saved cemetery coordinates. Choose a starting town or try your phone location.</p><div class="filters"><div><label for="startPlace">Starting point</label><select id="startPlace"><option value="39.7684,-86.1581">Indianapolis, IN</option><option value="38.9592,-85.8903" selected>Seymour, IN</option><option value="39.6128,-86.3742">Mooresville, IN</option><option value="39.2014,-85.9214">Columbus, IN</option><option value="custom">Custom coordinates</option></select></div><div><label for="radius">Within</label><select id="radius"><option>10</option><option selected>25</option><option>50</option><option>100</option><option>250</option><option>500</option></select></div><div><label for="startLat">Latitude</label><input id="startLat" type="number" step="any" placeholder="39.123"></div><div><label for="startLon">Longitude</label><input id="startLon" type="number" step="any" placeholder="-86.123"></div></div><div class="buttons" style="margin-top:10px"><button id="nearSearch">Find nearby cemeteries</button><button class="secondary" id="myLocation">Use phone GPS</button></div><div id="geoNote" class="hint" role="status"></div><div id="nearResults"></div></div></details></section><section class="panel" id="relativePanel"><details class="finder-fold" id="relativeFold" open><summary>🔎 Find a relative or cemetery <span class="finder-sub">Search names &amp; filters</span></summary><div class="finder-body"><div class="filters"><div class="wide"><input id="q" type="search" placeholder="Search name, cemetery, town, family line…" aria-label="Search"></div><div><label for="stateFilter">State</label><select id="stateFilter"><option value="">All states</option></select></div><div><label for="county">County</label><select id="county"><option value="">All counties</option></select></div><div><label for="cem">Cemetery</label><select id="cem"><option value="">All cemeteries</option></select></div><div><label for="status">Visit filter</label><select id="status"><option value="">All records</option><option value="unvisited">Not visited</option><option value="nophoto">Photo needed</option><option value="nogps">GPS needed</option></select></div></div><div class="buttons" style="margin-top:12px"><button id="add">+ Add discovery</button><button class="secondary" id="clear">Clear filters</button><button class="outline" id="showAll">Show all records</button><button class="secondary" type="button" id="showMatches">Show filtered results</button></div></div></details></section>
 <section class="panel" id="burialPanel"><div class="resulthead"><h2 style="margin:0">Burial records</h2><span class="tiny" id="count"></span></div><div class="burial-list-controls"><span class="hint">Tap a name to view details and edit.</span><div class="inline-controls"><button class="secondary" id="hideResultsTop" type="button">Hide results</button><button class="secondary" id="clearResultsTop" type="button">Clear filters</button></div></div><div id="out"></div><div class="burial-list-controls"><button id="more" class="secondary" hidden>Show more</button><div class="inline-controls"><button class="secondary" id="hideResultsBottom" type="button">Hide results</button><button class="secondary" id="clearResultsBottom" type="button">Clear filters</button></div></div></section>
@@ -123,8 +123,8 @@
 </div>
 <div id="gedcomImportAction" class="home-panel"><h3 style="margin-top:0">3 · Import burial entries</h3><p class="hint" id="gedcomImportHint">Choose a GEDCOM in Step 1 to prepare the burial preview. Then select your Home Person in Step 2 before importing.</p><div class="buttons" id="gedcomImportButtons"><button type="button" class="secondary" disabled>Choose a GEDCOM file first</button></div></div>
 <div class="home-panel" id="relationshipPreviewPanel">
-<h3 style="margin-top:0">4 · Preview relationship and shared ancestors</h3>
-<p class="hint">Compare a few known relatives with your family tree before applying calculations to thousands of burials. Uses the Home Person and parent-child links saved from your GEDCOM. This is a <strong>read-only preview</strong>: it does not alter burial records or existing family-line notes.</p>
+<h3 style="margin-top:0">4 · Detailed relationship verification (optional)</h3>
+<p class="hint">Compare a few known relatives with your family tree before applying calculations to thousands of burials. Uses the Home Person and parent-child links saved from your GEDCOM. Calculated values also appear in burial entries and their edit forms where fields are blank. These are <strong>GEDCOM-derived suggestions</strong>; the underlying stored records and manual notes are not changed automatically.</p>
 <label for="relationshipSearch">Search a buried person by name or GEDCOM ID</label>
 <input id="relationshipSearch" type="search" placeholder="Try Amy Hillman, William Poland, or a GEDCOM ID" autocomplete="off">
 <div class="buttons"><button type="button" class="secondary" id="relationshipSample">Show sample relatives</button></div>
@@ -443,7 +443,12 @@ $('downloadHistoryCsv').onclick=exportHistoryWorkbook;
 
 let updates={},extras=[],current=null,visible=65,db=null,showAllRecords=false,resultsSuppressed=false;
 try{const stored=JSON.parse(localStorage.getItem(KEY)||'{}');updates=stored.updates||{};extras=stored.extras||[]}catch(e){alert('Could not read saved records: '+e.message)}
-const all=()=>[...seed.map(r=>({...r,...(updates[r.id]||{})})),...extras];
+// Display GEDCOM-derived relationships without modifying original imported records.
+// Existing manually entered values always win. The calculated values are reviewable suggestions.
+const all=()=>[...seed.map(r=>({...r,...(updates[r.id]||{})})),...extras].map(r=>{
+ const suggestion=window.fieldbookDerivedRelationship?.(r);
+ return suggestion?{...r,relation:r.relation||suggestion.relation,side:r.side||suggestion.side,line:r.line||suggestion.line}:r;
+});
 function persist(){try{localStorage.setItem(KEY,JSON.stringify({updates,extras}))}catch(e){alert('Unable to save edits. Export a backup now. '+e.message)}}
 function unique(key){return [...new Set(all().map(x=>x[key]).filter(Boolean))].sort((a,b)=>a.localeCompare(b))}
 function options(id,arr,placeholder){let s=$(id),old=s.value;s.replaceChildren(new Option(placeholder,''));arr.forEach(x=>s.add(new Option(x,x)));s.value=arr.includes(old)?old:''}
@@ -504,6 +509,8 @@ function render(){
   summary.append(badges);block.append(summary);
   const body=textNode('div','burial-detail');
   body.append(textNode('div','meta',[r.relation,r.line].filter(Boolean).join(' · ')));
+  if(r.side)body.append(textNode('div','tiny','Side: '+r.side));
+  if(r.gedcomId&&window.fieldbookDerivedRelationship?.(r))body.append(textNode('div','tiny','Relationship / MRCA from GEDCOM parent links — review against your tree before treating as verified.'));
   const chips=textNode('div','chips');[['Visited',r.visited],['Stone',r.stone],['Photo',r.photo],['GPS',r.gps]].forEach(([label,done])=>chips.append(textNode('span','chip '+(done?'done':'not'),(done?'✓ ':'○ ')+label)));
   body.append(chips);
   if(r.plot&&r.plot!=='N/A')body.append(textNode('div','tiny','Plot: '+r.plot));
@@ -541,7 +548,7 @@ function render(){
  else if(!rows.length)out.append(textNode('p','empty','No matching burials. Try a broader search.'));
 }
 
-function openEditor(id){current=id;const r=all().find(x=>x.id===id)||{id:'new',name:'',dates:'',relation:'',side:'',line:'',state:'Indiana',county:'',town:'',cemetery:'',plot:'',findagrave:'',notes:'',visited:false,stone:false,photo:false,gps:false};$('editTitle').textContent=id?'Edit burial record':'New cemetery discovery';for(const e of $('editForm').querySelectorAll('[name]')){e.type==='checkbox'?e.checked=!!r[e.name]:e.value=r[e.name]||''}$('delete').hidden=!id||!id.startsWith('new-');$('editNote').textContent=r.gedcomId?'GEDCOM reference: '+r.gedcomId+(r.gedcomBurial?' · Burial: '+r.gedcomBurial:''):'';$('photoFile').value='';renderPhotos();$('editor').showModal()}
+function openEditor(id){current=id;const r=all().find(x=>x.id===id)||{id:'new',name:'',dates:'',relation:'',side:'',line:'',state:'Indiana',county:'',town:'',cemetery:'',plot:'',findagrave:'',notes:'',visited:false,stone:false,photo:false,gps:false};$('editTitle').textContent=id?'Edit burial record':'New cemetery discovery';for(const e of $('editForm').querySelectorAll('[name]')){e.type==='checkbox'?e.checked=!!r[e.name]:e.value=r[e.name]||''}$('delete').hidden=!id||!id.startsWith('new-');$('editNote').textContent=r.gedcomId?'GEDCOM reference: '+r.gedcomId+(r.gedcomBurial?' · Burial: '+r.gedcomBurial:'')+(window.fieldbookDerivedRelationship?.(r)?' · Empty Relationship, Side and MRCA fields are shown using GEDCOM-derived suggestions; verify before saving.':''):'';$('photoFile').value='';renderPhotos();$('editor').showModal()}
 function closeEditor(){$('editor').close();current=null}
 $('editForm').onsubmit=e=>{e.preventDefault();const form=$('editForm'),r={};for(const el of form.querySelectorAll('[name]'))r[el.name]=el.type==='checkbox'?el.checked:el.value.trim();if(!r.name||(!r.cemetery&&!(before&&before.source==='GEDCOM import'))){alert('Name and cemetery are required for new discoveries; GEDCOM records with unknown cemetery may remain incomplete.');return}const before=current?all().find(x=>x.id===current):null;let changed=[];if(before){changed=Object.keys(r).filter(k=>formatLogValue(before[k])!==formatLogValue(r[k])).map(k=>({key:k,detail:(FIELD_NAMES[k]||k)+': '+formatLogValue(before[k])+' → '+formatLogValue(r[k])}))}if(current){if(current.startsWith('new-'))extras=extras.map(x=>x.id===current?{...x,...r}:x);else updates[current]={...(updates[current]||{}),...r}}else{r.id='new-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);r.source='Field discovery';extras.push(r)}persist();if(!before)addChange('New discovery',r.name,r.id,DISCOVERY_FIELDS.filter(([key])=>String(r[key]||'').trim()).map(([key,label])=>label+': '+r[key]).join('; '));else if(changed.length){const genealogical=changed.filter(x=>!ROUTINE_FIELDS.has(x.key));const routine=changed.filter(x=>ROUTINE_FIELDS.has(x.key));if(genealogical.length)addChange('Record updated',r.name,current,genealogical.map(x=>x.detail).join('; '),true);if(routine.length)addChange('Visit tracking updated',r.name,current,routine.map(x=>x.detail).join('; '),false)}closeEditor();refreshOptions();render()};
 $('close').onclick=$('cancel').onclick=closeEditor;$('delete').onclick=async()=>{if(!confirm('Delete this new discovery and its pictures?'))return;const removed=extras.find(x=>x.id===current);extras=extras.filter(x=>x.id!==current);await photoDeleteAll(current);persist();if(removed)addChange('Discovery deleted',removed.name,current,'Cemetery: '+removed.cemetery);closeEditor();refreshOptions();render()};
@@ -797,6 +804,32 @@ function calculateRelationship(personId,index,homeAnc){
  const side=sideSet.size===2?'Both maternal and paternal paths':sideSet.size===1?[...sideSet][0]:'Side undetermined';
  return {label:relationshipLabel(h.homeDepth,h.otherDepth),ancestors:closest.map(x=>index.get(x.id)?.name||x.id),depths:[h.homeDepth,h.otherDepth],side,possibleMultiple:closest.length>2||closest.some(x=>x.homeDepth!==h.homeDepth||x.otherDepth!==h.otherDepth)};
 }
+// Expose a cached, read-only relationship suggestion to the burial list and record editor.
+// Computations never overwrite stored manual annotations or the underlying GEDCOM dataset.
+let derivedPeopleRef=null, derivedHomeId=null, derivedIndex=null, derivedHomeAnc=null;
+const derivedCache=new Map();
+window.fieldbookDerivedRelationship=function(record){
+ if(!record||!record.gedcomId||!homePersonId||!allGedcomPeople.length)return null;
+ if(derivedPeopleRef!==allGedcomPeople||derivedHomeId!==homePersonId){
+  derivedPeopleRef=allGedcomPeople; derivedHomeId=homePersonId;
+  derivedIndex=new Map(allGedcomPeople.map(person=>[person.id,person]));
+  derivedHomeAnc=derivedIndex.has(homePersonId)?ancestorMap(homePersonId,derivedIndex):null;
+  derivedCache.clear();
+ }
+ if(!derivedHomeAnc||!derivedIndex.has(record.gedcomId))return null;
+ if(derivedCache.has(record.gedcomId))return derivedCache.get(record.gedcomId);
+ const result=calculateRelationship(record.gedcomId,derivedIndex,derivedHomeAnc);
+ const suggestion=result?{
+  relation:result.label,
+  side:result.side==='Paternal'?'P':result.side==='Maternal'?'M':result.side.startsWith('Both')?'M/P':'',
+  line:result.ancestors.join(' & '),
+  ambiguous:result.possibleMultiple
+ }:null;
+ derivedCache.set(record.gedcomId,suggestion);
+ return suggestion;
+};
+// Update the read-only burial display on launch, after the calculator is registered.
+if(typeof render==='function')render();
 function card(r,index,homeAnc){
  const d=document.createElement('div');d.className='relationship-card';
  const h=document.createElement('strong');h.textContent=r.name+(r.dates?' ('+r.dates+')':'');d.append(h);
