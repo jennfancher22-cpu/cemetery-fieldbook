@@ -83,7 +83,20 @@
 .ged-count strong{display:block;font-size:19px;color:#124c47}
 .ged-example{font-size:12px;border-top:1px solid #dce5dd;padding:7px 0}
 @media(max-width:450px){.ged-counts{grid-template-columns:1fr 1fr}}
-</style><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="icon" type="image/svg+xml" href="icon.svg"></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#fff3cb;color:#765113">V7 HOME PERSON TEST · PRIVATE STORAGE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div></div></header><main>
+
+/* v7: Each cemetery+location is its own expandable group. */
+.cemetery-group{border:1px solid #cbded3;border-radius:11px;margin:9px 0;background:#fff;overflow:hidden}
+.cemetery-group>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;cursor:pointer;background:#edf5ee;list-style:none}
+.cemetery-group>summary::-webkit-details-marker{display:none}
+.cemetery-group>summary:before{content:'▸';flex:0 0 auto;color:#2d5e50;font-size:14px}
+.cemetery-group[open]>summary:before{content:'▾'}
+.cemetery-group-title{display:flex;flex:1;flex-direction:column;min-width:0;gap:3px}
+.cemetery-group-name{font-size:14px;font-weight:750;color:#174a3b;overflow-wrap:anywhere}
+.cemetery-group-location{font-size:12px;color:#526c61;overflow-wrap:anywhere}
+.cemetery-group-count{font-size:11px;white-space:nowrap;border-radius:15px;padding:4px 8px;background:#fff;color:#33624d;font-weight:650}
+.cemetery-group-people{padding:5px 10px 10px}
+@media(max-width:540px){.cemetery-group>summary{padding:10px 8px;gap:7px}.cemetery-group-people{padding:3px 5px 7px}}
+</style><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="icon" type="image/svg+xml" href="icon.svg"></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#fff3cb;color:#765113">V7 CEMETERY GROUPS TEST · PRIVATE STORAGE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div></div></header><main>
 <div class="stats"><div class="stat"><div id="sPeople" class="num">—</div><div class="small">Burial entries</div></div><div class="stat"><div id="sCem" class="num">—</div><div class="small">Cemeteries</div></div><div class="stat"><div id="sVisited" class="num">—</div><div class="small">Visited</div></div></div>
 <section class="panel" id="nearbyPanel"><details class="finder-fold" id="nearbyFold"><summary>📍 Find cemeteries nearby <span class="finder-sub">Search by distance</span></summary><div class="finder-body"><p class="hint">Straight-line distance, not driving distance. Works offline with saved cemetery coordinates. Choose a starting town or try your phone location.</p><div class="filters"><div><label for="startPlace">Starting point</label><select id="startPlace"><option value="39.7684,-86.1581">Indianapolis, IN</option><option value="38.9592,-85.8903" selected>Seymour, IN</option><option value="39.6128,-86.3742">Mooresville, IN</option><option value="39.2014,-85.9214">Columbus, IN</option><option value="custom">Custom coordinates</option></select></div><div><label for="radius">Within</label><select id="radius"><option>10</option><option selected>25</option><option>50</option><option>100</option><option>250</option><option>500</option></select></div><div><label for="startLat">Latitude</label><input id="startLat" type="number" step="any" placeholder="39.123"></div><div><label for="startLon">Longitude</label><input id="startLon" type="number" step="any" placeholder="-86.123"></div></div><div class="buttons" style="margin-top:10px"><button id="nearSearch">Find nearby cemeteries</button><button class="secondary" id="myLocation">Use phone GPS</button></div><div id="geoNote" class="hint" role="status"></div><div id="nearResults"></div></div></details></section><section class="panel" id="relativePanel"><details class="finder-fold" id="relativeFold" open><summary>🔎 Find a relative or cemetery <span class="finder-sub">Search names &amp; filters</span></summary><div class="finder-body"><div class="filters"><div class="wide"><input id="q" type="search" placeholder="Search name, cemetery, town, family line…" aria-label="Search"></div><div><label for="county">County</label><select id="county"><option value="">All counties</option></select></div><div><label for="cem">Cemetery</label><select id="cem"><option value="">All cemeteries</option></select></div><div><label for="status">Visit filter</label><select id="status"><option value="">All records</option><option value="unvisited">Not visited</option><option value="nophoto">Photo needed</option><option value="nogps">GPS needed</option></select></div></div><div class="buttons" style="margin-top:12px"><button id="add">+ Add discovery</button><button class="secondary" id="clear">Clear filters</button><button class="outline" id="showAll">Show all records</button><button class="secondary" type="button" id="showMatches">Show filtered results</button></div></div></details></section>
 <section class="panel" id="burialPanel"><div class="resulthead"><h2 style="margin:0">Burial records</h2><span class="tiny" id="count"></span></div><div class="burial-list-controls"><span class="hint">Tap a name to view details and edit.</span><div class="inline-controls"><button class="secondary" id="hideResultsTop" type="button">Hide results</button><button class="secondary" id="clearResultsTop" type="button">Clear filters</button></div></div><div id="out"></div><div class="burial-list-controls"><button id="more" class="secondary" hidden>Show more</button><div class="inline-controls"><button class="secondary" id="hideResultsBottom" type="button">Hide results</button><button class="secondary" id="clearResultsBottom" type="button">Clear filters</button></div></div></section>
@@ -419,18 +432,24 @@ function refreshOptions(){options('county',unique('county'),'All counties');opti
 function matching(){const t=$('q').value.trim().toLowerCase(),county=$('county').value,cem=$('cem').value,status=$('status').value;return all().filter(r=>{if(county&&r.county!==county||cem&&r.cemetery!==cem)return false;if(t&&![r.name,r.dates,r.relation,r.line,r.cemetery,r.county,r.town,r.state,r.notes,r.plot].join(' ').toLowerCase().includes(t))return false;if(status==='unvisited'&&r.visited||status==='nophoto'&&r.photo||status==='nogps'&&r.gps)return false;return true})}
 function textNode(tag,cls,value){const e=document.createElement(tag);if(cls)e.className=cls;e.textContent=value||'';return e}
 function render(){
-const hasFilter=!!($('q').value.trim()||$('county').value||$('cem').value||$('status').value);
-const shouldShow=(hasFilter||showAllRecords)&&!resultsSuppressed;
-const rows=(shouldShow?matching():[]).sort((a,b)=>(a.cemetery||'').localeCompare(b.cemetery||'')||(a.name||'').localeCompare(b.name||''));
-$('sPeople').textContent=all().length;
-$('sCem').textContent=new Set(all().map(r=>[r.state,r.county,r.cemetery].join('|'))).size;
-$('sVisited').textContent=all().filter(r=>r.visited).length;
-$('count').textContent=shouldShow?rows.length+' matching':(resultsSuppressed&&hasFilter?'Results hidden · filters retained':'Hidden until search');
-const out=$('out');out.replaceChildren();
-let last='';
-rows.slice(0,visible).forEach(r=>{
-  const group=[r.cemetery,r.town,r.county,r.state].filter(Boolean).join(' · ');
-  if(group!==last){out.append(textNode('div','cemtitle',group));last=group}
+ const hasFilter=!!($('q').value.trim()||$('county').value||$('cem').value||$('status').value);
+ const shouldShow=(hasFilter||showAllRecords)&&!resultsSuppressed;
+ const rows=shouldShow?matching():[];
+ $('sPeople').textContent=all().length;
+ $('sCem').textContent=new Set(all().map(r=>[r.state,r.county,r.cemetery].join('|'))).size;
+ $('sVisited').textContent=all().filter(r=>r.visited).length;
+ const out=$('out');out.replaceChildren();
+ const groups=new Map();
+ for(const r of rows){
+   // Name alone is not unique: keep Illinois/Indiana (and different counties/towns) distinct.
+   const key=JSON.stringify([r.state||'',r.county||'',r.town||'',r.cemetery||'']);
+   if(!groups.has(key))groups.set(key,{cemetery:r.cemetery||'Cemetery not specified',state:r.state||'',county:r.county||'',town:r.town||'',people:[]});
+   groups.get(key).people.push(r);
+ }
+ const ordered=[...groups.values()].sort((a,b)=>
+   a.cemetery.localeCompare(b.cemetery)||a.state.localeCompare(b.state)||a.county.localeCompare(b.county)||a.town.localeCompare(b.town));
+ $('count').textContent=shouldShow?rows.length+' matching · '+ordered.length+' cemetery locations':(resultsSuppressed&&hasFilter?'Results hidden · filters retained':'Hidden until search');
+ function makeBurialRow(r,holder){
   const block=document.createElement('details');block.className='burial-item';
   const summary=document.createElement('summary');
   const info=document.createElement('div');
@@ -464,16 +483,37 @@ rows.slice(0,visible).forEach(r=>{
   if(r.notes)body.append(textNode('div','meta',r.notes.length>160?r.notes.slice(0,160)+'…':r.notes));
   const actions=textNode('div','buttons');const edit=textNode('button','outline','View / Edit');edit.type='button';edit.onclick=()=>openEditor(r.id);actions.append(edit);
   if(r.findagrave){const a=document.createElement('a');a.className='btn secondary';a.href=r.findagrave;a.target='_blank';a.rel='noopener';a.textContent='Find a Grave ↗';actions.append(a)}
-  body.append(actions);block.append(body);out.append(block);
-});
-$('more').hidden=rows.length<=visible;
-$('clearResultsTop').hidden=!hasFilter&&!showAllRecords;
-$('clearResultsBottom').hidden=!hasFilter&&!showAllRecords;
-$('hideResultsTop').hidden=!shouldShow;
-$('hideResultsBottom').hidden=!shouldShow;
-if(!shouldShow)out.append(textNode('p','empty',resultsSuppressed&&hasFilter?'Results hidden; your filters are saved. Tap Show filtered results above, or adjust a filter to reopen.':'Records are hidden until you search or select a filter. Tap Show all records to browse everything.'));
-else if(!rows.length)out.append(textNode('p','empty','No matching burials. Try a broader search.'));
+  body.append(actions);block.append(body);holder.append(block);
+ }
+ ordered.slice(0,visible).forEach(g=>{
+   const group=document.createElement('details');group.className='cemetery-group';
+   const heading=document.createElement('summary');heading.className='cemetery-group-summary';
+   const label=textNode('span','cemetery-group-name',g.cemetery);
+   const location=[g.town,g.county?g.county+' County':'',g.state].filter(Boolean).join(', ')||'Location not specified';
+   const sub=textNode('span','cemetery-group-location',location);
+   const title=document.createElement('span');title.className='cemetery-group-title';title.append(label,sub);
+   const number=textNode('span','cemetery-group-count',g.people.length+' '+(g.people.length===1?'burial':'burials'));
+   heading.append(title,number);group.append(heading);
+   const holder=document.createElement('div');holder.className='cemetery-group-people';group.append(holder);
+   // Render individuals only when expanded; avoids thousands of hidden record cards.
+   group.addEventListener('toggle',()=>{
+     if(group.open && !holder.childElementCount){
+       g.people.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+       g.people.forEach(r=>makeBurialRow(r,holder));
+     }
+   });
+   out.append(group);
+ });
+ $('more').hidden=ordered.length<=visible;
+ $('more').textContent='Show more cemetery locations';
+ $('clearResultsTop').hidden=!hasFilter&&!showAllRecords;
+ $('clearResultsBottom').hidden=!hasFilter&&!showAllRecords;
+ $('hideResultsTop').hidden=!shouldShow;
+ $('hideResultsBottom').hidden=!shouldShow;
+ if(!shouldShow)out.append(textNode('p','empty',resultsSuppressed&&hasFilter?'Results hidden; your filters are saved. Tap Show filtered results above, or adjust a filter to reopen.':'Records are hidden until you search or select a filter. Tap Show all records to browse everything.'));
+ else if(!rows.length)out.append(textNode('p','empty','No matching burials. Try a broader search.'));
 }
+
 function openEditor(id){current=id;const r=all().find(x=>x.id===id)||{id:'new',name:'',dates:'',relation:'',side:'',line:'',state:'Indiana',county:'',town:'',cemetery:'',plot:'',findagrave:'',notes:'',visited:false,stone:false,photo:false,gps:false};$('editTitle').textContent=id?'Edit burial record':'New cemetery discovery';for(const e of $('editForm').querySelectorAll('[name]')){e.type==='checkbox'?e.checked=!!r[e.name]:e.value=r[e.name]||''}$('delete').hidden=!id||!id.startsWith('new-');$('editNote').textContent=r.gedcomId?'GEDCOM reference: '+r.gedcomId+(r.gedcomBurial?' · Burial: '+r.gedcomBurial:''):'';$('photoFile').value='';renderPhotos();$('editor').showModal()}
 function closeEditor(){$('editor').close();current=null}
 $('editForm').onsubmit=e=>{e.preventDefault();const form=$('editForm'),r={};for(const el of form.querySelectorAll('[name]'))r[el.name]=el.type==='checkbox'?el.checked:el.value.trim();if(!r.name||(!r.cemetery&&!(before&&before.source==='GEDCOM import'))){alert('Name and cemetery are required for new discoveries; GEDCOM records with unknown cemetery may remain incomplete.');return}const before=current?all().find(x=>x.id===current):null;let changed=[];if(before){changed=Object.keys(r).filter(k=>formatLogValue(before[k])!==formatLogValue(r[k])).map(k=>({key:k,detail:(FIELD_NAMES[k]||k)+': '+formatLogValue(before[k])+' → '+formatLogValue(r[k])}))}if(current){if(current.startsWith('new-'))extras=extras.map(x=>x.id===current?{...x,...r}:x);else updates[current]={...(updates[current]||{}),...r}}else{r.id='new-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);r.source='Field discovery';extras.push(r)}persist();if(!before)addChange('New discovery',r.name,r.id,DISCOVERY_FIELDS.filter(([key])=>String(r[key]||'').trim()).map(([key,label])=>label+': '+r[key]).join('; '));else if(changed.length){const genealogical=changed.filter(x=>!ROUTINE_FIELDS.has(x.key));const routine=changed.filter(x=>ROUTINE_FIELDS.has(x.key));if(genealogical.length)addChange('Record updated',r.name,current,genealogical.map(x=>x.detail).join('; '),true);if(routine.length)addChange('Visit tracking updated',r.name,current,routine.map(x=>x.detail).join('; '),false)}closeEditor();refreshOptions();render()};
