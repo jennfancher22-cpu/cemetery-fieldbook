@@ -1,16 +1,27 @@
-Cemetery Fieldbook v6 — Release Candidate (test before publishing)
+Cemetery Fieldbook v6.1 — public application files
 
-Contains only public application code. Does NOT include GEDCOM files, burial records, photographs, or backups.
+Upload these five files to the ROOT of the cemetery-fieldbook GitHub Pages repository:
+index.html
+service-worker.js
+manifest.webmanifest
+icon.svg
+README.txt
 
-Local test: Open index.html from extracted folder in Chrome. Local file storage is separate from the installed app. Do not assume local testing will inherit your data. Restore a COPY of your recent full backup, and import your private burial list if needed.
+Do not upload GEDCOMs, private burial JSON files, full backups, or photographs.
 
-GitHub: Once tested, upload only index.html, service-worker.js, manifest.webmanifest, icon.svg, README.txt to repository root. Commit on main and verify Pages deployment success. Never upload private JSON, GEDCOM, backup or photographs.
+WHAT CHANGED
+- Data Loading and Protection collapses and expands.
+- New version 4 full backups include the complete original burial list, edits, added discoveries, photos, coordinates, and change history.
+- Existing backups (versions 1–3) remain importable but do not include the original burial list.
+- Local storage keys are unchanged from the live Fieldbook v6.
 
-New: smarter net-change reporting; 3-tab Excel tree report; Excel activity history; compact grouped reports; compact burial rows; aligned statuses; hide separate from clear filters; collapsible Find sections; clickable FG indicators.
+FIRST TEST AFTER DEPLOYMENT
+1. Confirm your original relatives are present without importing anything.
+2. Verify the collapsible Data Loading and Protection section.
+3. Export a full backup; retain older backups.
+4. To verify a clean restore, use a separate private/incognito window and restore that new backup.
 
-Known limitations: no automatic sync between devices, GPS permission needs testing, deleted-discovery semantics need dedicated test. The backup contains fieldwork, photos and change log, but private baseline burial list is stored separately and must already exist in the target browser. Preserve older backups.
-
-Cemetery Fieldbook v6 public release (2026-11-06).
-Includes compact navigation and grouped burial/report views, smarter net tree changes, Excel exports, Find a Grave indicator, and photo-attachment history and tree reports.
-Only upload the five files in this folder to the public GitHub repository. Never upload a GEDCOM, burial list, photos, or backup.
-Before updating, export a full backup. After deployment verify existing records and photo attachments on both devices.
+WARNINGS
+GitHub Pages serves public app code; personal data belongs in local device storage and private backups.
+There is no automatic synchronization between devices. Restoring a backup replaces local data on the target device.
+Do not uninstall the Android app or clear browser storage during update testing.
