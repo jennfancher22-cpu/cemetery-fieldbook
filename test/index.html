@@ -118,7 +118,7 @@
 <p class="hint">Search <strong>everyone</strong> in your GEDCOM, including living people without burial facts. Your selection is used later to calculate relationships and common ancestors. No relationship calculation is performed yet.</p>
 <div id="homeSelected" class="notice" role="status">No Home Person selected. Choose a GEDCOM above to load the people directory.</div>
 <label for="homeSearch">Find yourself by name or GEDCOM ID</label><input type="search" id="homeSearch" placeholder="Search all GEDCOM people…" autocomplete="off">
-<div id="homeResults" class="home-results" hidden></div><div class="buttons"><button id="clearHome" type="button" class="secondary">Clear Home Person</button></div>
+<div id="homeResults" class="home-results" hidden></div><div class="buttons"><button type="button" class="secondary" id="refreshRelDirectory">Refresh relationship links from GEDCOM (no burial changes)</button><input type="file" id="refreshRelFile" accept=".ged,.gedcom,text/plain" hidden></div><p class="tiny" id="refreshRelStatus">For marriage relationships, reload your GEDCOM directory once to include spouse links. Existing burials, edits, and photos are preserved.</p><div class="buttons"><button id="clearHome" type="button" class="secondary">Clear Home Person</button></div>
 <p id="homeDirectoryStatus" class="tiny">Select a GEDCOM to prepare its people directory automatically.</p>
 </div>
 <div id="gedcomImportAction" class="home-panel"><h3 style="margin-top:0">3 · Import burial entries</h3><p class="hint" id="gedcomImportHint">Choose a GEDCOM in Step 1 to prepare the burial preview. Then select your Home Person in Step 2 before importing.</p><div class="buttons" id="gedcomImportButtons"><button type="button" class="secondary" disabled>Choose a GEDCOM file first</button></div></div>
@@ -132,7 +132,7 @@
 <div id="relationshipResults" class="relationship-results"></div>
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p><h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your existing OneDrive backup and restore it in this version. Do not discard either version until you have verified the imported notes and photos.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The new full backup includes the original burial list, photos, notes, and change history. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This is a single-file offline test, not a synced app. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div></div></details></section>
-<footer>Fieldbook v7 MEMORIAL MATCH FIX TEST · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 MARRIAGE RELATIONSHIPS TEST · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -641,12 +641,12 @@ function parseGedcomPeople(text){
  for(const line of lines){
   const m=line.match(/^(\d+)\s+(?:(@[^\s]+@)\s+)?(\S+)(?:\s+(.*))?$/);if(!m)continue;
   const level=Number(m[1]),id=m[2],tag=m[3],value=(m[4]||'').trim();
-  if(level===0){commit();if(tag==='INDI'&&id)p={id,name:'',birth:'',death:'',famc:''};else if(tag==='FAM'&&id)f={id,husb:'',wife:''};continue;}
-  if(p){if(level===1){context=tag;if(tag==='NAME'&&!p.name)p.name=gedName(value);if(tag==='FAMC'&&!p.famc)p.famc=value;}
+  if(level===0){commit();if(tag==='INDI'&&id)p={id,name:'',birth:'',death:'',famc:'',fams:[]};else if(tag==='FAM'&&id)f={id,husb:'',wife:''};continue;}
+  if(p){if(level===1){context=tag;if(tag==='NAME'&&!p.name)p.name=gedName(value);if(tag==='FAMC'&&!p.famc)p.famc=value;if(tag==='FAMS')p.fams.push(value);}
    else if(level===2&&tag==='DATE'){if(context==='BIRT'&&!p.birth)p.birth=gedYear(value);if(context==='DEAT'&&!p.death)p.death=gedYear(value);} }
   if(f&&level===1){if(tag==='HUSB')f.husb=value;if(tag==='WIFE')f.wife=value;}
  }
- commit();return people.map(p=>({id:p.id,name:p.name||'Unnamed '+p.id,birth:p.birth,death:p.death,father:families.get(p.famc)?.husb||'',mother:families.get(p.famc)?.wife||''}));
+ commit();return people.map(p=>({id:p.id,name:p.name||'Unnamed '+p.id,birth:p.birth,death:p.death,father:families.get(p.famc)?.husb||'',mother:families.get(p.famc)?.wife||'',spouses:[...new Set(p.fams.map(id=>{const f=families.get(id);return f?(f.husb===p.id?f.wife:f.husb):''}).filter(Boolean))]}));
 }
 function refreshHomeDisplay(){
  const p=allGedcomPeople.find(x=>x.id===homePersonId);
@@ -662,6 +662,18 @@ function searchHomePeople(){
  for(const p of matches){const b=textNode('button','home-option');b.type='button';b.append(textNode('div','home-identity',p.name),textNode('div','home-secondary',p.id+(p.birth?' · b. '+p.birth:'')+(p.death?' · d. '+p.death:'')));b.onclick=()=>{homePersonId=p.id;localStorage.setItem(HOME_PERSON_KEY,homePersonId);$('homeSearch').value='';out.hidden=true;refreshHomeDisplay();if(pendingGedcom){$('gedcomStatus').textContent='Home Person selected: '+p.name+'. Review the preview, then click Import burial entries. No need to choose your GEDCOM again.';}};out.append(b)}
  out.hidden=false;
 }
+$('refreshRelDirectory').onclick=()=>$('refreshRelFile').click();
+$('refreshRelFile').onchange=async e=>{
+ const file=e.target.files[0];if(!file)return;
+ try {const people=parseGedcomPeople(await file.text());if(!people.length)throw Error('No individuals found');
+  if(!confirm('Update only the relationship directory with '+people.length+' individuals from '+file.name+'? Cemetery records and fieldwork will not change.'))return;
+  allGedcomPeople=people;localStorage.setItem(GED_PEOPLE_KEY,JSON.stringify(people));
+  if(homePersonId&&!people.some(p=>p.id===homePersonId)){$('refreshRelStatus').textContent='Directory refreshed, but saved Home Person was not found. Please choose a Home Person.';}
+  else $('refreshRelStatus').textContent='Directory refreshed: '+people.length+' individuals; spouse links available. No burials changed.';
+  refreshHomeDisplay();if(typeof render==='function')render();
+ }catch(err){$('refreshRelStatus').textContent='Relationship directory could not be refreshed: '+err.message;}
+ finally{e.target.value='';}
+};
 $('homeSearch').addEventListener('input',searchHomePeople);
 $('clearHome').onclick=()=>{if(!homePersonId)return;homePersonId='';localStorage.removeItem(HOME_PERSON_KEY);refreshHomeDisplay();searchHomePeople()};
 refreshHomeDisplay();
@@ -839,7 +851,7 @@ function relationshipLabel(a,b){
  const degree=Math.min(a,b)-1,removed=Math.abs(a-b);
  return ordinal(degree)+' cousin'+(removed?' '+removed+' time'+(removed===1?'':'s')+' removed':'');
 }
-function calculateRelationship(personId,index,homeAnc){
+function calculateBloodRelationship(personId,index,homeAnc){
  const targetAnc=ancestorMap(personId,index),common=[];
  for(const [id,h] of homeAnc){const t=targetAnc.get(id);if(t)common.push({id,homeDepth:h.depth,otherDepth:t.depth,total:h.depth+t.depth,path:h.path});}
  if(!common.length)return null;
@@ -850,6 +862,26 @@ function calculateRelationship(personId,index,homeAnc){
  for(const a of closest){const parentId=a.path[1];if(parentId&&parentId===home?.father)sideSet.add('Paternal');if(parentId&&parentId===home?.mother)sideSet.add('Maternal');}
  const side=sideSet.size===2?'Both maternal and paternal paths':sideSet.size===1?[...sideSet][0]:'Side undetermined';
  return {label:relationshipLabel(h.homeDepth,h.otherDepth),ancestors:closest.map(x=>index.get(x.id)?.name||x.id),depths:[h.homeDepth,h.otherDepth],side,possibleMultiple:closest.length>2||closest.some(x=>x.homeDepth!==h.homeDepth||x.otherDepth!==h.otherDepth)};
+}
+// A marriage link is reported only when no common ancestor is documented for the target.
+// Never assign the spouse's MRCA to the in-law as though they were blood relatives.
+function calculateRelationship(personId,index,homeAnc){
+ const direct=calculateBloodRelationship(personId,index,homeAnc);
+ if(direct)return direct;
+ const person=index.get(personId);
+ if(!person)return null;
+ const choices=[];
+ for(const spouseId of (person.spouses||[])){
+  if(spouseId===personId||!index.has(spouseId))continue;
+  const spouseRel=calculateBloodRelationship(spouseId,index,homeAnc);
+  if(spouseRel){choices.push({spouseId,spouseRel});}
+ }
+ if(!choices.length)return null;
+ choices.sort((a,b)=>a.spouseRel.depths.reduce((x,y)=>x+y,0)-b.spouseRel.depths.reduce((x,y)=>x+y,0));
+ const best=choices[0],spouse=index.get(best.spouseId),genderNeutral='Spouse of';
+ return {label:genderNeutral+' '+spouse.name+' ('+best.spouseRel.label+')',ancestors:[],
+   connectedVia:best.spouseRel.ancestors,depths:best.spouseRel.depths,side:best.spouseRel.side,
+   byMarriage:true, spouseName:spouse.name,possibleMultiple:choices.length>1||best.spouseRel.possibleMultiple};
 }
 // Expose a cached, read-only relationship suggestion to the burial list and record editor.
 // Computations never overwrite stored manual annotations or the underlying GEDCOM dataset.
@@ -869,7 +901,7 @@ window.fieldbookDerivedRelationship=function(record){
  const suggestion=result?{
   relation:result.label,
   side:result.side==='Paternal'?'P':result.side==='Maternal'?'M':result.side.startsWith('Both')?'M/P':'',
-  line:result.ancestors.join(' & '),
+  line:result.byMarriage?('By marriage through '+result.spouseName+'; '+result.connectedVia.join(' & ')):result.ancestors.join(' & '),
   ambiguous:result.possibleMultiple
  }:null;
  derivedCache.set(record.gedcomId,suggestion);
@@ -883,11 +915,13 @@ function card(r,index,homeAnc){
  const id=document.createElement('div');id.className='meta-line';id.textContent=(r.gedcomId||'No GEDCOM ID')+' · '+[r.cemetery,r.county,r.state].filter(Boolean).join(', ');d.append(id);
  if(!r.gedcomId||!index.has(r.gedcomId)){const x=document.createElement('div');x.className='uncertain';x.textContent='Cannot calculate: this burial is not linked to a person in the loaded GEDCOM directory.';d.append(x);return d;}
  const rel=calculateRelationship(r.gedcomId,index,homeAnc);
- if(!rel){const x=document.createElement('div');x.className='uncertain';x.textContent='No documented common ancestor through the imported parent-child links. This does not prove the people are unrelated.';d.append(x);return d;}
+ if(!rel){const x=document.createElement('div');x.className='uncertain';x.textContent='No common ancestor or documented spouse connection through the loaded GEDCOM. An incomplete tree does not establish unrelatedness. If you just updated the app, refresh relationship links from your GEDCOM first.';d.append(x);return d;}
  const title=document.createElement('div');title.className='rel-title';title.textContent=rel.label;d.append(title);
- const anc=document.createElement('div');anc.className='meta-line';anc.textContent='Closest shared ancestor'+(rel.ancestors.length!==1?'s':'')+': '+rel.ancestors.join('; ');d.append(anc);
+ const anc=document.createElement('div');anc.className='meta-line';anc.textContent=rel.byMarriage?
+  'Connection by marriage through '+rel.spouseName+'; your shared ancestors with that spouse: '+rel.connectedVia.join('; ')+'. These are NOT automatically ancestors of this person.' :
+  'Closest shared ancestor'+(rel.ancestors.length!==1?'s':'')+': '+rel.ancestors.join('; ');d.append(anc);
  const side=document.createElement('div');side.className='meta-line';side.textContent=rel.side+' · Generations from home / buried person: '+rel.depths.join(' / ');d.append(side);
- if(rel.possibleMultiple){const x=document.createElement('div');x.className='uncertain';x.textContent='Multiple equally close ancestral paths found. Review them in your genealogy program before assigning a single MRCA.';d.append(x);}
+ if(rel.possibleMultiple){const x=document.createElement('div');x.className='uncertain';x.textContent=rel.byMarriage?'Multiple possible marriage connections or ancestral paths. Review in your tree.':'Multiple equally close ancestral paths found. Review them in your genealogy program before assigning a single MRCA.';d.append(x);}
  return d;
 }
 function previewRelationship(sample=false){
