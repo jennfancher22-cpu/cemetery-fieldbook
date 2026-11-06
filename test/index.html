@@ -636,22 +636,44 @@ let allGedcomPeople=[];let homePersonId='';
 try {const list=JSON.parse(localStorage.getItem(GED_PEOPLE_KEY)||'[]');if(Array.isArray(list))allGedcomPeople=list;homePersonId=localStorage.getItem(HOME_PERSON_KEY)||'';}catch(_){allGedcomPeople=[];homePersonId='';}
 function parseGedcomPeople(text){
  const lines=String(text).replace(/^\uFEFF/,'').split(/\r\n|\n|\r/),people=[],families=new Map();
- let p=null,f=null,context='';
- function commit(){if(p)people.push(p);if(f)families.set(f.id,f);p=null;f=null;context='';}
+ let p=null,f=null,context='',childId='';
+ function commit(){if(p)people.push(p);if(f)families.set(f.id,f);p=null;f=null;context='';childId='';}
  for(const line of lines){
   const m=line.match(/^(\d+)\s+(?:(@[^\s]+@)\s+)?(\S+)(?:\s+(.*))?$/);if(!m)continue;
   const level=Number(m[1]),id=m[2],tag=m[3],value=(m[4]||'').trim();
-  if(level===0){commit();if(tag==='INDI'&&id)p={id,name:'',birth:'',death:'',famc:'',fams:[]};else if(tag==='FAM'&&id)f={id,husb:'',wife:''};continue;}
-  if(p){if(level===1){context=tag;if(tag==='NAME'&&!p.name)p.name=gedName(value);if(tag==='FAMC'&&!p.famc)p.famc=value;if(tag==='FAMS')p.fams.push(value);}
-   else if(level===2&&tag==='DATE'){if(context==='BIRT'&&!p.birth)p.birth=gedYear(value);if(context==='DEAT'&&!p.death)p.death=gedYear(value);} }
-  if(f&&level===1){if(tag==='HUSB')f.husb=value;if(tag==='WIFE')f.wife=value;}
+  if(level===0){commit();if(tag==='INDI'&&id)p={id,name:'',birth:'',death:'',famc:[],fams:[]};else if(tag==='FAM'&&id)f={id,husb:'',wife:'',children:{}};continue;}
+  if(p){if(level===1){context=tag;if(tag==='NAME'&&!p.name)p.name=gedName(value);
+    if(tag==='FAMC')p.famc.push(value);if(tag==='FAMS')p.fams.push(value);
+   }else if(level===2&&tag==='DATE'){if(context==='BIRT'&&!p.birth)p.birth=gedYear(value);if(context==='DEAT'&&!p.death)p.death=gedYear(value);}}
+  if(f){if(level===1){childId='';if(tag==='HUSB')f.husb=value;if(tag==='WIFE')f.wife=value;
+    if(tag==='CHIL'){childId=value;f.children[childId]??={};}}
+   if(level===2&&childId&&(tag==='_FREL'||tag==='_MREL'))f.children[childId][tag]=value;}
  }
- commit();return people.map(p=>({id:p.id,name:p.name||'Unnamed '+p.id,birth:p.birth,death:p.death,father:families.get(p.famc)?.husb||'',mother:families.get(p.famc)?.wife||'',spouses:[...new Set(p.fams.map(id=>{const f=families.get(id);return f?(f.husb===p.id?f.wife:f.husb):''}).filter(Boolean))]}));
+ commit();
+ // Only explicitly non-parental roles are excluded; an unannotated ordinary
+ // GEDCOM parent link stays usable but is not independent proof of biology.
+ function parental(role){return !/guardian|foster|adopt|step|non.?biolog|unrelated|ward|godparent/i.test(role||'');}
+ return people.map(p=>{
+  const fatherChoices=[],motherChoices=[],excluded=[];
+  for(const fid of p.famc){const fam=families.get(fid);if(!fam)continue;
+   const roles=fam.children[p.id]||{};
+   if(fam.husb){if(parental(roles._FREL))fatherChoices.push(fam.husb);else excluded.push({person:fam.husb,role:roles._FREL,side:'father'});}
+   if(fam.wife){if(parental(roles._MREL))motherChoices.push(fam.wife);else excluded.push({person:fam.wife,role:roles._MREL,side:'mother'});}
+  }
+  // Conflicting eligible parents should never be arbitrarily reduced to one.
+  const fathers=[...new Set(fatherChoices)],mothers=[...new Set(motherChoices)];
+  return {id:p.id,name:p.name||'Unnamed '+p.id,birth:p.birth,death:p.death,
+   father:fathers.length===1?fathers[0]:'',mother:mothers.length===1?mothers[0]:'',
+   ambiguousParents:fathers.length>1||mothers.length>1,
+   excludedParents:excluded,
+   relationshipParserVersion:2,
+   spouses:[...new Set(p.fams.map(id=>{const fam=families.get(id);return fam?(fam.husb===p.id?fam.wife:fam.husb):''}).filter(Boolean))]};
+ });
 }
 function refreshHomeDisplay(){
  const p=allGedcomPeople.find(x=>x.id===homePersonId);
  $('homeSelected').textContent=p?'Home Person: '+p.name+' ('+p.id+')'+(p.birth?' · born '+p.birth:''):'No Home Person selected.';
- $('homeDirectoryStatus').textContent=allGedcomPeople.length+' GEDCOM individuals available for Home Person selection.';
+ $('homeDirectoryStatus').textContent=allGedcomPeople.length+' GEDCOM individuals available for Home Person selection.'+(allGedcomPeople.length&&allGedcomPeople.some(x=>x.relationshipParserVersion!==2)?' Relationship calculations temporarily disabled: refresh links from your GEDCOM to exclude guardianships.':'');
  $('clearHome').disabled=!homePersonId;
 }
 function searchHomePeople(){
@@ -669,7 +691,7 @@ $('refreshRelFile').onchange=async e=>{
   if(!confirm('Update only the relationship directory with '+people.length+' individuals from '+file.name+'? Cemetery records and fieldwork will not change.'))return;
   allGedcomPeople=people;localStorage.setItem(GED_PEOPLE_KEY,JSON.stringify(people));
   if(homePersonId&&!people.some(p=>p.id===homePersonId)){$('refreshRelStatus').textContent='Directory refreshed, but saved Home Person was not found. Please choose a Home Person.';}
-  else $('refreshRelStatus').textContent='Directory refreshed: '+people.length+' individuals; spouse links available. No burials changed.';
+  else $('refreshRelStatus').textContent='Directory refreshed: '+people.length+' individuals. Guardians and other explicitly nonbiological links excluded from ancestry calculations. No burials changed.';
   refreshHomeDisplay();if(typeof render==='function')render();
  }catch(err){$('refreshRelStatus').textContent='Relationship directory could not be refreshed: '+err.message;}
  finally{e.target.value='';}
@@ -831,11 +853,11 @@ const relationshipSampleNames=['Amy Hillman','William Poland','Georgia Pauline D
 function ordinal(n){const v=n%100;return n+(v>=11&&v<=13?'th':({1:'st',2:'nd',3:'rd'}[n%10]||'th'));}
 function greatLabel(n){if(n===1)return '';if(n===2)return 'grand';if(n===3)return 'great-grand';return ordinal(n-2)+' great-grand';}
 function ancestorMap(personId,index){
- // Each entry has shortest known parent-child path through GEDCOM FAMC links.
+ // Only eligible parent-child links from GEDCOM, never guardianship paths.
  const m=new Map(),q=[{id:personId,depth:0,path:[personId]}];
  for(let i=0;i<q.length;i++){
    const x=q[i];if(!x.id||m.has(x.id)||x.depth>32)continue;
-   m.set(x.id,x);const p=index.get(x.id);if(!p)continue;
+   m.set(x.id,x);const p=index.get(x.id);if(!p||p.ambiguousParents)continue;
    for(const parentId of [p.father,p.mother])if(parentId&&!x.path.includes(parentId)&&!m.has(parentId))q.push({id:parentId,depth:x.depth+1,path:[...x.path,parentId]});
  }
  return m;
@@ -888,7 +910,7 @@ function calculateRelationship(personId,index,homeAnc){
 let derivedPeopleRef=null, derivedHomeId=null, derivedIndex=null, derivedHomeAnc=null;
 const derivedCache=new Map();
 window.fieldbookDerivedRelationship=function(record){
- if(!record||!record.gedcomId||!homePersonId||!allGedcomPeople.length)return null;
+ if(!record||!record.gedcomId||!homePersonId||!allGedcomPeople.length||allGedcomPeople.some(p=>p.relationshipParserVersion!==2))return null;
  if(derivedPeopleRef!==allGedcomPeople||derivedHomeId!==homePersonId){
   derivedPeopleRef=allGedcomPeople; derivedHomeId=homePersonId;
   derivedIndex=new Map(allGedcomPeople.map(person=>[person.id,person]));
@@ -927,6 +949,7 @@ function card(r,index,homeAnc){
 function previewRelationship(sample=false){
  relResults.replaceChildren();
  if(!allGedcomPeople.length){relStatus.textContent='First choose a GEDCOM and import its people directory.';return;}
+ if(allGedcomPeople.some(p=>p.relationshipParserVersion!==2)){relStatus.textContent='Relationship directory uses an older parser that may treat guardians as parents. Use Refresh relationship links from GEDCOM with your September 18 export before trusting calculations.';return;}
  if(!homePersonId){relStatus.textContent='Choose your Home Person before calculating relationships.';return;}
  const index=new Map(allGedcomPeople.map(p=>[p.id,p]));
  if(!index.has(homePersonId)){relStatus.textContent='Home Person is missing from the loaded directory. Choose them again.';return;}
