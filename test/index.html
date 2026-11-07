@@ -113,6 +113,9 @@
 .merge-approval span{flex:1;min-width:0}
 .merge-approval:has(input:disabled){opacity:.58;cursor:not-allowed}
 .merge-approval input:disabled{cursor:not-allowed}
+.data-subbody > .hint:first-child{line-height:1.65;background:#f3f8f4;border-radius:9px;padding:10px 12px}.data-subfold .data-subfold{margin:12px 0}.data-subfold .home-panel{max-width:100%}
+#dataToolsFold .ged-preview{margin-top:14px}#dataToolsFold .ged-counts{gap:8px}#dataToolsFold .ged-count{padding:11px 7px}#dataToolsFold .cemetery-group>summary{cursor:pointer}#dataToolsFold .merge-approval{align-items:center}#dataToolsFold .merge-approval input{flex-shrink:0}
+@media(max-width:640px){#dataToolsFold .ged-counts{grid-template-columns:repeat(2,minmax(0,1fr))}#dataToolsFold .cemetery-group-people{padding:10px}#dataToolsFold .merge-approval{padding:10px 8px}}
 </style><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="icon" type="image/svg+xml" href="icon.svg"><style>
 /* v7 read-only relationship verification */
 .relationship-results{display:grid;gap:8px;margin-top:9px}
@@ -121,7 +124,7 @@
 .relationship-card .meta-line{font-size:12px;color:#546b60;margin:4px 0}
 .relationship-card .uncertain{font-size:12px;color:#8a6230;background:#fff7e8;border-radius:6px;padding:6px 8px;margin-top:7px}
 .relationship-card .rel-title{font-size:14px;font-weight:700;color:#174e40;margin:7px 0}
-</style></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#fff3cb;color:#765113">V7 ACTIONABLE GEDCOM PREVIEW · PRIVATE STORAGE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div></div></header><main>
+</style></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#fff3cb;color:#765113">V7 CLEAN DATA TOOLS TEST · PRIVATE STORAGE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div></div></header><main>
 <div class="stats"><div class="stat"><div id="sPeople" class="num">—</div><div class="small">Burial entries</div></div><div class="stat"><div id="sCem" class="num">—</div><div class="small">Cemeteries</div></div><div class="stat"><div id="sVisited" class="num">—</div><div class="small">Visited</div></div></div>
 <section class="panel" id="nearbyPanel"><details class="finder-fold" id="nearbyFold"><summary>📍 Find cemeteries nearby <span class="finder-sub">Search by distance</span></summary><div class="finder-body"><p class="hint">Straight-line distance, not driving distance. Works offline with saved cemetery coordinates. Choose a starting town or try your phone location.</p><div class="filters"><div><label for="startPlace">Starting point</label><select id="startPlace"><option value="39.7684,-86.1581">Indianapolis, IN</option><option value="38.9592,-85.8903" selected>Seymour, IN</option><option value="39.6128,-86.3742">Mooresville, IN</option><option value="39.2014,-85.9214">Columbus, IN</option><option value="custom">Custom coordinates</option></select></div><div><label for="radius">Within</label><select id="radius"><option>10</option><option selected>25</option><option>50</option><option>100</option><option>250</option><option>500</option></select></div><div><label for="startLat">Latitude</label><input id="startLat" type="number" step="any" placeholder="39.123"></div><div><label for="startLon">Longitude</label><input id="startLon" type="number" step="any" placeholder="-86.123"></div></div><div class="buttons" style="margin-top:10px"><button id="nearSearch">Find nearby cemeteries</button><button class="secondary" id="myLocation">Use phone GPS</button></div><div id="geoNote" class="hint" role="status"></div><div id="nearResults"></div></div></details></section><section class="panel" id="relativePanel"><details class="finder-fold" id="relativeFold" open><summary>🔎 Find a relative or cemetery <span class="finder-sub">Search names &amp; filters</span></summary><div class="finder-body"><div class="filters"><div class="wide"><input id="q" type="search" placeholder="Search name, cemetery, town, family line…" aria-label="Search"></div><div><label for="stateFilter">State</label><select id="stateFilter"><option value="">All states</option></select></div><div><label for="county">County</label><select id="county"><option value="">All counties</option></select></div><div><label for="cem">Cemetery</label><select id="cem"><option value="">All cemeteries</option></select></div><div><label for="status">Visit filter</label><select id="status"><option value="">All records</option><option value="unvisited">Not visited</option><option value="nophoto">Photo needed</option><option value="nogps">GPS needed</option></select></div></div><div class="buttons" style="margin-top:12px"><button id="add">+ Add discovery</button><button class="secondary" id="clear">Clear filters</button><button class="outline" id="showAll">Show all records</button><button class="secondary" type="button" id="showMatches">Show filtered results</button></div></div></details></section>
 <section class="panel" id="burialPanel"><div class="resulthead"><h2 style="margin:0">Burial records</h2><span class="tiny" id="count"></span></div><div class="burial-list-controls"><span class="hint">Tap a name to view details and edit.</span><div class="inline-controls"><button class="secondary" id="hideResultsTop" type="button">Hide results</button><button class="secondary" id="clearResultsTop" type="button">Clear filters</button></div></div><div id="out"></div><div class="burial-list-controls"><button id="more" class="secondary" hidden>Show more</button><div class="inline-controls"><button class="secondary" id="hideResultsBottom" type="button">Hide results</button><button class="secondary" id="clearResultsBottom" type="button">Clear filters</button></div></div></section>
@@ -129,7 +132,7 @@
 <section class="panel" id="dataProtectionPanel">
 <details class="finder-fold" id="protectionFold"><summary>🔐 Data loading and protection <span class="finder-sub">GEDCOM · data tools · backups</span></summary>
 <div class="finder-body">
-<details class="data-subfold" id="gedcomSetupFold" open><summary>1 · GEDCOM setup <span class="tool-subnote">Import your tree and select Home Person</span></summary><div class="data-subbody">
+<details class="data-subfold" id="gedcomSetupFold"><summary>1 · Initial GEDCOM setup <span class="tool-subnote">First-time import and Home Person</span></summary><div class="data-subbody">
 <h3>Import your GEDCOM (v7 preview)</h3>
 <p class="hint">Choose your GEDCOM <strong>once</strong>. Fieldbook will automatically prepare everyone in your family tree (including living people), then you can choose your Home Person and import burial entries from the <strong>same file</strong>. Your GEDCOM stays on this device; nothing is uploaded to GitHub.</p>
 <p class="hint"><strong>Step 1 of 3 — Select GEDCOM</strong></p>
@@ -144,12 +147,18 @@
 </div>
 <div id="gedcomImportAction" class="home-panel"><h3 style="margin-top:0">3 · Import burial entries</h3><p class="hint" id="gedcomImportHint">Choose a GEDCOM in Step 1 to prepare the burial preview. Then select your Home Person in Step 2 before importing.</p><div class="buttons" id="gedcomImportButtons"><button type="button" class="secondary" disabled>Choose a GEDCOM file first</button></div></div>
 </div></details>
-<details class="data-subfold" id="dataToolsFold"><summary>2 · Data tools <span class="tool-subnote">Relationship checks and repairs</span></summary><div class="data-subbody">
-<div class="home-panel" id="safeReimportPanel"><h3 style="margin-top:0">Preview updated GEDCOM (no changes)</h3>
-<p class="hint">Choose a newer GEDCOM to compare with existing burials. The preview is read-only. After review, approvals can add new burials, fill missing fields, or individually replace verified existing values. No existing value is replaced without its own approval. Find a Grave links are compared by memorial ID. Keep your full backup before any future merge.</p>
-<div class="buttons"><button type="button" class="secondary" id="compareGedcomButton">Choose GEDCOM to compare</button><input id="compareGedcomFile" type="file" accept=".ged,.gedcom,text/plain" hidden></div>
-<div id="compareGedcomStatus" class="hint" role="status">No GEDCOM comparison run yet.</div>
+<details class="data-subfold" id="dataToolsFold"><summary>2 · Update from GEDCOM <span class="tool-subnote">Compare, review, approve changes</span></summary><div class="data-subbody">
+<p class="hint" style="margin-top:0"><strong>Regular update workflow:</strong> Compare a new GEDCOM → review differences → approve selected changes → save rollback backup → confirm. After a merge, the comparison refreshes automatically to show what remains. You do not need Advanced Tools for routine updates.</p>
+<div class="home-panel" id="safeReimportPanel"><h3 style="margin-top:0">Compare and update your Fieldbook</h3>
+<p class="hint">Choose your latest Family Tree Maker GEDCOM. First review what changed, then approve only the additions, missing fields, or verified replacements you want. The comparison itself changes nothing. Existing photos, visits, notes, and GPS are protected; conflicting burial facts remain blocked. Save the required rollback backup before applying a merge.</p>
+<div class="buttons"><button type="button" class="secondary" id="compareGedcomButton">Compare a newer GEDCOM</button><input id="compareGedcomFile" type="file" accept=".ged,.gedcom,text/plain" hidden></div>
+<div id="compareGedcomStatus" class="hint" role="status">Choose a GEDCOM to begin. No records are changed by a comparison.</div>
 <div id="compareGedcomResults" class="ged-preview" hidden></div></div>
+</div></details>
+<details class="data-subfold" id="dataBackupsFold"><summary>3 · Backup and restore <span class="tool-subnote">Protect and transfer your data</span></summary><div class="data-subbody">
+<h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your existing OneDrive backup and restore it in this version. Do not discard either version until you have verified the imported notes and photos.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The new full backup includes the original burial list, photos, notes, and change history. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This is a single-file offline test, not a synced app. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div></div></details>
+<details class="data-subfold" id="advancedToolsFold"><summary>4 · Advanced tools <span class="tool-subnote">Legacy repairs and troubleshooting · usually not needed</span></summary><div class="data-subbody">
+<p class="hint" style="margin-top:0">These are retained for older Fieldbook data, relationship troubleshooting, and recovery. Initial GEDCOM imports and routine updates already handle suffix emojis and Find a Grave links, so you normally do not need separate repair tools. Back up before using any repair action.</p>
 <div class="home-panel" id="suffixRepairPanel"><h3 style="margin-top:0">Preview missing GEDCOM name suffixes</h3>
 <p class="hint">Check GEDCOM suffixes (including your emoji markers) against the same person's saved GEDCOM ID. Only missing suffixes are eligible. Existing suffixes, names, cemetery details, photos, and visit tracking are never replaced. <strong>Export a full backup before applying any repair.</strong></p>
 <div class="buttons"><button class="secondary" type="button" id="suffixRepairButton">Choose GEDCOM to check suffixes</button><input id="suffixRepairFile" type="file" accept=".ged,.gedcom,text/plain" hidden></div>
@@ -158,7 +167,7 @@
 <p class="hint">Update the relationship directory from your GEDCOM without changing burial records, field notes, or photographs.</p>
 <div class="buttons"><button type="button" class="secondary" id="refreshRelDirectory">Refresh relationship links from GEDCOM (no burial changes)</button><input type="file" id="refreshRelFile" accept=".ged,.gedcom,text/plain" hidden></div><p class="tiny" id="refreshRelStatus">For marriage relationships, reload your GEDCOM directory once to include spouse links. Existing burials, edits, and photos are preserved.</p></div>
 <div class="home-panel" id="relationshipPreviewPanel">
-<h3 style="margin-top:0">4 · Detailed relationship verification (optional)</h3>
+<h3 style="margin-top:0">Detailed relationship verification</h3>
 <p class="hint">Compare a few known relatives with your family tree before applying calculations to thousands of burials. Uses the Home Person and parent-child links saved from your GEDCOM. Calculated values also appear in burial entries and their edit forms where fields are blank. These are <strong>GEDCOM-derived suggestions</strong>; the underlying stored records and manual notes are not changed automatically.</p>
 <label for="relationshipSearch">Search a buried person by name or GEDCOM ID</label>
 <input id="relationshipSearch" type="search" placeholder="Try Amy Hillman, William Poland, or a GEDCOM ID" autocomplete="off">
@@ -167,10 +176,8 @@
 <div id="relationshipResults" class="relationship-results"></div>
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
-<details class="data-subfold" id="dataBackupsFold"><summary>3 · Backup and restore <span class="tool-subnote">Protect and transfer fieldwork</span></summary><div class="data-subbody">
-<h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your existing OneDrive backup and restore it in this version. Do not discard either version until you have verified the imported notes and photos.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The new full backup includes the original burial list, photos, notes, and change history. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This is a single-file offline test, not a synced app. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div></div></details>
 </div></details></section>
-<footer>Fieldbook v7 SELECTIVE REPLACEMENTS TEST · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 GUIDED GEDCOM UPDATE TEST · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -968,8 +975,8 @@ function detectAmbiguousGedcomBurials(text){
 
 // Read-only comparison for future safe GEDCOM re-import. No persistent state is changed.
 $('compareGedcomButton').onclick=()=>$('compareGedcomFile').click();
-$('compareGedcomFile').onchange=async e=>{
- const file=e.target.files[0];if(!file)return;
+async function compareCurrentGedcom(file){
+ if(!file)return;
  const status=$('compareGedcomStatus'),container=$('compareGedcomResults');
  container.hidden=true;container.replaceChildren();status.textContent='Comparing '+file.name+' against saved burial records…';
  try{
@@ -1083,9 +1090,14 @@ $('compareGedcomFile').onchange=async e=>{
    const box=textNode('div','ged-count');box.append(textNode('strong','',String(n)),textNode('span','tiny',label));counts.append(box);
   }
   container.append(title,counts,textNode('p','hint',
-   'PREVIEW ONLY. Categories count records, not individual fields; one person may appear in more than one category. '+
+   'Comparison summary. Categories count records, not individual fields; one person may appear in more than one category. '+
    'Cemetery/town field shifts are review-only and are not treated as safe automatic fixes. Missing-field candidates are NOT automatically applied. Multiple incompatible burial facts within one person ID are EXCLUDED from the New people count and require manual review, not automatic merging. Original and locally edited records, photos, notes, visits, and history are unchanged. '+
    'Name suffixes (including emoji markers) are meaningful. Existing suffixes embedded at the end of legacy Fieldbook names count as present, preventing duplicate updates. Missing suffixes are not automatically added. GEDCOM ID matching requires stable IDs across exports; files from other trees may not compare safely.'));
+  const diagnostics=document.createElement('details');diagnostics.className='cemetery-group';
+  diagnostics.append(textNode('summary','','Detailed comparison information (optional)'));
+  const diagnosticsBody=textNode('div','cemetery-group-people');
+  diagnosticsBody.append(textNode('p','hint','These technical details are useful if a change looks wrong. You normally only need Review and approve updates above.'));
+  diagnostics.append(diagnosticsBody);
   const sections=[
    ['New burial entries — excluding conflicting burial facts (sample)',newBurials.slice(0,8).map(r=>`${r.name} (${idOf(r)}) · ${r.cemetery||'Cemetery unknown'} · ${[r.county,r.state].filter(Boolean).join(', ')}`)],
    ['Likely cemetery / town mapping issues — all flagged records',shifted.map(x=>`${x.name} (${x.id}) · Fieldbook: Cemetery ${x.oldCemetery||'—'}; Town ${x.oldTown||'—'} · GEDCOM: Cemetery ${x.proposedCemetery}; Town ${x.proposedTown} · Source: ${x.place} · REVIEW ONLY, no changes made`)],
@@ -1101,7 +1113,7 @@ $('compareGedcomFile').onchange=async e=>{
    const body=textNode('div','cemetery-group-people');
    if(!items.length)body.append(textNode('p','tiny','None'));
    else for(const line of items)body.append(textNode('div','ged-example',line));
-   fold.append(body);container.append(fold);
+   fold.append(body);diagnosticsBody.append(fold);
   }
   const total=existing.length;
   const unlinked=all().length-total;
@@ -1118,7 +1130,7 @@ $('compareGedcomFile').onchange=async e=>{
   searchBox.style.width='100%';searchBox.style.marginBottom='0.7rem';
   const foundBox=document.createElement('div');
   inspectorBody.append(textNode('p','hint','This inspector shows the full saved Fieldbook name and its separate suffix field. If the emoji is absent from BOTH, a missing-suffix warning is correct; if embedded in the name, it counts as present. No values are changed.'),searchBox,foundBox);
-  inspector.append(inspectorHead,inspectorBody);container.append(inspector);
+  inspector.append(inspectorHead,inspectorBody);diagnosticsBody.append(inspector);
   const inspected=[...incomingMap.entries()];
   function updateInspector(){
    foundBox.replaceChildren();const query=searchBox.value.trim().toLocaleLowerCase('en-US');
@@ -1182,9 +1194,9 @@ $('compareGedcomFile').onchange=async e=>{
   const minimumOverlap=existing.length>=100?0.85:0.65;
   const idSafetyOK=existing.length>0&&overlap>=Math.min(existing.length,20)&&overlap/existing.length>=minimumOverlap&&mismatches<=Math.max(1,Math.floor(overlap*0.005));
   const mergeBox=document.createElement('details');mergeBox.className='cemetery-group';
-  const mergeHead=textNode('summary','','Safe GEDCOM merge — review and apply (TEST only)');mergeBox.append(mergeHead);
+  const mergeHead=textNode('summary','','Review and approve GEDCOM updates (TEST only)');mergeBox.append(mergeHead);mergeBox.open=true;
   const mergeBody=textNode('div','cemetery-group-people');
-  mergeBody.append(textNode('p','hint','Safe merge: add new burials, fill empty fields, or individually replace an existing value only after checking the identity and the specific proposed change. Other values, notes, visits, photos, and GPS remain protected. Intentional values such as “Cemetery Unknown” are preserved. Conflicting burials and suspected location shifts remain blocked. Nothing happens without approval.'));
+  mergeBody.append(textNode('p','hint','STEP 1: Review new burials and safe blank fields. STEP 2: Verify identity and select specific missing or replacement fields when other values differ. STEP 3: Approve, export one rollback backup, and apply all selected changes together. Existing fieldwork is protected. Conflicting burials stay blocked.'));
   const summary=textNode('p','hint',newBurials.length+' eligible new burial records; '+fillGroups.size+' existing people with safe empty fields ('+[...fillGroups.values()].reduce((a,b)=>a+b.length,0)+' individual fields); '+ambiguous.length+' conflicting-burial people blocked; '+changedIds.size+' people with differing values require review rather than bulk updates.');mergeBody.append(summary);
   const safetyMessage=textNode('p','hint',idSafetyOK?'GEDCOM ID safety check passed: '+overlap+' matching individual IDs; '+mismatches+' name discrepancies.':'MERGE DISABLED: person-ID safety check failed ('+overlap+' matching IDs out of '+existing.length+' existing GEDCOM records; '+mismatches+' different names). This may be an export with changed IDs or another tree. No data may be merged.');
   mergeBody.append(safetyMessage);
@@ -1303,7 +1315,12 @@ $('compareGedcomFile').onchange=async e=>{
   addApproval.disabled=!newBurials.length||!idSafetyOK;fillApproval.disabled=!fillGroups.size||!idSafetyOK;
   const apply=document.createElement('button');apply.type='button';apply.className='secondary';apply.textContent='Export rollback backup, then confirm approved merge';apply.disabled=!idSafetyOK||(!newBurials.length&&!fillGroups.size&&!reviewFillCount&&!replaceCount);
   const mergeStatus=textNode('p','hint','No merge applied. Select categories above before continuing.');
+  // Put frequent tasks first; retain detailed name-ID differences below the review choices.
+  mergeBody.insertBefore(addDetails,identityDetails);
+  mergeBody.insertBefore(fillDetails,identityDetails);
   mergeBody.append(apply,mergeStatus);mergeBox.append(mergeBody);container.append(mergeBox);
+  // Keep diagnostic categories available but out of the everyday workflow.
+  container.append(diagnostics);
   apply.onclick=async()=>{
    const doAdd=addApproval.checked,doFill=fillApproval.checked;
    const approvedManual=manualSelections.filter(x=>x.checkbox.checked&&x.identity.checked&&!x.checkbox.disabled);
@@ -1411,8 +1428,13 @@ $('compareGedcomFile').onchange=async e=>{
      localStorage.setItem(CHANGE_KEY,JSON.stringify([...replacementEvents,event,...changeLog]));
      extras=nextExtras;updates=nextUpdates;allGedcomPeople=[...nextDirectory.values()];changeLog=[...replacementEvents,event,...changeLog];
      refreshHomeDisplay();searchHomePeople();refreshOptions();render();renderChangeLog();
-     mergeStatus.textContent='Merge complete: '+freshNew.length+' new burial records and '+freshFills.length+' blank fields filled and '+freshReplacements.length+' verified existing values replaced. '+ambiguous.length+' conflicting-burial people excluded. Your PRE-MERGE backup is your rollback copy. Re-run the comparison to verify.';
+     const resultMessage='Merge complete: '+freshNew.length+' new burials added, '+freshFills.length+' blank fields filled, and '+freshReplacements.length+' verified existing values replaced. '+ambiguous.length+' conflicting-burial people held for review. Keep your downloaded PRE-MERGE backup.';
+     mergeStatus.textContent=resultMessage+' Refreshing the comparison automatically…';
      addApproval.checked=false;fillApproval.checked=false;for(const entry of [...manualSelections,...replaceSelections]){entry.checkbox.checked=false;entry.checkbox.disabled=true;entry.identity.checked=false;}apply.disabled=true;
+     // Refresh asynchronously after the save and redraw; the SAME user-chosen file is reused.
+     // Save the result banner outside the rebuilt review area so it stays visible.
+     try{await compareCurrentGedcom(file);status.textContent=resultMessage+' The comparison below is now up to date.';}
+     catch(refreshErr){status.textContent=resultMessage+' Automatic verification could not finish: '+refreshErr.message+'. You can compare the file again manually.';}
     }catch(err){
      extras=oldExtras;updates=oldUpdates;allGedcomPeople=oldDirectory;changeLog=oldLog;
      for(const [key,value] of [[KEY,priorRecords],[GED_PEOPLE_KEY,priorPeople],[CHANGE_KEY,priorLog]]){
@@ -1425,8 +1447,8 @@ $('compareGedcomFile').onchange=async e=>{
   };
   container.hidden=false;
  }catch(err){status.textContent='Comparison failed: '+err.message;container.hidden=true;}
- finally{e.target.value='';}
-};
+}
+$('compareGedcomFile').onchange=async e=>{const file=e.target.files[0];await compareCurrentGedcom(file);e.target.value='';};
 
 $('pickGedcom').onclick=()=>$('gedcomFile').click();
 $('gedcomFile').onchange=async e=>{
