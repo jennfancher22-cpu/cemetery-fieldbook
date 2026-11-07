@@ -738,10 +738,19 @@ const US_STATES = new Set(('Alabama|Alaska|Arizona|Arkansas|California|Colorado|
 function gedYear(s) { const m = String(s||'').match(/(?:^|\D)(1[5-9]\d{2}|20\d{2})(?:\D|$)/); return m?m[1]:''; }
 function gedName(s) { return String(s||'').replace(/\//g,'').replace(/\s+/g,' ').trim(); }
 function gedNameSuffix(raw) {
-  // GEDCOM NAME syntax: Given /Surname/ suffix. Do not discard suffix markers:
-  // users may assign genealogical meaning to emojis or other suffix text.
-  const value=String(raw||'');const last=value.lastIndexOf('/');
-  return last<0?'':value.slice(last+1).replace(/\s+/g,' ').trim();
+  // Preserve FTM name markers in BOTH layouts:
+  //   Given /Surname/ 👪  or  Given Surname /👪/
+  // The second layout is present in this GEDCOM; a symbols-only slashed
+  // segment must be treated as an intentional suffix, not discarded.
+  const value=String(raw||'');
+  const parts=value.match(/^(.*?)\/([^/]*)\/(.*)$/u);
+  if(!parts)return '';
+  const trailing=parts[3].replace(/\s+/g,' ').trim();
+  if(trailing)return trailing;
+  const slashed=parts[2].trim(),before=parts[1].trim();
+  if(before && slashed && /\p{Extended_Pictographic}/u.test(slashed)
+     && !/[\p{L}\p{N}]/u.test(slashed))return slashed;
+  return '';
 }
 function savedNameSuffix(record) {
   if(String(record.nameSuffix||'').trim())return String(record.nameSuffix).trim();
@@ -966,6 +975,9 @@ $('compareGedcomFile').onchange=async e=>{
   const existing=seed.filter(r=>idOf(r));
   const existingMap=new Map(existing.map(r=>[idOf(r),r]));
   const incomingMap=new Map(incoming.filter(r=>idOf(r)).map(r=>[idOf(r),r]));
+  // These IDs have incompatible burial facts. Keep them visible in manual
+  // review, but NEVER count them as safe new burials or merge candidates.
+  const blockedBurialIds=new Set(ambiguous.map(r=>String(r.id).toUpperCase()));
   // Only compare fields owned by the GEDCOM importer; never treat visit tracking,
   // plot, photos, notes or manually entered family relationships as GEDCOM updates.
   // Compare actual memorial identity, not URL spelling. Other fields are compared as trimmed text.
@@ -1002,6 +1014,7 @@ $('compareGedcomFile').onchange=async e=>{
   const newBurials=[],missing=[],fills=[],reviews=[],formatting=[],shifted=[],resolved=[],unmodified=[];
   const localValue=(old,key)=>{const u=updates[old.id]||{};return Object.prototype.hasOwnProperty.call(u,key)?u[key]:old[key];};
   for(const [id,incomingRecord] of incomingMap){
+   if(blockedBurialIds.has(id.toUpperCase()))continue;
    const old=existingMap.get(id);
    if(!old){newBurials.push(incomingRecord);continue;}
    let changed=false;
@@ -1057,17 +1070,17 @@ $('compareGedcomFile').onchange=async e=>{
    [uniqueCount(fills),'Records with missing fields to fill'],
    [uniqueCount(reviews),'Records with values to review'],
    [uniqueCount(formatting),'Formatting-only differences'],
-   [ambiguous.length,'Multiple conflicting burial facts'],
+   [ambiguous.length,'Multiple conflicting burial facts — manual review only'],
    [missing.length,'Absent from this GEDCOM']
   ]){
    const box=textNode('div','ged-count');box.append(textNode('strong','',String(n)),textNode('span','tiny',label));counts.append(box);
   }
   container.append(title,counts,textNode('p','hint',
    'PREVIEW ONLY. Categories count records, not individual fields; one person may appear in more than one category. '+
-   'Cemetery/town field shifts are review-only and are not treated as safe automatic fixes. Missing-field candidates are NOT automatically applied. Multiple incompatible burial facts within one person ID require manual review, not automatic merging. Original and locally edited records, photos, notes, visits, and history are unchanged. '+
+   'Cemetery/town field shifts are review-only and are not treated as safe automatic fixes. Missing-field candidates are NOT automatically applied. Multiple incompatible burial facts within one person ID are EXCLUDED from the New people count and require manual review, not automatic merging. Original and locally edited records, photos, notes, visits, and history are unchanged. '+
    'Name suffixes (including emoji markers) are meaningful. Existing suffixes embedded at the end of legacy Fieldbook names count as present, preventing duplicate updates. Missing suffixes are not automatically added. GEDCOM ID matching requires stable IDs across exports; files from other trees may not compare safely.'));
   const sections=[
-   ['New burial entries (sample)',newBurials.slice(0,8).map(r=>`${r.name} (${idOf(r)}) · ${r.cemetery||'Cemetery unknown'} · ${[r.county,r.state].filter(Boolean).join(', ')}`)],
+   ['New burial entries — excluding conflicting burial facts (sample)',newBurials.slice(0,8).map(r=>`${r.name} (${idOf(r)}) · ${r.cemetery||'Cemetery unknown'} · ${[r.county,r.state].filter(Boolean).join(', ')}`)],
    ['Likely cemetery / town mapping issues — all flagged records',shifted.map(x=>`${x.name} (${x.id}) · Fieldbook: Cemetery ${x.oldCemetery||'—'}; Town ${x.oldTown||'—'} · GEDCOM: Cemetery ${x.proposedCemetery}; Town ${x.proposedTown} · Source: ${x.place} · REVIEW ONLY, no changes made`)],
    ['Missing information available (sample)',fills.slice(0,12).map(describe)],
    ['Existing values requiring review (sample)',reviews.slice(0,12).map(describe)],
