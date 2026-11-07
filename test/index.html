@@ -742,6 +742,19 @@ function savedNameSuffix(record) {
   const m=String(record.name||'').match(/(\p{Extended_Pictographic}.*)$/u);
   return m?m[1].trim():'';
 }
+// Resolve legacy names that already contain a GEDCOM suffix, but do not have
+// a separate nameSuffix field yet. Only accept an exact trailing suffix.
+function effectiveSavedSuffix(record, incomingSuffix){
+  const explicit=String(record.nameSuffix||'').trim();
+  if(explicit)return explicit;
+  const name=String(record.name||'').trim();
+  const suffix=String(incomingSuffix||'').trim();
+  if(suffix&&name.endsWith(suffix)){
+    const prefix=name.slice(0,-suffix.length);
+    if(prefix&&/\s$/.test(prefix))return suffix;
+  }
+  return savedNameSuffix(record);
+}
 function nameWithoutSuffix(value,suffix){
   const text=String(value||'').trim(),tail=String(suffix||'').trim();
   return tail&&text.endsWith(tail)?text.slice(0,-tail.length).trim():text;
@@ -939,13 +952,14 @@ $('compareGedcomFile').onchange=async e=>{
    ));
    if(shiftedLocation)shifted.push({id,name:incomingRecord.name,oldCemetery:savedCemetery,oldTown:savedTown,proposedCemetery:newCemetery,proposedTown:newTown,place:incomingRecord.gedcomBurial});
    for(const key of fields){
-    const original=key==='nameSuffix'?savedNameSuffix(old):(old[key]||'');
-    const current=key==='nameSuffix'?savedNameSuffix({...old,...(updates[old.id]||{})}):(localValue(old,key)||'');
+    const original=key==='nameSuffix'?effectiveSavedSuffix(old,incomingRecord.nameSuffix):(old[key]||'');
+    const currentRecord={...old,...(updates[old.id]||{})};
+    const current=key==='nameSuffix'?effectiveSavedSuffix(currentRecord,incomingRecord.nameSuffix):(localValue(old,key)||'');
     const incomingValue=incomingRecord[key]||'';
     // A suffix belongs in its own comparison. Avoid double-counting it as
     // a changed given/surname when it is otherwise the same name.
-    const originalBase=key==='name'?nameWithoutSuffix(original,savedNameSuffix(old)):original;
-    const currentBase=key==='name'?nameWithoutSuffix(current,savedNameSuffix({...old,...(updates[old.id]||{})})):current;
+    const originalBase=key==='name'?nameWithoutSuffix(original,effectiveSavedSuffix(old,incomingRecord.nameSuffix)):original;
+    const currentBase=key==='name'?nameWithoutSuffix(current,effectiveSavedSuffix(currentRecord,incomingRecord.nameSuffix)):current;
     const incomingBase=key==='name'?nameWithoutSuffix(incomingValue,incomingRecord.nameSuffix):incomingValue;
     if(shiftedLocation&&(key==='town'||key==='cemetery')){changed=true;continue;}
     // Compare against the visible, effective value, not just the original imported seed.
@@ -984,7 +998,7 @@ $('compareGedcomFile').onchange=async e=>{
   container.append(title,counts,textNode('p','hint',
    'PREVIEW ONLY. Categories count records, not individual fields; one person may appear in more than one category. '+
    'Cemetery/town field shifts are review-only and are not treated as safe automatic fixes. Missing-field candidates are NOT automatically applied. Multiple incompatible burial facts within one person ID require manual review, not automatic merging. Original and locally edited records, photos, notes, visits, and history are unchanged. '+
-   'Name suffixes (including emoji markers) are meaningful and are reviewed separately, not discarded as formatting. GEDCOM ID matching requires stable IDs across exports; files from other trees may not compare safely.'));
+   'Name suffixes (including emoji markers) are meaningful. Existing suffixes embedded at the end of legacy Fieldbook names count as present, preventing duplicate updates. Missing suffixes are not automatically added. GEDCOM ID matching requires stable IDs across exports; files from other trees may not compare safely.'));
   const sections=[
    ['New burial entries (sample)',newBurials.slice(0,8).map(r=>`${r.name} (${idOf(r)}) · ${r.cemetery||'Cemetery unknown'} · ${[r.county,r.state].filter(Boolean).join(', ')}`)],
    ['Likely cemetery / town mapping issues — all flagged records',shifted.map(x=>`${x.name} (${x.id}) · Fieldbook: Cemetery ${x.oldCemetery||'—'}; Town ${x.oldTown||'—'} · GEDCOM: Cemetery ${x.proposedCemetery}; Town ${x.proposedTown} · Source: ${x.place} · REVIEW ONLY, no changes made`)],
@@ -1016,7 +1030,7 @@ $('compareGedcomFile').onchange=async e=>{
   searchBox.setAttribute('aria-label','Search GEDCOM comparisons by person');
   searchBox.style.width='100%';searchBox.style.marginBottom='0.7rem';
   const foundBox=document.createElement('div');
-  inspectorBody.append(textNode('p','hint','This inspector shows exactly why a person appears in a comparison category. Unchanged suffix emojis are not missing information.'),searchBox,foundBox);
+  inspectorBody.append(textNode('p','hint','This inspector shows the full saved Fieldbook name and its separate suffix field. If the emoji is absent from BOTH, a missing-suffix warning is correct; if embedded in the name, it counts as present. No values are changed.'),searchBox,foundBox);
   inspector.append(inspectorHead,inspectorBody);container.append(inspector);
   const inspected=[...incomingMap.entries()];
   function updateInspector(){
@@ -1029,7 +1043,12 @@ $('compareGedcomFile').onchange=async e=>{
     const panel=document.createElement('div');panel.className='ged-example';
     panel.append(textNode('strong','',r.name+' ('+id+')'));
     if(!old){panel.append(textNode('p','tiny','New burial entry — no saved GEDCOM-linked record to compare.'));foundBox.append(panel);continue;}
-    const currentSuffix=savedNameSuffix({...old,...(updates[old.id]||{})});
+    const currentRecord={...old,...(updates[old.id]||{})};
+    const currentSuffix=effectiveSavedSuffix(currentRecord,r.nameSuffix);
+    panel.append(textNode('div','tiny','Full saved Fieldbook name: '+(String(currentRecord.name||'')||'—')));
+    panel.append(textNode('div','tiny','Separate saved suffix field: '+(String(currentRecord.nameSuffix||'')||'—')));
+    panel.append(textNode('div','tiny','Suffix detected inside saved name: '+(savedNameSuffix(currentRecord)||'—')));
+    panel.append(textNode('div','tiny','Effective suffix compared: '+(currentSuffix||'—')+' | GEDCOM suffix: '+(r.nameSuffix||'—')));
     let rows=0;
     for(const key of fields){
      const current=key==='nameSuffix'?currentSuffix:(localValue(old,key)||'');
@@ -1037,7 +1056,7 @@ $('compareGedcomFile').onchange=async e=>{
      const a=key==='name'?nameWithoutSuffix(current,currentSuffix):current;
      const b=key==='name'?nameWithoutSuffix(next,r.nameSuffix):next;
      const kind=sameValue(key,a,b)?'Same':equivalentFormatting(key,a,b)?'Formatting only':!String(current).trim()&&String(next).trim()?'MISSING in Fieldbook':String(current).trim()&&!String(next).trim()?'Missing in GEDCOM — preserve':'DIFFERENT — review';
-     if(kind!=='Same'||key==='nameSuffix'||key==='cemetery'||key==='town'){
+     if(kind!=='Same'||key==='name'||key==='nameSuffix'||key==='cemetery'||key==='town'){
       panel.append(textNode('div','tiny',readable(key)+': '+kind+' | Fieldbook: '+(String(current)||'—')+' | GEDCOM: '+(String(next)||'—')));rows++;
      }
     }
