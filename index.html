@@ -204,12 +204,21 @@
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7 LIVE · Reset option · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 LIVE · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
 const $=x=>document.getElementById(x);
 const SEED_KEY='cemeteryFieldbook_private_seed_v3';
+
+// Large GEDCOM directories and burial lists are saved in IndexedDB, NOT localStorage.
+// Only the LIVE app uses this database; TEST has a different database name.
+const LARGE_DB_NAME='cemeteryFieldbookLiveData_v7';
+function openLargeDB(){return new Promise((resolve,reject)=>{const q=indexedDB.open(LARGE_DB_NAME,1);q.onupgradeneeded=()=>{if(!q.result.objectStoreNames.contains('datasets'))q.result.createObjectStore('datasets')};q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error||Error('Cannot open Fieldbook large-data storage'))})}
+async function readLargeData(){const db=await openLargeDB();return new Promise((resolve,reject)=>{const tx=db.transaction('datasets','readonly');const a=tx.objectStore('datasets').get('burials'),b=tx.objectStore('datasets').get('people');tx.oncomplete=()=>{db.close();resolve({burials:a.result,people:b.result})};tx.onerror=()=>{db.close();reject(tx.error)};tx.onabort=()=>{db.close();reject(tx.error)}})}
+async function saveLargeData(burials,people){const db=await openLargeDB();return new Promise((resolve,reject)=>{const tx=db.transaction('datasets','readwrite'),st=tx.objectStore('datasets');st.put(burials,'burials');st.put(people,'people');tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{db.close();reject(tx.error||Error('Large-data save failed'))};tx.onabort=()=>{db.close();reject(tx.error||Error('Large-data save aborted'))}})}
+async function clearLargeData(){const db=await openLargeDB();return new Promise((resolve,reject)=>{const tx=db.transaction('datasets','readwrite');tx.objectStore('datasets').clear();tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{db.close();reject(tx.error)}})}
+
 let seed=[];
 try { const saved=localStorage.getItem(SEED_KEY); if(saved) {const parsed=JSON.parse(saved); if(Array.isArray(parsed))seed=parsed;} } catch(err) {alert('Could not read private cemetery records: '+err.message)}
 const KEY='cemeteryFieldbook_v1', BACKUP_KEY='cemeteryFieldbook_backup_time';
@@ -648,10 +657,10 @@ function compress(file){return new Promise((resolve,reject)=>{const fr=new FileR
 async function renderPhotos(){const container=$('photos');container.replaceChildren();if(!current)return;try{const photos=(await getPhotos()).filter(p=>p.person===current);photos.forEach(p=>{const d=textNode('div','photoitem'),im=document.createElement('img');im.src=p.data;im.alt='Field photo';const b=textNode('button','','×');b.type='button';b.onclick=async()=>{if(confirm('Remove this photograph?')){await store('readwrite',s=>s.delete(p.id));addChange('Photo deleted',(all().find(x=>x.id===current)||{}).name,current,p.name||'Photograph');renderPhotos()}};d.append(im,b);container.append(d)});if(!photos.length)container.append(textNode('span','hint','No attached photographs yet.'))}catch(e){container.append(textNode('div','hint','Photo storage unavailable: '+e.message))}}
 $('photoFile').onchange=async e=>{if(!current){alert('Save the new entry first, then reopen it to attach photos.');e.target.value='';return}const files=[...e.target.files];for(const f of files){try{const data=await compress(f);await store('readwrite',s=>s.put({id:'ph-'+Date.now()+'-'+Math.random().toString(36).slice(2),person:current,name:f.name,created:new Date().toISOString(),data}));addChange('Photo attached',(all().find(x=>x.id===current)||{}).name,current,f.name);}catch(err){alert('Could not attach '+f.name+': '+err.message)}}$('photoFile').value='';renderPhotos()};
 function download(blob,name){const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
-$('backup').onclick=async()=>{try{const photos=await getPhotos();const payload={format:'CemeteryFieldbookBackup',version:1,exported:new Date().toISOString(),updates,extras,photos};download(new Blob([JSON.stringify(payload)],{type:'application/json'}),'cemetery-fieldbook-backup-'+new Date().toISOString().slice(0,10)+'.json');localStorage.setItem(BACKUP_KEY,new Date().toLocaleString());$('lastbackup').textContent='Last backup exported: '+localStorage.getItem(BACKUP_KEY)}catch(e){alert('Backup failed: '+e.message)}};
+$('backup').onclick=async()=>{try{await largeDataReady;const photos=await getPhotos();const payload={format:'CemeteryFieldbookBackup',version:1,exported:new Date().toISOString(),updates,extras,photos};download(new Blob([JSON.stringify(payload)],{type:'application/json'}),'cemetery-fieldbook-backup-'+new Date().toISOString().slice(0,10)+'.json');localStorage.setItem(BACKUP_KEY,new Date().toLocaleString());$('lastbackup').textContent='Last backup exported: '+localStorage.getItem(BACKUP_KEY)}catch(e){alert('Backup failed: '+e.message)}};
 $('restore').onclick=()=>$('restoreFile').click();$('restoreFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{const data=JSON.parse(await f.text());if(data.format!=='CemeteryFieldbookBackup'||data.version!==1||!Array.isArray(data.extras)||!Array.isArray(data.photos)||!data.updates)throw Error('Unsupported backup format');if(!confirm('Restore this backup? Existing edits and photos on this device will be replaced.'))return;updates=data.updates;extras=data.extras;persist();if(!db)db=await openDB();await new Promise((resolve,reject)=>{const tx=db.transaction('photos','readwrite'),s=tx.objectStore('photos');s.clear();for(const p of data.photos)s.put(p);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});refreshOptions();render();alert('Backup restored successfully')}catch(err){alert('Restore failed: '+err.message)}finally{e.target.value=''}};
 $('importPrivateSeed').onclick=()=>$('privateSeedFile').click();
-$('privateSeedFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const list=JSON.parse(await f.text());if(!Array.isArray(list)||!list.length||!list.every(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.name==='string'))throw Error('Not a compatible burial list');if(!confirm('Import '+list.length+' private burial records to this browser?'))return;localStorage.setItem(SEED_KEY,JSON.stringify(list));seed=list;refreshOptions();render();$('privateSeedStatus').textContent=seed.length+' private burial records loaded on this device';alert('Burial list loaded. Now restore your fieldwork backup to recover photos and edits.')}catch(err){alert('Could not import burial list: '+err.message)}finally{e.target.value=''}};
+$('privateSeedFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const list=JSON.parse(await f.text());if(!Array.isArray(list)||!list.length||!list.every(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.name==='string'))throw Error('Not a compatible burial list');if(!confirm('Import '+list.length+' private burial records to this browser?'))return;await largeDataReady;await saveLargeData(list,allGedcomPeople);localStorage.removeItem(SEED_KEY);seed=list;refreshOptions();render();$('privateSeedStatus').textContent=seed.length+' private burial records loaded on this device';alert('Burial list loaded. Now restore your fieldwork backup to recover photos and edits.')}catch(err){alert('Could not import burial list: '+err.message)}finally{e.target.value=''}};
 $('privateSeedStatus').textContent=seed.length+' private burial records loaded on this device';
 refreshOptions();render();$('lastbackup').textContent=localStorage.getItem(BACKUP_KEY)?'Last backup exported: '+localStorage.getItem(BACKUP_KEY):'No backup exported yet.';
 
@@ -688,15 +697,16 @@ function nearbySearch(){let p=coordinatesFromUI();if(!p){message('Enter a valid 
 $('nearSearch').onclick=nearbySearch;
 $('myLocation').onclick=()=>{if(location.protocol==='file:'){message('GPS is restricted when opening the downloaded HTML file. The town-based distance search still works offline. A secure HTTPS installation is required for reliable location permission.');return}if(!window.isSecureContext){message('GPS requires HTTPS (a secure connection). Select a town for offline searching.');return}if(!navigator.geolocation){message('This browser does not support location. Use a listed city or enter coordinates.');return}message('Requesting GPS location…');navigator.geolocation.getCurrentPosition(pos=>{$('startPlace').value='custom';$('startLat').value=pos.coords.latitude.toFixed(6);$('startLon').value=pos.coords.longitude.toFixed(6);message('Phone location received. Approximate GPS accuracy: '+Math.round(pos.coords.accuracy)+' meters.');nearbySearch()},err=>message('Phone GPS unavailable: '+err.message+'. Local HTML files may not receive location permission. You can still select a town.'),{enableHighAccuracy:true,timeout:15000,maximumAge:60000})};
 // V2 backup includes geolocations; restores still accept V1 backups (and retain V2 coordinate edits).
-$('backup').onclick=async()=>{try{const photos=await getPhotos();const payload={format:'CemeteryFieldbookBackup',version:5,exported:new Date().toISOString(),seed,updates,extras,photos,geoEdits,changeLog,gedcomPeople:allGedcomPeople,homePersonId};download(new Blob([JSON.stringify(payload)],{type:'application/json'}),'cemetery-fieldbook-backup-'+new Date().toISOString().slice(0,10)+'.json');localStorage.setItem(BACKUP_KEY,new Date().toLocaleString());$('lastbackup').textContent='Last backup exported: '+localStorage.getItem(BACKUP_KEY)}catch(e){alert('Backup failed: '+e.message)}};
-$('restoreFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const data=JSON.parse(await f.text());if(data.format!=='CemeteryFieldbookBackup'||![1,2,3,4,5].includes(data.version)||!Array.isArray(data.extras)||!Array.isArray(data.photos)||!data.updates||typeof data.updates!=='object')throw Error('Unsupported backup format');if(data.version>=4&&(!Array.isArray(data.seed)||!data.seed.every(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.name==='string')))throw Error('Full backup contains an invalid burial list');
+$('backup').onclick=async()=>{try{await largeDataReady;const photos=await getPhotos();const payload={format:'CemeteryFieldbookBackup',version:5,exported:new Date().toISOString(),seed,updates,extras,photos,geoEdits,changeLog,gedcomPeople:allGedcomPeople,homePersonId};download(new Blob([JSON.stringify(payload)],{type:'application/json'}),'cemetery-fieldbook-backup-'+new Date().toISOString().slice(0,10)+'.json');localStorage.setItem(BACKUP_KEY,new Date().toLocaleString());$('lastbackup').textContent='Last backup exported: '+localStorage.getItem(BACKUP_KEY)}catch(e){alert('Backup failed: '+e.message)}};
+$('restoreFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{await largeDataReady;const data=JSON.parse(await f.text());if(data.format!=='CemeteryFieldbookBackup'||![1,2,3,4,5].includes(data.version)||!Array.isArray(data.extras)||!Array.isArray(data.photos)||!data.updates||typeof data.updates!=='object')throw Error('Unsupported backup format');if(data.version>=4&&(!Array.isArray(data.seed)||!data.seed.every(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.name==='string')))throw Error('Full backup contains an invalid burial list');
 if(!confirm('Restore this backup? Existing records, history, and photos on this device will be replaced.'))return;
 // Backups v1-v3 did not contain a burial list. Keep any separately loaded list.
 // Stage and write photos before mutating record edits.
 if(!db)db=await openDB();await new Promise((resolve,reject)=>{const tx=db.transaction('photos','readwrite'),s=tx.objectStore('photos');s.clear();for(const p of data.photos)s.put(p);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
-if(data.version>=4){localStorage.setItem(SEED_KEY,JSON.stringify(data.seed));seed=data.seed;}updates=data.updates;extras=data.extras;persist();if(data.version>=2&&data.geoEdits&&typeof data.geoEdits==='object'){geoEdits=data.geoEdits;localStorage.setItem(GEO_KEY,JSON.stringify(geoEdits))}if(data.version>=3&&Array.isArray(data.changeLog)){changeLog=data.changeLog;localStorage.setItem(CHANGE_KEY,JSON.stringify(changeLog))}else{changeLog=[];localStorage.setItem(CHANGE_KEY,'[]')}if(data.version===5){
+if(data.version>=4){await saveLargeData(data.seed,data.version===5?data.gedcomPeople:allGedcomPeople);localStorage.removeItem(SEED_KEY);seed=data.seed;}updates=data.updates;extras=data.extras;persist();if(data.version>=2&&data.geoEdits&&typeof data.geoEdits==='object'){geoEdits=data.geoEdits;localStorage.setItem(GEO_KEY,JSON.stringify(geoEdits))}if(data.version>=3&&Array.isArray(data.changeLog)){changeLog=data.changeLog;localStorage.setItem(CHANGE_KEY,JSON.stringify(changeLog))}else{changeLog=[];localStorage.setItem(CHANGE_KEY,'[]')}if(data.version===5){
  if(!Array.isArray(data.gedcomPeople)||!data.gedcomPeople.every(p=>p&&typeof p.id==='string'&&typeof p.name==='string'))throw Error('Backup people directory is invalid');
- localStorage.setItem(GED_PEOPLE_KEY,JSON.stringify(data.gedcomPeople));allGedcomPeople=data.gedcomPeople;
+ if(data.version<4)await saveLargeData(seed,data.gedcomPeople);
+ localStorage.removeItem(GED_PEOPLE_KEY);allGedcomPeople=data.gedcomPeople;
  homePersonId=typeof data.homePersonId==='string'&&allGedcomPeople.some(p=>p.id===data.homePersonId)?data.homePersonId:'';
  if(homePersonId)localStorage.setItem(HOME_PERSON_KEY,homePersonId);else localStorage.removeItem(HOME_PERSON_KEY);
  refreshHomeDisplay();searchHomePeople();
@@ -765,7 +775,7 @@ $('refreshRelFile').onchange=async e=>{
  const file=e.target.files[0];if(!file)return;
  try {const people=parseGedcomPeople(await file.text());if(!people.length)throw Error('No individuals found');
   if(!confirm('Update only the relationship directory with '+people.length+' individuals from '+file.name+'? Cemetery records and fieldwork will not change.'))return;
-  allGedcomPeople=people;localStorage.setItem(GED_PEOPLE_KEY,JSON.stringify(people));
+  await largeDataReady;await saveLargeData(seed,people);allGedcomPeople=people;localStorage.removeItem(GED_PEOPLE_KEY);
   if(homePersonId&&!people.some(p=>p.id===homePersonId)){$('refreshRelStatus').textContent='Directory refreshed, but saved Home Person was not found. Please choose a Home Person.';}
   else $('refreshRelStatus').textContent='Directory refreshed: '+people.length+' individuals. Guardians and other explicitly nonbiological links excluded from ancestry calculations. No burials changed.';
   refreshHomeDisplay();if(typeof render==='function')render();
@@ -1451,6 +1461,7 @@ async function compareCurrentGedcom(file){
     if(!confirmed){mergeStatus.textContent='Cancelled. No records changed; the rollback backup was requested.';return;}
     const oldExtras=extras,oldUpdates=updates,oldDirectory=allGedcomPeople,oldLog=changeLog;
     const priorRecords=localStorage.getItem(KEY),priorPeople=localStorage.getItem(GED_PEOPLE_KEY),priorLog=localStorage.getItem(CHANGE_KEY);
+    const priorLarge=await readLargeData();
     try{
      const nextExtras=[...extras,...freshNew];
      const nextUpdates={...updates};
@@ -1477,7 +1488,8 @@ async function compareCurrentGedcom(file){
      const event={id:'evt-'+Date.now()+'-gedcom',at:new Date().toISOString(),type:'GEDCOM merge',person:'GEDCOM import',personId:'',detail:'Source: '+file.name+'; Added burials: '+freshNew.length+'; Missing fields filled: '+freshFills.length+'; Verified existing fields replaced: '+freshReplacements.length+'; Conflicting burials excluded: '+ambiguous.length,enteredFTM:true,needsTree:false};
      // Stage all data in memory, and rollback ALL local storage keys on any quota failure.
      localStorage.setItem(KEY,JSON.stringify({updates:nextUpdates,extras:nextExtras}));
-     localStorage.setItem(GED_PEOPLE_KEY,JSON.stringify([...nextDirectory.values()]));
+     await saveLargeData(seed,[...nextDirectory.values()]);
+     localStorage.removeItem(GED_PEOPLE_KEY);
      const replacementEvents=freshReplacements.map((x,i)=>({
       id:'evt-'+Date.now()+'-replace-'+i,at:new Date().toISOString(),
       type:'GEDCOM verified replacement',person:x.record.name||x.id,personId:x.record.id,
@@ -1496,6 +1508,7 @@ async function compareCurrentGedcom(file){
      catch(refreshErr){status.textContent=resultMessage+' Automatic verification could not finish: '+refreshErr.message+'. You can compare the file again manually.';}
     }catch(err){
      extras=oldExtras;updates=oldUpdates;allGedcomPeople=oldDirectory;changeLog=oldLog;
+     try{await saveLargeData(priorLarge.burials||[],priorLarge.people||[])}catch(_){}
      for(const [key,value] of [[KEY,priorRecords],[GED_PEOPLE_KEY,priorPeople],[CHANGE_KEY,priorLog]]){
       try{if(value===null)localStorage.removeItem(key);else localStorage.setItem(key,value);}catch(_){}
      }
@@ -1535,7 +1548,7 @@ $('gedcomFile').onchange=async e=>{
   preview.replaceChildren();
   preview.append(textNode('h3','','Preview — '+file.name));
   const counts=textNode('div','ged-counts');
-  for(const [num,label] of [[directory.length,'All GEDCOM individuals'],[entries.length,'Safe burial entries'],[ambiguous.length,'Conflicting burials held out'],[withSuffix,'Suffixes preserved'],[unknown,'Cemetery unknown']]){
+  for(const [num,label] of [[directory.length,'All GEDCOM individuals'],[entries.length,'Safe burial entries'],[ambiguous.length,'Conflicting burials held out'],[unknown,'Cemetery unknown']]){
    const box=textNode('div','ged-count');box.append(textNode('strong','',String(num)),textNode('span','tiny',label));counts.append(box);
   }
   preview.append(counts,textNode('p','hint','The people directory is ready for Home Person selection. Name suffixes (including emojis) are saved as a separate field in the initial import. Conflicting burial facts are held out of automatic import for manual correction. Nothing has been imported yet.'));
@@ -1545,7 +1558,8 @@ $('gedcomFile').onchange=async e=>{
   const suffixSample=entries.filter(x=>x.nameSuffix).slice(0,8);if(suffixSample.length){const d=document.createElement('details');d.append(textNode('summary','','Sample imported suffixes (including emojis)'));for(const r of suffixSample)d.append(textNode('div','ged-example',r.name+' · suffix: '+r.nameSuffix+' · '+r.gedcomId));preview.append(d);}
   for(const x of entries.slice(0,5))preview.append(textNode('div','ged-example',x.name+' · '+(x.cemetery||'Cemetery unknown')+' · '+(x.county||x.town||x.gedcomBurial||'No location')));
   const btn=textNode('button','','Import '+entries.length+' burial entries');btn.type='button';
-  btn.onclick=()=>{
+  btn.onclick=async()=>{
+   await largeDataReady;
    if(!pendingGedcom){alert('Choose a GEDCOM file first.');return;}
    if(!homePersonId || !directory.some(p=>p.id===homePersonId)){
     alert('First, search for and select your Home Person in step 2. You do not need to choose the GEDCOM file again.');
@@ -1557,8 +1571,10 @@ $('gedcomFile').onchange=async e=>{
    }
    if(!confirm('Import '+entries.length+' burial entries ('+withSuffix+' with preserved suffixes; '+ambiguous.length+' conflicting-burial people excluded) from '+file.name+' with '+(allGedcomPeople.find(p=>p.id===homePersonId)?.name||homePersonId)+' as Home Person? This changes ONLY this browser dataset.'))return;
    try{
-    localStorage.setItem(SEED_KEY,JSON.stringify(entries));
-    localStorage.setItem(GED_PEOPLE_KEY,JSON.stringify(directory));
+    await saveLargeData(entries,directory);
+    // Remove any old small-storage copies only AFTER IndexedDB commits.
+    localStorage.removeItem(SEED_KEY);
+    localStorage.removeItem(GED_PEOPLE_KEY);
     localStorage.setItem(HOME_PERSON_KEY,homePersonId);
     seed=entries;allGedcomPeople=directory;pendingGedcom=null;
     refreshHomeDisplay();searchHomePeople();refreshOptions();render();
@@ -1720,6 +1736,7 @@ relStatus.textContent='Select your Home Person and search for someone buried in 
     tx.onerror=()=>reject(tx.error||Error('Photo database failed'));
     tx.onabort=()=>reject(tx.error||Error('Photo clearing was aborted'));
    });
+   await clearLargeData();
    // Only LIVE-specific keys: do not touch TEST keys on the same origin.
    const liveKeys=[
     'cemeteryFieldbook_private_seed_v3',
@@ -1739,4 +1756,18 @@ relStatus.textContent='Select your Home Person and search for someone buried in 
   }
  });
 })();
-</script></body></html>
+</script>
+<script>
+// Hydrate persistent large data after all app modules have initialized.
+// Existing v6.1 small-storage records remain readable for migration.
+const largeDataReady=(async()=>{
+ try{
+  const saved=await readLargeData();
+  if(Array.isArray(saved.burials))seed=saved.burials;
+  if(Array.isArray(saved.people))allGedcomPeople=saved.people;
+  if(saved.burials||saved.people){refreshOptions();render();refreshHomeDisplay();searchHomePeople();
+   const st=document.getElementById('privateSeedStatus');if(st)st.textContent=seed.length+' burial records loaded (expanded storage)';}
+ }catch(e){alert('Fieldbook could not load its saved burial data: '+e.message+'. Please do not import or reset until storage works.');throw e;}
+})();
+</script>
+</body></html>
