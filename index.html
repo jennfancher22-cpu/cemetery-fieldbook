@@ -157,6 +157,34 @@
 @media(max-width:550px){#dataToolsFold .person-review-card>summary{gap:7px}#dataToolsFold .person-review-heading{flex:1 1 100%;font-size:13px}#dataToolsFold .person-review-accept{margin-left:0}#dataToolsFold .person-review-pill{font-size:10px}}
 
 
+
+/* v7 mobile person-review layout: reclaim width from nested panels and keep controls usable. */
+@media (max-width: 640px) {
+  main {padding-left:6px;padding-right:6px}
+  main > .panel {padding:8px}
+  #dataToolsFold, #dataToolsFold .data-subfold {max-width:100%;min-width:0}
+  #dataToolsFold .data-subbody {padding:6px}
+  #dataToolsFold .home-panel, #dataToolsFold .ged-preview {padding:8px;margin-left:0;margin-right:0;min-width:0}
+  #dataToolsFold .guided-step {padding:8px 6px;margin:9px 0;min-width:0}
+  #dataToolsFold .guided-step-title {font-size:15px;line-height:1.35}
+  #dataToolsFold .guided-step-hint {font-size:12px;line-height:1.45}
+  #dataToolsFold .guided-step .cemetery-group-people {padding:8px 7px}
+  #dataToolsFold .person-review-list {min-width:0}
+  #dataToolsFold .person-review-card {margin:8px 0;min-width:0}
+  #dataToolsFold .person-review-card>summary {padding:10px 9px;gap:7px;display:grid;grid-template-columns:15px minmax(0,1fr);align-items:start}
+  #dataToolsFold .person-review-card>summary::before {grid-column:1;grid-row:1;margin-top:1px}
+  #dataToolsFold .person-review-heading {grid-column:2;grid-row:1;display:block;min-width:0;font-size:14px;line-height:1.3;flex:none;overflow-wrap:anywhere}
+  #dataToolsFold .person-review-pill {grid-column:2;font-size:11px;justify-self:start;white-space:normal}
+  #dataToolsFold .person-review-accept {grid-column:2;justify-self:start;padding:5px 3px;background:transparent;font-size:13px}
+  #dataToolsFold .person-review-progress {grid-column:2;justify-self:start;font-size:11px}
+  #dataToolsFold .person-review-card .merge-approval {font-size:12px;padding:9px 8px;gap:8px;line-height:1.4}
+  #dataToolsFold .person-review-detail {font-size:12px;line-height:1.5}
+  #dataToolsFold .person-review-search {display:block;margin:9px 0 12px}
+  #dataToolsFold .person-review-search input {display:block;min-width:0;width:100%;font-size:16px;padding:10px 11px}
+  #dataToolsFold .person-review-search .tiny {display:block;margin-top:6px}
+  #dataToolsFold .guided-status {font-size:12px;line-height:1.5;padding:9px}
+}
+
 </style><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="icon" type="image/svg+xml" href="icon.svg"><style>
 /* v7 read-only relationship verification */
 .relationship-results{display:grid;gap:8px;margin-top:9px}
@@ -224,7 +252,7 @@
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7 LIVE · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 LIVE · Mobile review layout · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -1310,7 +1338,7 @@ async function compareCurrentGedcom(file){
   reviewStep.append(textNode('h4','guided-step-title','1. Review people and select changes'));
   reviewStep.append(textNode('p','guided-step-hint','Each person appears once, with all proposed fields together. For existing records, verify the person first, then check only what you want to accept. Unchecked values stay unchanged.'));
   const findRow=document.createElement('div');findRow.className='person-review-search';
-  const findInput=document.createElement('input');findInput.type='search';findInput.placeholder='Find person by name or GEDCOM ID';findInput.setAttribute('aria-label','Find person in proposed GEDCOM changes');
+  const findInput=document.createElement('input');findInput.type='search';findInput.placeholder='Search name or ID';findInput.setAttribute('aria-label','Find person in proposed GEDCOM changes');
   const visibleCount=textNode('span','tiny','');findRow.append(findInput,visibleCount);
   const personHolder=textNode('div','person-review-list');
   reviewStep.append(findRow,personHolder);
