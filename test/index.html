@@ -816,6 +816,35 @@ if(seed.length){
  const already=textNode('button','secondary','Burial entries already loaded ('+seed.length+')');already.disabled=true;$('gedcomImportButtons').append(already);
 }
 
+// Detect multiple distinct burial facts under the SAME GEDCOM person ID.
+// GEDCOM ID alone is insufficient when the source tree has conflicting burial facts.
+function detectAmbiguousGedcomBurials(text){
+ const lines=String(text).split(/\r\n|\n|\r/),out=[];
+ let personId='',name='',facts=[],current=null,level2='';
+ function finish(){
+  if(current){facts.push(current);current=null;}
+  if(personId&&facts.length>1){
+   const keys=new Set(facts.map(f=>(f.place||'').trim().toLowerCase()+'|'+(f.memorialIds[0]||'')));
+   const allMemorials=new Set(facts.flatMap(f=>f.memorialIds));
+   if(keys.size>1||allMemorials.size>1)out.push({id:personId,name:name.replace(/\//g,'').trim(),facts});
+  }
+ }
+ for(const row of lines){
+  const m=row.match(/^(\d+)\s+(?:(@[^\s]+@)\s+)?(\S+)(?:\s+(.*))?$/);if(!m)continue;
+  const lv=+m[1],tag=m[3],v=m[4]||'';
+  if(lv===0){finish();personId=tag==='INDI'?m[2]||'':'';name='';facts=[];level2='';continue;}
+  if(!personId)continue;
+  if(lv===1){if(tag==='NAME'&&!name)name=v;if(current){facts.push(current);current=null;}if(tag==='BURI')current={place:'',memorialIds:[],sources:[]};level2='';continue;}
+  if(!current)continue;
+  if(lv===2){level2=tag;if(tag==='PLAC')current.place=v;continue;}
+  if(lv===3&&level2==='SOUR'){
+   if(tag==='PAGE'&&/memorial id/i.test(v)){const id=v.match(/Memorial Id\s*(\d+)/i);if(id)current.memorialIds.push(id[1]);current.sources.push(v);}
+   if((tag==='_LINK'||tag==='NOTE')&&/findagrave\.com/i.test(v)){const id=v.match(/\/memorial\/(\d+)/i);if(id&&!current.memorialIds.includes(id[1]))current.memorialIds.push(id[1]);}
+  }
+ }
+ finish();return out;
+}
+
 // Read-only comparison for future safe GEDCOM re-import. No persistent state is changed.
 $('compareGedcomButton').onclick=()=>$('compareGedcomFile').click();
 $('compareGedcomFile').onchange=async e=>{
@@ -827,6 +856,7 @@ $('compareGedcomFile').onchange=async e=>{
   const raw=await file.text();
   if(!/^0\s+HEAD\b/m.test(raw.slice(0,1200)))throw Error('This does not appear to be a GEDCOM file.');
   const incoming=parseGedcomBurials(raw);
+  const ambiguous=detectAmbiguousGedcomBurials(raw);
   const idOf=r=>burialGedcomKey(r)||'';
   const existing=seed.filter(r=>idOf(r));
   const existingMap=new Map(existing.map(r=>[idOf(r),r]));
@@ -899,19 +929,21 @@ $('compareGedcomFile').onchange=async e=>{
    [uniqueCount(fills),'Records with missing fields to fill'],
    [uniqueCount(reviews),'Records with values to review'],
    [uniqueCount(formatting),'Formatting-only differences'],
+   [ambiguous.length,'Multiple conflicting burial facts'],
    [missing.length,'Absent from this GEDCOM']
   ]){
    const box=textNode('div','ged-count');box.append(textNode('strong','',String(n)),textNode('span','tiny',label));counts.append(box);
   }
   container.append(title,counts,textNode('p','hint',
    'PREVIEW ONLY. Categories count records, not individual fields; one person may appear in more than one category. '+
-   'Missing-field candidates are NOT automatically applied. Original and locally edited records, photos, notes, visits, and history are unchanged. '+
+   'Missing-field candidates are NOT automatically applied. Multiple incompatible burial facts within one person ID require manual review, not automatic merging. Original and locally edited records, photos, notes, visits, and history are unchanged. '+
    'GEDCOM ID matching requires stable IDs across exports; files from other trees may not compare safely.'));
   const sections=[
    ['New burial entries (sample)',newBurials.slice(0,8).map(r=>`${r.name} (${idOf(r)}) · ${r.cemetery||'Cemetery unknown'} · ${[r.county,r.state].filter(Boolean).join(', ')}`)],
    ['Missing information available (sample)',fills.slice(0,12).map(describe)],
    ['Existing values requiring review (sample)',reviews.slice(0,12).map(describe)],
    ['Formatting-only differences (sample)',formatting.slice(0,12).map(describe)],
+   ['Multiple burial facts — manual review required',ambiguous.slice(0,15).map(r=>`${r.name} (${r.id}) · `+r.facts.map((f,i)=>`Burial ${i+1}: ${f.place||'unspecified'}${f.memorialIds.length?' · memorial '+[...new Set(f.memorialIds)].join(', '):''}`).join(' | ')+' · DO NOT auto-merge')],
    ['Missing from selected GEDCOM (sample)',missing.slice(0,8).map(r=>`${r.name} (${idOf(r)}) · no automatic deletion`)]
   ];
   for(const [heading,items] of sections){
