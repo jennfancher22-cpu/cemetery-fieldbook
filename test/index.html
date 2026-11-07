@@ -729,6 +729,23 @@ refreshHomeDisplay();
 const US_STATES = new Set(('Alabama|Alaska|Arizona|Arkansas|California|Colorado|Connecticut|Delaware|Florida|Georgia|Hawaii|Idaho|Illinois|Indiana|Iowa|Kansas|Kentucky|Louisiana|Maine|Maryland|Massachusetts|Michigan|Minnesota|Mississippi|Missouri|Montana|Nebraska|Nevada|New Hampshire|New Jersey|New Mexico|New York|North Carolina|North Dakota|Ohio|Oklahoma|Oregon|Pennsylvania|Rhode Island|South Carolina|South Dakota|Tennessee|Texas|Utah|Vermont|Virginia|Washington|West Virginia|Wisconsin|Wyoming|District of Columbia').split('|'));
 function gedYear(s) { const m = String(s||'').match(/(?:^|\D)(1[5-9]\d{2}|20\d{2})(?:\D|$)/); return m?m[1]:''; }
 function gedName(s) { return String(s||'').replace(/\//g,'').replace(/\s+/g,' ').trim(); }
+function gedNameSuffix(raw) {
+  // GEDCOM NAME syntax: Given /Surname/ suffix. Do not discard suffix markers:
+  // users may assign genealogical meaning to emojis or other suffix text.
+  const value=String(raw||'');const last=value.lastIndexOf('/');
+  return last<0?'':value.slice(last+1).replace(/\s+/g,' ').trim();
+}
+function savedNameSuffix(record) {
+  if(String(record.nameSuffix||'').trim())return String(record.nameSuffix).trim();
+  // Older Fieldbook imports did not store a separate suffix. Recover a
+  // suffix beginning with an emoji if it is visibly embedded in the name.
+  const m=String(record.name||'').match(/(\p{Extended_Pictographic}.*)$/u);
+  return m?m[1].trim():'';
+}
+function nameWithoutSuffix(value,suffix){
+  const text=String(value||'').trim(),tail=String(suffix||'').trim();
+  return tail&&text.endsWith(tail)?text.slice(0,-tail.length).trim():text;
+}
 function normalizeBurialPlace(raw) {
   // Preserve place components rather than sliding a cemetery into the town field.
   // Typical FTM format: Cemetery, Town, County, State, USA.
@@ -756,7 +773,7 @@ function parseGedcomBurials(text){
    if(!location.hasCemetery&&best.place)noteBits.push('GEDCOM burial place (cemetery not identified): '+best.place);
    if(best.note&&!/^@[A-Za-z0-9_:-]+@$/.test(best.note.trim()))noteBits.push(best.note.slice(0,500));
    const memorial=best.link.match(/https?:\/\/[^\s<>"']+/i);
-   individuals.push({id:'ged-'+person.id.replace(/[^A-Za-z0-9_-]/g,''),gedcomId:person.id,name:gedName(person.name)||'Unnamed individual '+person.id,dates:dates==='–'?'':dates,relation:'',side:'',line:'',state:location.state,county:location.county,town:location.town,cemetery:location.cemetery,plot:'',findagrave:memorial?memorial[0]:'',notes:noteBits.join(' | '),visited:false,stone:false,photo:false,gps:false,gedcomBurial:best.place,source:'GEDCOM import'});
+   individuals.push({id:'ged-'+person.id.replace(/[^A-Za-z0-9_-]/g,''),gedcomId:person.id,name:gedName(person.name)||'Unnamed individual '+person.id,nameSuffix:gedNameSuffix(person.name),dates:dates==='–'?'':dates,relation:'',side:'',line:'',state:location.state,county:location.county,town:location.town,cemetery:location.cemetery,plot:'',findagrave:memorial?memorial[0]:'',notes:noteBits.join(' | '),visited:false,stone:false,photo:false,gps:false,gedcomBurial:best.place,source:'GEDCOM import'});
  }}
  for(const row of lines){const m=row.match(/^(\d+)\s+(?:(@[^\s]+@)\s+)?(\S+)(?:\s+(.*))?$/);if(!m)continue;const lev=Number(m[1]),tag=m[3],value=(m[4]||'').trim();
   if(lev===0){commit();person=(tag==='INDI'&&m[2])?{id:m[2],name:'',birth:'',death:'',burials:[]}:null;context='';level2='';burial=null;continue;}
@@ -887,13 +904,13 @@ $('compareGedcomFile').onchange=async e=>{
    }
    return left===right;
   }
-  const readable=k=>FIELD_NAMES[k]||k;
-  const fields=['name','dates','cemetery','town','county','state','findagrave'];
+  const readable=k=>k==='nameSuffix'?'Name suffix (including emoji markers)':(FIELD_NAMES[k]||k);
+  const fields=['name','nameSuffix','dates','cemetery','town','county','state','findagrave'];
   // Conservative presentation-only normalization. Do not call distinct dates, towns,
   // cemetery names, or memorial IDs equivalent just because they resemble one another.
   function normalizedDisplay(key,value){
    let t=String(value||'').normalize('NFKC').trim().replace(/\s+/g,' ');
-   if(key==='name')t=t.replace(/[\u200D\uFE0E\uFE0F]/g,'').replace(/\p{Extended_Pictographic}/gu,'').replace(/\s+/g,' ').trim();
+   // Never strip emojis from names: users deliberately use them in suffixes.
    if(key==='dates')t=t.replace(/[‐‑‒–—]/g,'-').replace(/\s*[-]\s*/g,'-');
    return t.toLocaleLowerCase('en-US');
   }
@@ -922,16 +939,23 @@ $('compareGedcomFile').onchange=async e=>{
    ));
    if(shiftedLocation)shifted.push({id,name:incomingRecord.name,oldCemetery:savedCemetery,oldTown:savedTown,proposedCemetery:newCemetery,proposedTown:newTown,place:incomingRecord.gedcomBurial});
    for(const key of fields){
-    const original=old[key]||'',current=localValue(old,key)||'',incomingValue=incomingRecord[key]||'';
+    const original=key==='nameSuffix'?savedNameSuffix(old):(old[key]||'');
+    const current=key==='nameSuffix'?savedNameSuffix({...old,...(updates[old.id]||{})}):(localValue(old,key)||'');
+    const incomingValue=incomingRecord[key]||'';
+    // A suffix belongs in its own comparison. Avoid double-counting it as
+    // a changed given/surname when it is otherwise the same name.
+    const originalBase=key==='name'?nameWithoutSuffix(original,savedNameSuffix(old)):original;
+    const currentBase=key==='name'?nameWithoutSuffix(current,savedNameSuffix({...old,...(updates[old.id]||{})})):current;
+    const incomingBase=key==='name'?nameWithoutSuffix(incomingValue,incomingRecord.nameSuffix):incomingValue;
     if(shiftedLocation&&(key==='town'||key==='cemetery')){changed=true;continue;}
     // Compare against the visible, effective value, not just the original imported seed.
-    if(sameValue(key,current,incomingValue)){
-     if(!sameValue(key,original,incomingValue))resolved.push({id,name:incomingRecord.name,key});
+    if(sameValue(key,currentBase,incomingBase)){
+     if(!sameValue(key,originalBase,incomingBase))resolved.push({id,name:incomingRecord.name,key});
      continue;
     }
     changed=true;
     const item={id,name:incomingRecord.name,key,original,current,incoming:incomingValue,locallyEdited:!sameValue(key,current,original)};
-    if(equivalentFormatting(key,current,incomingValue))formatting.push(item);
+    if(equivalentFormatting(key,currentBase,incomingBase))formatting.push(item);
     else if(!String(current).trim()&&String(incomingValue).trim())fills.push(item);
     else if(String(current).trim()&&!String(incomingValue).trim()){
      // Absence in an export is not an instruction to erase fieldwork.
@@ -960,10 +984,10 @@ $('compareGedcomFile').onchange=async e=>{
   container.append(title,counts,textNode('p','hint',
    'PREVIEW ONLY. Categories count records, not individual fields; one person may appear in more than one category. '+
    'Cemetery/town field shifts are review-only and are not treated as safe automatic fixes. Missing-field candidates are NOT automatically applied. Multiple incompatible burial facts within one person ID require manual review, not automatic merging. Original and locally edited records, photos, notes, visits, and history are unchanged. '+
-   'GEDCOM ID matching requires stable IDs across exports; files from other trees may not compare safely.'));
+   'Name suffixes (including emoji markers) are meaningful and are reviewed separately, not discarded as formatting. GEDCOM ID matching requires stable IDs across exports; files from other trees may not compare safely.'));
   const sections=[
    ['New burial entries (sample)',newBurials.slice(0,8).map(r=>`${r.name} (${idOf(r)}) · ${r.cemetery||'Cemetery unknown'} · ${[r.county,r.state].filter(Boolean).join(', ')}`)],
-   ['Likely cemetery / town mapping issues — review first',shifted.slice(0,15).map(x=>`${x.name} (${x.id}) · Fieldbook: Cemetery ${x.oldCemetery||'—'}; Town ${x.oldTown||'—'} · GEDCOM: Cemetery ${x.proposedCemetery}; Town ${x.proposedTown} · Source: ${x.place} · REVIEW ONLY, no changes made`)],
+   ['Likely cemetery / town mapping issues — all flagged records',shifted.map(x=>`${x.name} (${x.id}) · Fieldbook: Cemetery ${x.oldCemetery||'—'}; Town ${x.oldTown||'—'} · GEDCOM: Cemetery ${x.proposedCemetery}; Town ${x.proposedTown} · Source: ${x.place} · REVIEW ONLY, no changes made`)],
    ['Missing information available (sample)',fills.slice(0,12).map(describe)],
    ['Existing values requiring review (sample)',reviews.slice(0,12).map(describe)],
    ['Formatting-only differences (sample)',formatting.slice(0,12).map(describe)],
