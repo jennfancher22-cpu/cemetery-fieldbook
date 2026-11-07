@@ -170,7 +170,7 @@
 <details class="data-subfold" id="dataBackupsFold"><summary>3 · Backup and restore <span class="tool-subnote">Protect and transfer fieldwork</span></summary><div class="data-subbody">
 <h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your existing OneDrive backup and restore it in this version. Do not discard either version until you have verified the imported notes and photos.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The new full backup includes the original burial list, photos, notes, and change history. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This is a single-file offline test, not a synced app. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div></div></details>
 </div></details></section>
-<footer>Fieldbook v7 MERGE REVIEW UI TEST · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 INDIVIDUAL FIELD REVIEW TEST · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -1152,7 +1152,7 @@ $('compareGedcomFile').onchange=async e=>{
    }
   }
   searchBox.addEventListener('input',updateInspector);updateInspector();
-  // Safe-merge phase 1: additions and empty-field completions only.
+  // Safe-merge phase 2: additions, conflict-free completions, and individually approved blank fields on records with unrelated differences.
   // Never overwrite any present value, and never merge a person flagged for
   // multiple incompatible burial facts, a field shift, or a value disagreement.
   // All actions require an explicit review, an exported rollback backup, and confirmation.
@@ -1185,7 +1185,7 @@ $('compareGedcomFile').onchange=async e=>{
   const mergeHead=textNode('summary','','Safe GEDCOM merge — review and apply (TEST only)');mergeBox.append(mergeHead);
   const mergeBody=textNode('div','cemetery-group-people');
   mergeBody.append(textNode('p','hint','First-stage merge only: add new GEDCOM burial people and optionally fill truly blank fields on records without any conflicts. Existing values, local edits, notes, visits, photos, and GPS are never replaced. Intentional source values such as “Cemetery Unknown” are preserved as supplied by FTM. Conflicting burials, shifted locations, and records with any differing nonempty values are not eligible. Nothing happens without approval.'));
-  const summary=textNode('p','hint',newBurials.length+' eligible new burial records; '+fillGroups.size+' existing people with safe empty fields ('+[...fillGroups.values()].reduce((a,b)=>a+b.length,0)+' individual fields); '+ambiguous.length+' conflicting-burial people blocked; '+changedIds.size+' people requiring review excluded.');mergeBody.append(summary);
+  const summary=textNode('p','hint',newBurials.length+' eligible new burial records; '+fillGroups.size+' existing people with safe empty fields ('+[...fillGroups.values()].reduce((a,b)=>a+b.length,0)+' individual fields); '+ambiguous.length+' conflicting-burial people blocked; '+changedIds.size+' people with differing values require review rather than bulk updates.');mergeBody.append(summary);
   const safetyMessage=textNode('p','hint',idSafetyOK?'GEDCOM ID safety check passed: '+overlap+' matching individual IDs; '+mismatches+' name discrepancies.':'MERGE DISABLED: person-ID safety check failed ('+overlap+' matching IDs out of '+existing.length+' existing GEDCOM records; '+mismatches+' different names). This may be an export with changed IDs or another tree. No data may be merged.');
   mergeBody.append(safetyMessage);
   const identityDetails=document.createElement('details');identityDetails.className='cemetery-group';
@@ -1195,6 +1195,53 @@ $('compareGedcomFile').onchange=async e=>{
   if(!identityDifferences.length)identityList.append(textNode('p','tiny','None. All matched GEDCOM IDs have the same normalized base name.'));
   for(const x of identityDifferences)identityList.append(textNode('div','ged-example',x.id+' · Fieldbook: '+x.oldName+' · New GEDCOM: '+x.newName));
   identityDetails.append(identityList);mergeBody.append(identityDetails);
+  // Separate review path for individual empty fields on records whose OTHER
+  // nonblank fields differ. No broad approval: verify the person and tick each
+  // proposed field. Never include uncertain location-shift or burial-conflict IDs.
+  const shiftedIds=new Set(shifted.map(x=>x.id));
+  const reviewFillGroups=new Map();
+  for(const item of fills){
+   if(!changedIds.has(item.id)||shiftedIds.has(item.id)||blockedBurialIds.has(item.id.toUpperCase()))continue;
+   // If someone deliberately cleared an original value, do not restore it.
+   if(String(item.original||'').trim()||item.locallyEdited)continue;
+   if(!reviewFillGroups.has(item.id))reviewFillGroups.set(item.id,[]);
+   reviewFillGroups.get(item.id).push(item);
+  }
+  const reviewedDetails=document.createElement('details');reviewedDetails.className='cemetery-group';
+  const reviewFillCount=[...reviewFillGroups.values()].reduce((sum,items)=>sum+items.length,0);
+  reviewedDetails.append(textNode('summary','','Review individually: missing fields on records with differences ('+reviewFillGroups.size+' people, '+reviewFillCount+' fields)'));
+  const reviewedBody=textNode('div','cemetery-group-people');
+  reviewedBody.append(textNode('p','hint','These people have differences elsewhere in their records. Verify the GEDCOM ID and identity first, then tick only specific missing fields you want filled. Existing names and other nonempty values are never changed. Cemetery/town shifts and conflicting burial facts remain blocked.'));
+  const manualSelections=[];
+  for(const [id,items] of reviewFillGroups){
+   const old=existingMap.get(id),newPerson=incomingMap.get(id);
+   const section=document.createElement('details');section.className='cemetery-group';
+   section.append(textNode('summary','',''+(newPerson?.name||old?.name||id)+' ('+id+') — '+items.length+' proposed field'+(items.length===1?'':'s')));
+   const body=textNode('div','cemetery-group-people');
+   body.append(textNode('p','tiny','Saved Fieldbook name: '+(old?.name||'—')+' | Incoming GEDCOM name: '+(newPerson?.name||'—')));
+   const differences=reviews.filter(r=>r.id===id);
+   for(const x of differences)body.append(textNode('div','ged-example','Existing difference (NOT changed): '+readable(x.key)+' | Fieldbook: '+(x.current||'—')+' | GEDCOM: '+(x.incoming||'—')));
+   const identity=document.createElement('label');identity.className='merge-approval';
+   const identityCB=document.createElement('input');identityCB.type='checkbox';
+   identity.append(identityCB,textNode('span','','I verified that GEDCOM '+id+' is the same person as this Fieldbook record.'));
+   body.append(identity);
+   for(const x of items){
+    const label=document.createElement('label');label.className='merge-approval';
+    const cb=document.createElement('input');cb.type='checkbox';cb.disabled=true;
+    const caption=textNode('span','','Fill '+readable(x.key)+': blank → '+x.incoming);
+    label.append(cb,caption);body.append(label);
+    manualSelections.push({item:x,checkbox:cb,identity:identityCB});
+   }
+   identityCB.addEventListener('change',()=>{
+    for(const entry of manualSelections.filter(x=>x.identity===identityCB)){
+     entry.checkbox.disabled=!identityCB.checked||!idSafetyOK;
+     if(entry.checkbox.disabled)entry.checkbox.checked=false;
+    }
+   });
+   section.append(body);reviewedBody.append(section);
+  }
+  if(!reviewFillGroups.size)reviewedBody.append(textNode('p','tiny','No additional blank fields eligible for individual review.'));
+  reviewedDetails.append(reviewedBody);mergeBody.append(reviewedDetails);
   const addDetails=document.createElement('details');addDetails.append(textNode('summary','','Review new burial records ('+newBurials.length+')'));
   const addList=textNode('div','cemetery-group-people');addList.style.maxHeight='240px';addList.style.overflow='auto';
   for(const r of newBurials)addList.append(textNode('div','ged-example',displayPersonName(r)+' · '+idOf(r)+' · '+(r.cemetery||'Cemetery unknown')+' · '+[r.town,r.county,r.state].filter(Boolean).join(', ')));
@@ -1209,13 +1256,14 @@ $('compareGedcomFile').onchange=async e=>{
   const addApproval=approval('Approve all '+newBurials.length+' eligible new burial records (none with conflicting burial facts)');
   const fillApproval=approval('Approve blank-field completions for '+fillGroups.size+' conflict-free people (never replace an existing value)');
   addApproval.disabled=!newBurials.length||!idSafetyOK;fillApproval.disabled=!fillGroups.size||!idSafetyOK;
-  const apply=document.createElement('button');apply.type='button';apply.className='secondary';apply.textContent='Export rollback backup, then confirm approved merge';apply.disabled=!idSafetyOK||(!newBurials.length&&!fillGroups.size);
+  const apply=document.createElement('button');apply.type='button';apply.className='secondary';apply.textContent='Export rollback backup, then confirm approved merge';apply.disabled=!idSafetyOK||(!newBurials.length&&!fillGroups.size&&!reviewFillCount);
   const mergeStatus=textNode('p','hint','No merge applied. Select categories above before continuing.');
   mergeBody.append(apply,mergeStatus);mergeBox.append(mergeBody);container.append(mergeBox);
   apply.onclick=async()=>{
    const doAdd=addApproval.checked,doFill=fillApproval.checked;
+   const approvedManual=manualSelections.filter(x=>x.checkbox.checked&&x.identity.checked&&!x.checkbox.disabled);
    if(!idSafetyOK){mergeStatus.textContent='Blocked: GEDCOM person IDs are not safe to match.';return;}
-   if(!doAdd&&!doFill){mergeStatus.textContent='Select at least one category to apply.';return;}
+   if(!doAdd&&!doFill&&!approvedManual.length){mergeStatus.textContent='Select at least one category or individual missing field to apply.';return;}
    // Revalidate against live data immediately before the write; comparison can
    // become stale if the user edits a record after previewing.
    const live=new Map(all().filter(r=>idOf(r)).map(r=>[idOf(r),r]));
@@ -1229,13 +1277,27 @@ $('compareGedcomFile').onchange=async e=>{
      if(!String(current).trim()&&String(x.incoming).trim())freshFills.push({id,record,key:x.key,value:x.incoming});
     }
    }
+   // Individually reviewed fields may coexist with different nonblank values
+   // elsewhere in the SAME person. Never change the differing values.
+   let manualCount=0;
+   for(const selection of approvedManual){
+    const x=selection.item,id=x.id;
+    if(shiftedIds.has(id)||blockedBurialIds.has(id.toUpperCase())||!reviewFillGroups.has(id))continue;
+    const record=live.get(id);if(!record)continue;
+    const current=x.key==='nameSuffix'?effectiveSavedSuffix(record,x.incoming):record[x.key]||'';
+    if(String(current).trim()||!String(x.incoming).trim())continue;
+    // Deliberate emptying of an originally populated field stays empty.
+    if(String(x.original||'').trim()||x.locallyEdited)continue;
+    if(freshFills.some(y=>y.id===id&&y.key===x.key))continue;
+    freshFills.push({id,record,key:x.key,value:x.incoming});manualCount++;
+   }
    if(!freshNew.length&&!freshFills.length){mergeStatus.textContent='No approved changes remain to apply. The saved records may already be up to date.';return;}
    apply.disabled=true;mergeStatus.textContent='Preparing a full rollback backup, including photographs…';
    try{
     const photos=await getPhotos();
     const payload={format:'CemeteryFieldbookBackup',version:5,exported:new Date().toISOString(),seed,updates,extras,photos,geoEdits,changeLog,gedcomPeople:allGedcomPeople,homePersonId};
     download(new Blob([JSON.stringify(payload)],{type:'application/json'}),'cemetery-fieldbook-PRE-MERGE-backup-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json');
-    const confirmed=confirm('A full rollback backup download was requested. Verify the JSON backup is saved before continuing.\n\nApply '+freshNew.length+' new burial records and '+freshFills.length+' missing fields to TEST?\n\nNo existing nonempty values will be overwritten. '+ambiguous.length+' conflicting burial people remain blocked. Cancel if the backup was not downloaded.');
+    const confirmed=confirm('A full rollback backup download was requested. Verify the JSON backup is saved before continuing.\n\nApply '+freshNew.length+' new burial records and '+freshFills.length+' missing fields to TEST?\n\nNo existing nonempty values will be overwritten. '+manualCount+' individually reviewed field(s) included. '+ambiguous.length+' conflicting burial people remain blocked. Cancel if the backup was not downloaded.');
     if(!confirmed){mergeStatus.textContent='Cancelled. No records changed; the rollback backup was requested.';return;}
     const oldExtras=extras,oldUpdates=updates,oldDirectory=allGedcomPeople,oldLog=changeLog;
     const priorRecords=localStorage.getItem(KEY),priorPeople=localStorage.getItem(GED_PEOPLE_KEY),priorLog=localStorage.getItem(CHANGE_KEY);
@@ -1262,7 +1324,7 @@ $('compareGedcomFile').onchange=async e=>{
      extras=nextExtras;updates=nextUpdates;allGedcomPeople=[...nextDirectory.values()];changeLog=[event,...changeLog];
      refreshHomeDisplay();searchHomePeople();refreshOptions();render();renderChangeLog();
      mergeStatus.textContent='Merge complete: '+freshNew.length+' new burial records and '+freshFills.length+' blank fields filled. '+ambiguous.length+' conflicting-burial people excluded. Your PRE-MERGE backup is your rollback copy. Re-run the comparison to verify.';
-     addApproval.checked=false;fillApproval.checked=false;apply.disabled=true;
+     addApproval.checked=false;fillApproval.checked=false;for(const entry of manualSelections){entry.checkbox.checked=false;entry.checkbox.disabled=true;entry.identity.checked=false;}apply.disabled=true;
     }catch(err){
      extras=oldExtras;updates=oldUpdates;allGedcomPeople=oldDirectory;changeLog=oldLog;
      for(const [key,value] of [[KEY,priorRecords],[GED_PEOPLE_KEY,priorPeople],[CHANGE_KEY,priorLog]]){
