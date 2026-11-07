@@ -177,7 +177,13 @@
 <div id="compareGedcomResults" class="ged-preview" hidden></div></div>
 </div></details>
 <details class="data-subfold" id="dataBackupsFold"><summary>3 · Backup and restore <span class="tool-subnote">Protect and transfer your data</span></summary><div class="data-subbody">
-<h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your v6.1 backup safe. This LIVE release opens your existing local records using the same storage keys. Do not restore a backup unless recovery is needed; restoring replaces current data.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The new full backup includes the original burial list, photos, notes, and change history. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This app stores records privately on this device and is not synced. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div></div></details>
+<h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your v6.1 backup safe. This LIVE release opens your existing local records using the same storage keys. Do not restore a backup unless recovery is needed; restoring replaces current data.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The new full backup includes the original burial list, photos, notes, and change history. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This app stores records privately on this device and is not synced. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div><div id="resetFieldbookPanel" class="fieldbook-reset-panel" style="margin-top:18px;padding:14px;border:1px solid #d8b3ad;border-radius:12px;background:#fff9f7">
+<h3 style="margin:0 0 6px;color:#813d32">Start over / reset Fieldbook data</h3>
+<p class="hint" style="margin:0 0 10px">Use this only when you want an empty Fieldbook before a fresh GEDCOM import. This erases this browser's <strong>LIVE burial entries, edits, discoveries, photographs, visit statuses, change history, saved cemetery coordinates, Home Person, and GEDCOM directory</strong>. It does not delete your downloaded backups or the app on GitHub. It does not erase TEST Fieldbook records.</p>
+<label style="display:flex;align-items:flex-start;gap:9px;margin:8px 0;font-size:13px"><input id="resetBackupAck" type="checkbox" style="width:18px;height:18px;min-height:18px;flex:0 0 18px;margin-top:2px"><span>I have saved a full backup and understand that resetting removes my LIVE data from this browser.</span></label>
+<button type="button" class="danger" id="resetFieldbookButton" disabled>Reset LIVE Fieldbook data…</button>
+<p id="resetFieldbookStatus" class="hint" role="status" style="margin:8px 0 0"></p>
+</div></div></details>
 <details class="data-subfold" id="advancedToolsFold"><summary>4 · Advanced tools <span class="tool-subnote">Legacy repairs and troubleshooting · usually not needed</span></summary><div class="data-subbody">
 <p class="hint" style="margin-top:0">These are retained for older Fieldbook data, relationship troubleshooting, and recovery. Initial GEDCOM imports and routine updates already handle suffix emojis and Find a Grave links, so you normally do not need separate repair tools. Back up before using any repair action.</p>
 <div class="home-panel" id="suffixRepairPanel"><h3 style="margin-top:0">Preview missing GEDCOM name suffixes</h3>
@@ -198,7 +204,7 @@
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7 LIVE · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 LIVE · Reset option · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -1686,5 +1692,51 @@ function previewRelationship(sample=false){
 $rel('relationshipSample').addEventListener('click',()=>{relSearch.value='';previewRelationship(true);});
 relSearch.addEventListener('input',()=>previewRelationship(false));
 relStatus.textContent='Select your Home Person and search for someone buried in your GEDCOM.';
+})();
+</script><script>
+// LIVE-only, deliberate reset. Never clear the whole origin: TEST shares this GitHub Pages origin.
+(function () {
+ 'use strict';
+ const ack=document.getElementById('resetBackupAck');
+ const button=document.getElementById('resetFieldbookButton');
+ const status=document.getElementById('resetFieldbookStatus');
+ if(!ack||!button||!status)return;
+ ack.addEventListener('change',()=>{button.disabled=!ack.checked});
+ button.addEventListener('click',async()=>{
+  if(!ack.checked)return;
+  const answer=prompt('FINAL CHECK: This will permanently clear all LIVE Fieldbook data stored in this browser, including photos and history.\n\nType RESET to continue:');
+  if(answer!=='RESET'){status.textContent='Reset cancelled. No data changed.';return;}
+  if(!confirm('Clear LIVE Fieldbook data from this browser now? Your saved backup files will not be deleted.')){
+   status.textContent='Reset cancelled. No data changed.';return;
+  }
+  button.disabled=true;status.textContent='Clearing LIVE photos and records…';
+  try {
+   // Photos are stored separately in IndexedDB. Clear them first, before deleting any record data.
+   const database=await openDB();
+   await new Promise((resolve,reject)=>{
+    const tx=database.transaction('photos','readwrite');
+    tx.objectStore('photos').clear();
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error||Error('Photo database failed'));
+    tx.onabort=()=>reject(tx.error||Error('Photo clearing was aborted'));
+   });
+   // Only LIVE-specific keys: do not touch TEST keys on the same origin.
+   const liveKeys=[
+    'cemeteryFieldbook_private_seed_v3',
+    'cemeteryFieldbook_v1',
+    'cemeteryFieldbook_backup_time',
+    'cemeteryFieldbook_changelog_v1',
+    'cemeteryFieldbook_geo_v2',
+    'cemeteryFieldbook_v7_all_gedcom_people',
+    'cemeteryFieldbook_v7_home_person_id'
+   ];
+   for(const key of liveKeys)localStorage.removeItem(key);
+   status.textContent='LIVE data cleared. Reloading Fieldbook…';
+   location.reload();
+  } catch(err) {
+   status.textContent='Reset did not finish: '+(err?.message||String(err))+'. Do not import until you verify that the Fieldbook is empty. Your original backup remains available.';
+   button.disabled=false;
+  }
+ });
 })();
 </script></body></html>
