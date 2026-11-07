@@ -273,7 +273,7 @@
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7 LIVE · Mobile review v2 · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 LIVE · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -1357,7 +1357,8 @@ async function compareCurrentGedcom(file){
   const totalFields=[...individualReview.values()].reduce((n,g)=>n+g.fills.length+g.replacements.length,0);
   const reviewStep=textNode('section','guided-step');
   reviewStep.append(textNode('h4','guided-step-title','1. Review people and select changes'));
-  reviewStep.append(textNode('p','guided-step-hint','Each person appears once, with all proposed fields together. For existing records, tap Accept all to confirm identity and select all eligible fields, or verify identity and select individual fields. Unchecked values stay unchanged.'));
+  reviewStep.append(textNode('p','guided-step-hint','Review the proposed changes for each person. Selecting Accept all approves every eligible field for that person; you can deselect individual fields. Unchecked values stay unchanged.'));
+  reviewStep.append(textNode('p','person-review-note','Please confirm each record is the correct person before selecting changes. GEDCOM IDs help identify matches but are not proof of identity. Your selections are your approval; no separate person-by-person confirmation is required.'));
   const findRow=document.createElement('div');findRow.className='person-review-search';
   const findInput=document.createElement('input');findInput.type='search';findInput.placeholder='Search name or ID';findInput.setAttribute('aria-label','Find person in proposed GEDCOM changes');
   const visibleCount=textNode('span','tiny','');findRow.append(findInput,visibleCount);
@@ -1405,19 +1406,15 @@ async function compareCurrentGedcom(file){
    const differentNames=old&&incoming&&!sameValue('name',nameWithoutSuffix(old.name||'',effectiveSavedSuffix(old,'')),nameWithoutSuffix(incoming.name||'',incoming.nameSuffix||''));
    addPersonCard(name,id,'Update',changes.length,(body,heading)=>{
     if(differentNames)body.append(textNode('p','person-review-note','Saved name: '+(old.name||'—')+' | GEDCOM name: '+(incoming.name||'—')));
-    const verifyLabel=document.createElement('label');verifyLabel.className='merge-approval';
-    const verify=document.createElement('input');verify.type='checkbox';
-    verifyLabel.append(verify,textNode('span','','I verified GEDCOM '+id+' is the same person in FTM and Fieldbook'));
-    body.append(verifyLabel);
     const choices=[];
     for(const {item:x,kind} of changes){
      const row=document.createElement('label');row.className='merge-approval person-review-field';
-     const cb=document.createElement('input');cb.type='checkbox';cb.disabled=true;
+     const cb=document.createElement('input');cb.type='checkbox';cb.disabled=!idSafetyOK||Boolean(legacyUnlinked.length);
      const textPart=textNode('span','');
      const heading=textNode('strong','',readable(x.key)+' · '+(kind==='fill'?'Fill blank':'Replace existing'));
      const description=textNode('span','person-review-values',(kind==='fill'?'Blank':String(x.current||'—'))+' → '+String(x.incoming||'—'));
      textPart.append(heading,description);row.append(cb,textPart);body.append(row);
-     const selection={item:x,checkbox:cb,identity:verify};
+     const selection={item:x,checkbox:cb};
      if(kind==='fill')manualSelections.push(selection);else replaceSelections.push(selection);
      choices.push(cb);
     }
@@ -1440,19 +1437,8 @@ async function compareCurrentGedcom(file){
     for(const cb of choices)cb.addEventListener('change',syncSelection);
     acceptAll.addEventListener('change',()=>{
      const requested=acceptAll.checked;
-     // Tapping Accept all is an explicit request; verify identity before enabling edits.
-     if(requested&&!verify.checked){
-      const confirmed=window.confirm('Have you verified that '+name+' ('+id+') is the SAME individual in your Family Tree Maker tree and this Fieldbook?\n\nSelect OK only after confirming the identity.');
-      if(!confirmed){acceptAll.checked=false;syncSelection();return;}
-      verify.checked=true;
-     }
-     const allow=verify.checked&&idSafetyOK&&!legacyUnlinked.length;
-     for(const cb of choices){cb.disabled=!allow;if(!allow)cb.checked=false;else cb.checked=requested;}
-     syncSelection();
-    });
-    verify.addEventListener('change',()=>{
-     const allow=verify.checked&&idSafetyOK&&!legacyUnlinked.length;
-     for(const cb of choices){cb.disabled=!allow;if(cb.disabled)cb.checked=false;}
+     const allow=idSafetyOK&&!legacyUnlinked.length;
+     for(const cb of choices){cb.disabled=!allow;cb.checked=Boolean(allow&&requested);}
      syncSelection();
     });
    });
@@ -1496,8 +1482,8 @@ async function compareCurrentGedcom(file){
   apply.onclick=async()=>{
    const selectedNew=new Set(newSelections.filter(x=>x.checkbox.checked&&!x.checkbox.disabled).map(x=>x.id));
    const doAdd=selectedNew.size>0,doFill=false;
-   const approvedManual=manualSelections.filter(x=>x.checkbox.checked&&x.identity.checked&&!x.checkbox.disabled);
-   const approvedReplacements=replaceSelections.filter(x=>x.checkbox.checked&&x.identity.checked&&!x.checkbox.disabled);
+   const approvedManual=manualSelections.filter(x=>x.checkbox.checked&&!x.checkbox.disabled);
+   const approvedReplacements=replaceSelections.filter(x=>x.checkbox.checked&&!x.checkbox.disabled);
    if(legacyUnlinked.length){mergeStatus.textContent='Merge blocked to prevent duplicate relatives: '+legacyUnlinked.length+' existing LIVE entries have no GEDCOM ID. Their identities must be matched before the first nationwide update. No records were changed.';return;}
    if(!idSafetyOK){mergeStatus.textContent='Blocked: GEDCOM person IDs are not safe to match.';return;}
    if(!doAdd&&!doFill&&!approvedManual.length&&!approvedReplacements.length){mergeStatus.textContent='Select at least one category or approved individual field to apply.';return;}
@@ -1606,7 +1592,7 @@ async function compareCurrentGedcom(file){
      refreshHomeDisplay();searchHomePeople();refreshOptions();render();renderChangeLog();
      const resultMessage='Merge complete: '+freshNew.length+' new burials added, '+freshFills.length+' blank fields filled, and '+freshReplacements.length+' verified existing values replaced. '+ambiguous.length+' conflicting-burial people held for review. Keep your downloaded PRE-MERGE backup.';
      mergeStatus.textContent=resultMessage+' Refreshing the comparison automatically…';
-     for(const choice of newSelections)choice.checkbox.checked=false;for(const entry of [...manualSelections,...replaceSelections]){entry.checkbox.checked=false;entry.checkbox.disabled=true;entry.identity.checked=false;}apply.disabled=true;
+     for(const choice of newSelections)choice.checkbox.checked=false;for(const entry of [...manualSelections,...replaceSelections]){entry.checkbox.checked=false;entry.checkbox.disabled=!idSafetyOK||Boolean(legacyUnlinked.length);}apply.disabled=true;
      // Refresh asynchronously after the save and redraw; the SAME user-chosen file is reused.
      // Save the result banner outside the rebuilt review area so it stays visible.
      try{await compareCurrentGedcom(file);status.textContent=resultMessage+' The comparison below is now up to date.';}
