@@ -1005,6 +1005,47 @@ $('compareGedcomFile').onchange=async e=>{
   const total=existing.length;
   const unlinked=seed.length-total;
   status.textContent=`Compared ${incoming.length} burial entries in ${file.name} with ${total} GEDCOM-linked saved records`+(unlinked?` (${unlinked} other saved entries left out of ID matching)`:'')+'. '+shifted.length+' potential cemetery/town field shifts, '+fills.length+' missing-field candidates, '+reviews.length+' field differences to review, '+formatting.length+' formatting-only fields. Nothing changed.';
+  // Inspect each imported person's precise field-level comparison without editing data.
+  // This is particularly important when a record appears in a broad category for
+  // an unrelated field (for example an unchanged name suffix).
+  const inspector=document.createElement('details');inspector.className='cemetery-group';
+  const inspectorHead=document.createElement('summary');inspectorHead.textContent='Inspect a person — exact field differences';
+  const inspectorBody=textNode('div','cemetery-group-people');
+  const searchBox=document.createElement('input');searchBox.type='search';
+  searchBox.placeholder='Search name or GEDCOM ID (e.g. Samuel H Poland)';
+  searchBox.setAttribute('aria-label','Search GEDCOM comparisons by person');
+  searchBox.style.width='100%';searchBox.style.marginBottom='0.7rem';
+  const foundBox=document.createElement('div');
+  inspectorBody.append(textNode('p','hint','This inspector shows exactly why a person appears in a comparison category. Unchanged suffix emojis are not missing information.'),searchBox,foundBox);
+  inspector.append(inspectorHead,inspectorBody);container.append(inspector);
+  const inspected=[...incomingMap.entries()];
+  function updateInspector(){
+   foundBox.replaceChildren();const query=searchBox.value.trim().toLocaleLowerCase('en-US');
+   if(query.length<2){foundBox.append(textNode('p','tiny','Enter at least 2 characters.'));return;}
+   const matches=inspected.filter(([id,r])=>String(r.name).toLocaleLowerCase('en-US').includes(query)||id.toLocaleLowerCase('en-US').includes(query)).slice(0,6);
+   if(!matches.length){foundBox.append(textNode('p','tiny','No matching GEDCOM person found.'));return;}
+   for(const [id,r] of matches){
+    const old=existingMap.get(id);
+    const panel=document.createElement('div');panel.className='ged-example';
+    panel.append(textNode('strong','',r.name+' ('+id+')'));
+    if(!old){panel.append(textNode('p','tiny','New burial entry — no saved GEDCOM-linked record to compare.'));foundBox.append(panel);continue;}
+    const currentSuffix=savedNameSuffix({...old,...(updates[old.id]||{})});
+    let rows=0;
+    for(const key of fields){
+     const current=key==='nameSuffix'?currentSuffix:(localValue(old,key)||'');
+     const next=r[key]||'';
+     const a=key==='name'?nameWithoutSuffix(current,currentSuffix):current;
+     const b=key==='name'?nameWithoutSuffix(next,r.nameSuffix):next;
+     const kind=sameValue(key,a,b)?'Same':equivalentFormatting(key,a,b)?'Formatting only':!String(current).trim()&&String(next).trim()?'MISSING in Fieldbook':String(current).trim()&&!String(next).trim()?'Missing in GEDCOM — preserve':'DIFFERENT — review';
+     if(kind!=='Same'||key==='nameSuffix'||key==='cemetery'||key==='town'){
+      panel.append(textNode('div','tiny',readable(key)+': '+kind+' | Fieldbook: '+(String(current)||'—')+' | GEDCOM: '+(String(next)||'—')));rows++;
+     }
+    }
+    if(!rows)panel.append(textNode('p','tiny','All compared fields match.'));
+    foundBox.append(panel);
+   }
+  }
+  searchBox.addEventListener('input',updateInspector);updateInspector();
   container.hidden=false;
  }catch(err){status.textContent='Comparison failed: '+err.message;container.hidden=true;}
  finally{e.target.value='';}
