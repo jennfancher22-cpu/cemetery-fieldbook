@@ -730,15 +730,23 @@ const US_STATES = new Set(('Alabama|Alaska|Arizona|Arkansas|California|Colorado|
 function gedYear(s) { const m = String(s||'').match(/(?:^|\D)(1[5-9]\d{2}|20\d{2})(?:\D|$)/); return m?m[1]:''; }
 function gedName(s) { return String(s||'').replace(/\//g,'').replace(/\s+/g,' ').trim(); }
 function normalizeBurialPlace(raw) {
+  // Preserve place components rather than sliding a cemetery into the town field.
+  // Typical FTM format: Cemetery, Town, County, State, USA.
   const parts=String(raw||'').split(',').map(s=>s.trim()).filter(Boolean);
-  const cemeteryMatch=/\b(cemetery|cem\.?|graveyard|churchyard|burial ground|memorial park|memorial gardens|mausoleum)\b/i;
-  const hasCemetery=!!(parts[0]&&cemeteryMatch.test(parts[0]));
-  const loc=hasCemetery?parts.slice(1):parts;
-  const state=loc.find(s=>US_STATES.has(s)) || '';
-  const countyPart=loc.find(s=>/\bcounty\b/i.test(s))||'';
-  const county=countyPart.replace(/\s+county\b/i,'').trim();
-  const town=loc.find(s=>s!==countyPart && s!==state && !/^(usa|united states|united states of america)$/i.test(s))||'';
-  return {cemetery:hasCemetery?parts[0]:'',town,county,state,hasCemetery};
+  const cemeteryCue=/\b(cemetery|cem\.?|graveyard|churchyard|burial\s*ground|(?:memorial|memory)\s*(?:park|gardens?)|mausoleum|burying\s*ground|burial\s*park)\b/i;
+  const country=/^(?:usa|u\.?s\.?a\.?|united states(?: of america)?)$/i;
+  const loc=parts.filter(x=>!country.test(x));
+  const usAbbr={AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',DC:'District of Columbia'};
+  const last=loc.length?loc[loc.length-1]:'';
+  const state=US_STATES.has(last)?last:(usAbbr[last.toUpperCase()]||'');
+  if(state)loc.pop();
+  const countyIndex=loc.findIndex(s=>/\b(county|parish|borough)\s*$/i.test(s));
+  const county=countyIndex<0?'':loc.splice(countyIndex,1)[0].replace(/\s+(county|parish|borough)\s*$/i,'').trim();
+  const hasCemetery=!!(loc[0]&&cemeteryCue.test(loc[0]));
+  const cemetery=hasCemetery?loc.shift():'';
+  // If the remaining place is ambiguous, don't pretend a cemetery is a town.
+  const town=loc[0]||'';
+  return {cemetery,town,county,state,hasCemetery,rawPlace:String(raw||'')};
 }
 function parseGedcomBurials(text){
  const lines=String(text).replace(/^\uFEFF/,'').split(/\r\n|\n|\r/);
@@ -894,14 +902,28 @@ $('compareGedcomFile').onchange=async e=>{
    if(key==='findagrave')return false; // Different memorial IDs require review.
    return normalizedDisplay(key,a)===normalizedDisplay(key,b);
   }
-  const newBurials=[],missing=[],fills=[],reviews=[],formatting=[],resolved=[],unmodified=[];
+  const newBurials=[],missing=[],fills=[],reviews=[],formatting=[],shifted=[],resolved=[],unmodified=[];
   const localValue=(old,key)=>{const u=updates[old.id]||{};return Object.prototype.hasOwnProperty.call(u,key)?u[key]:old[key];};
   for(const [id,incomingRecord] of incomingMap){
    const old=existingMap.get(id);
    if(!old){newBurials.push(incomingRecord);continue;}
    let changed=false;
+   // Historical importer versions sometimes saved cemetery names as towns.
+   // Flag the whole location as a mapping issue; never silently overwrite local fields.
+   const savedCemetery=String(localValue(old,'cemetery')||'').trim();
+   const savedTown=String(localValue(old,'town')||'').trim();
+   const newCemetery=String(incomingRecord.cemetery||'').trim();
+   const newTown=String(incomingRecord.town||'').trim();
+   const sameText=(a,b)=>a.toLocaleLowerCase('en-US')===b.toLocaleLowerCase('en-US');
+   const shiftedLocation=!!(newCemetery&&newTown&&(
+     (!savedCemetery&&sameText(savedTown,newCemetery)) ||
+     (sameText(savedCemetery,newTown)&&sameText(savedTown,newCemetery)) ||
+     (!savedCemetery&&/\b(?:cemetery|(?:memorial|memory) gardens?|(?:memorial|memory) park|graveyard)\b/i.test(savedTown)&&!sameText(savedTown,newTown))
+   ));
+   if(shiftedLocation)shifted.push({id,name:incomingRecord.name,oldCemetery:savedCemetery,oldTown:savedTown,proposedCemetery:newCemetery,proposedTown:newTown,place:incomingRecord.gedcomBurial});
    for(const key of fields){
     const original=old[key]||'',current=localValue(old,key)||'',incomingValue=incomingRecord[key]||'';
+    if(shiftedLocation&&(key==='town'||key==='cemetery')){changed=true;continue;}
     // Compare against the visible, effective value, not just the original imported seed.
     if(sameValue(key,current,incomingValue)){
      if(!sameValue(key,original,incomingValue))resolved.push({id,name:incomingRecord.name,key});
@@ -926,6 +948,7 @@ $('compareGedcomFile').onchange=async e=>{
   for(const [n,label] of [
    [incoming.length,'Burial entries in file'],
    [newBurials.length,'New people with burials'],
+   [uniqueCount(shifted),'Likely cemetery / town field shifts'],
    [uniqueCount(fills),'Records with missing fields to fill'],
    [uniqueCount(reviews),'Records with values to review'],
    [uniqueCount(formatting),'Formatting-only differences'],
@@ -936,10 +959,11 @@ $('compareGedcomFile').onchange=async e=>{
   }
   container.append(title,counts,textNode('p','hint',
    'PREVIEW ONLY. Categories count records, not individual fields; one person may appear in more than one category. '+
-   'Missing-field candidates are NOT automatically applied. Multiple incompatible burial facts within one person ID require manual review, not automatic merging. Original and locally edited records, photos, notes, visits, and history are unchanged. '+
+   'Cemetery/town field shifts are review-only and are not treated as safe automatic fixes. Missing-field candidates are NOT automatically applied. Multiple incompatible burial facts within one person ID require manual review, not automatic merging. Original and locally edited records, photos, notes, visits, and history are unchanged. '+
    'GEDCOM ID matching requires stable IDs across exports; files from other trees may not compare safely.'));
   const sections=[
    ['New burial entries (sample)',newBurials.slice(0,8).map(r=>`${r.name} (${idOf(r)}) · ${r.cemetery||'Cemetery unknown'} · ${[r.county,r.state].filter(Boolean).join(', ')}`)],
+   ['Likely cemetery / town mapping issues — review first',shifted.slice(0,15).map(x=>`${x.name} (${x.id}) · Fieldbook: Cemetery ${x.oldCemetery||'—'}; Town ${x.oldTown||'—'} · GEDCOM: Cemetery ${x.proposedCemetery}; Town ${x.proposedTown} · Source: ${x.place} · REVIEW ONLY, no changes made`)],
    ['Missing information available (sample)',fills.slice(0,12).map(describe)],
    ['Existing values requiring review (sample)',reviews.slice(0,12).map(describe)],
    ['Formatting-only differences (sample)',formatting.slice(0,12).map(describe)],
@@ -956,7 +980,7 @@ $('compareGedcomFile').onchange=async e=>{
   }
   const total=existing.length;
   const unlinked=seed.length-total;
-  status.textContent=`Compared ${incoming.length} burial entries in ${file.name} with ${total} GEDCOM-linked saved records`+(unlinked?` (${unlinked} other saved entries left out of ID matching)`:'')+'. '+fills.length+' missing-field candidates, '+reviews.length+' field differences to review, '+formatting.length+' formatting-only fields. Nothing changed.';
+  status.textContent=`Compared ${incoming.length} burial entries in ${file.name} with ${total} GEDCOM-linked saved records`+(unlinked?` (${unlinked} other saved entries left out of ID matching)`:'')+'. '+shifted.length+' potential cemetery/town field shifts, '+fills.length+' missing-field candidates, '+reviews.length+' field differences to review, '+formatting.length+' formatting-only fields. Nothing changed.';
   container.hidden=false;
  }catch(err){status.textContent='Comparison failed: '+err.message;container.hidden=true;}
  finally{e.target.value='';}
