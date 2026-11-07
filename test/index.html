@@ -143,6 +143,10 @@
 <div class="buttons"><button type="button" class="secondary" id="compareGedcomButton">Choose GEDCOM to compare</button><input id="compareGedcomFile" type="file" accept=".ged,.gedcom,text/plain" hidden></div>
 <div id="compareGedcomStatus" class="hint" role="status">No GEDCOM comparison run yet.</div>
 <div id="compareGedcomResults" class="ged-preview" hidden></div></div>
+<div class="home-panel" id="suffixRepairPanel"><h3 style="margin-top:0">Preview missing GEDCOM name suffixes</h3>
+<p class="hint">Check GEDCOM suffixes (including your emoji markers) against the same person's saved GEDCOM ID. Only missing suffixes are eligible. Existing suffixes, names, cemetery details, photos, and visit tracking are never replaced. <strong>Export a full backup before applying any repair.</strong></p>
+<div class="buttons"><button class="secondary" type="button" id="suffixRepairButton">Choose GEDCOM to check suffixes</button><input id="suffixRepairFile" type="file" accept=".ged,.gedcom,text/plain" hidden></div>
+<div id="suffixRepairStatus" class="hint" role="status">No suffix check run yet.</div><div id="suffixRepairResults" class="ged-preview" hidden></div></div>
 <div class="home-panel" id="relationshipRefreshPanel"><h3 style="margin-top:0">Refresh relationship links</h3>
 <p class="hint">Update the relationship directory from your GEDCOM without changing burial records, field notes, or photographs.</p>
 <div class="buttons"><button type="button" class="secondary" id="refreshRelDirectory">Refresh relationship links from GEDCOM (no burial changes)</button><input type="file" id="refreshRelFile" accept=".ged,.gedcom,text/plain" hidden></div><p class="tiny" id="refreshRelStatus">For marriage relationships, reload your GEDCOM directory once to include spouse links. Existing burials, edits, and photos are preserved.</p></div>
@@ -159,7 +163,7 @@
 <details class="data-subfold" id="dataBackupsFold"><summary>3 · Backup and restore <span class="tool-subnote">Protect and transfer fieldwork</span></summary><div class="data-subbody">
 <h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your existing OneDrive backup and restore it in this version. Do not discard either version until you have verified the imported notes and photos.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The new full backup includes the original burial list, photos, notes, and change history. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This is a single-file offline test, not a synced app. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div></div></details>
 </div></details></section>
-<footer>Fieldbook v7 SAFE RE-IMPORT PREVIEW · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 SUFFIX REPAIR TEST · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -488,7 +492,11 @@ function refreshOptions(){
  const inArea=inState.filter(r=>!county||r.county===county);
  options('cem',[...new Set(inArea.map(r=>r.cemetery).filter(Boolean))].sort((a,b)=>a.localeCompare(b)),'All cemeteries');
 }
-function matching(){const t=$('q').value.trim().toLowerCase(),state=$('stateFilter').value,county=$('county').value,cem=$('cem').value,status=$('status').value;return all().filter(r=>{if(state&&r.state!==state||county&&r.county!==county||cem&&r.cemetery!==cem)return false;if(t&&![r.name,r.dates,r.relation,r.line,r.cemetery,r.county,r.town,r.state,r.notes,r.plot].join(' ').toLowerCase().includes(t))return false;if(status==='unvisited'&&r.visited||status==='nophoto'&&r.photo||status==='nogps'&&r.gps)return false;return true})}
+function displayPersonName(record){
+ const base=String(record.name||'').trim(),suffix=String(record.nameSuffix||'').trim();
+ return suffix&&!base.endsWith(suffix)?base+' '+suffix:base;
+}
+function matching(){const t=$('q').value.trim().toLowerCase(),state=$('stateFilter').value,county=$('county').value,cem=$('cem').value,status=$('status').value;return all().filter(r=>{if(state&&r.state!==state||county&&r.county!==county||cem&&r.cemetery!==cem)return false;if(t&&![r.name,r.nameSuffix,r.dates,r.relation,r.line,r.cemetery,r.county,r.town,r.state,r.notes,r.plot].join(' ').toLowerCase().includes(t))return false;if(status==='unvisited'&&r.visited||status==='nophoto'&&r.photo||status==='nogps'&&r.gps)return false;return true})}
 function textNode(tag,cls,value){const e=document.createElement(tag);if(cls)e.className=cls;e.textContent=value||'';return e}
 function render(){
  const hasFilter=!!($('q').value.trim()||$('stateFilter').value||$('county').value||$('cem').value||$('status').value);
@@ -513,7 +521,7 @@ function render(){
   const summary=document.createElement('summary');
   const info=document.createElement('div');
   const nameLine=textNode('div','burial-name-line');
-  nameLine.append(textNode('span','burial-title',r.name+(r.dates?' ('+r.dates+')':'')));
+  nameLine.append(textNode('span','burial-title',displayPersonName(r)+(r.dates?' ('+r.dates+')':'')));
   // Link lives alongside the name, without toggling the record accordion.
   if(r.findagrave){
     try{
@@ -759,6 +767,65 @@ function nameWithoutSuffix(value,suffix){
   const text=String(value||'').trim(),tail=String(suffix||'').trim();
   return tail&&text.endsWith(tail)?text.slice(0,-tail.length).trim():text;
 }
+// Targeted suffix-only repair. Does not attempt a general GEDCOM re-import.
+$('suffixRepairButton').onclick=()=>$('suffixRepairFile').click();
+$('suffixRepairFile').onchange=async e=>{
+ const file=e.target.files[0];if(!file)return;
+ const out=$('suffixRepairResults'),status=$('suffixRepairStatus');
+ out.hidden=true;out.replaceChildren();status.textContent='Checking suffixes in '+file.name+'…';
+ try{
+  const incoming=parseGedcomBurials(await file.text());
+  const byId=new Map(),duplicates=new Set();
+  for(const person of incoming){
+   const id=burialGedcomKey(person);if(!id)continue;
+   if(byId.has(id)){duplicates.add(id);continue;}
+   byId.set(id,person);
+  }
+  const eligible=[],existing=[],unmatched=[],conflicting=[],seen=new Set();
+  // Only existing records that came from a GEDCOM; never match names.
+  for(const record of seed){
+   const id=burialGedcomKey(record);if(!id)continue;
+   if(seen.has(id)||duplicates.has(id)){conflicting.push({id,name:record.name,reason:'Duplicate GEDCOM ID'});continue;}
+   seen.add(id);
+   const newer=byId.get(id);if(!newer){unmatched.push(id);continue;}
+   const incomingSuffix=String(newer.nameSuffix||'').trim();if(!incomingSuffix)continue;
+   const effective={...record,...(updates[record.id]||{})};
+   const currentSuffix=effectiveSavedSuffix(effective,incomingSuffix);
+   if(currentSuffix){
+    if(currentSuffix===incomingSuffix)existing.push(id);
+    else conflicting.push({id,name:record.name,reason:'Existing suffix '+currentSuffix+' differs from GEDCOM '+incomingSuffix});
+    continue;
+   }
+   // Never fill if the name contains trailing symbols that might be another suffix.
+   eligible.push({recordId:record.id,id,name:effective.name,incomingSuffix});
+  }
+  const summary=textNode('h3','','Suffix-only check — '+file.name);
+  const counts=textNode('p','hint',eligible.length+' missing suffixes available · '+existing.length+' already present · '+conflicting.length+' skipped conflicts · '+unmatched.length+' saved IDs not in file. No changes yet.');
+  out.append(summary,counts);
+  const preview=document.createElement('details');preview.open=true;
+  preview.append(textNode('summary','','Missing suffixes — all '+eligible.length+' records'));
+  const list=textNode('div','');for(const item of eligible)list.append(textNode('div','ged-example',item.name+' ('+item.id+') · add suffix '+item.incomingSuffix));
+  preview.append(list);out.append(preview);
+  if(conflicting.length){const conflicts=document.createElement('details');conflicts.append(textNode('summary','','Skipped suffix conflicts ('+conflicting.length+')'));for(const item of conflicting)conflicts.append(textNode('div','ged-example',item.name+' ('+item.id+') · '+item.reason));out.append(conflicts);}
+  if(eligible.length){
+   const apply=textNode('button','secondary','Apply '+eligible.length+' missing suffixes to this TEST Fieldbook');apply.type='button';
+   apply.onclick=()=>{
+    // Re-check against current records at commit time: do not overwrite edits
+    // made while this preview was open.
+    const safe=eligible.filter(item=>{const rec=seed.find(r=>r.id===item.recordId);return rec&&burialGedcomKey(rec)===item.id&&!effectiveSavedSuffix({...rec,...(updates[rec.id]||{})},item.incomingSuffix);});
+    if(!safe.length){status.textContent='No missing suffixes remain. No changes made.';return;}
+    if(!confirm('Have you exported a full Fieldbook backup? Add ONLY '+safe.length+' currently missing suffixes from '+file.name+'? Existing names, cemeteries, fieldwork, and photos will not change.'))return;
+    for(const item of safe){updates[item.recordId]={...(updates[item.recordId]||{}),nameSuffix:item.incomingSuffix};}
+    persist();render();
+    status.textContent='Added '+safe.length+' missing name suffixes by GEDCOM ID. No other fields were changed. Export a new full backup now.';
+    apply.disabled=true;apply.textContent='Suffixes applied';
+   };
+   out.append(apply);
+  }
+  out.hidden=false;status.textContent='Checked '+incoming.length+' GEDCOM burial entries from '+file.name+'. Review before applying; nothing changed.';
+ }catch(err){status.textContent='Suffix check failed: '+err.message;}
+ finally{e.target.value='';}
+};
 function normalizeBurialPlace(raw) {
   // Preserve place components rather than sliding a cemetery into the town field.
   // Typical FTM format: Cemetery, Town, County, State, USA.
@@ -1215,7 +1282,7 @@ window.fieldbookDerivedRelationship=function(record){
 if(typeof render==='function')render();
 function card(r,index,homeAnc){
  const d=document.createElement('div');d.className='relationship-card';
- const h=document.createElement('strong');h.textContent=r.name+(r.dates?' ('+r.dates+')':'');d.append(h);
+ const h=document.createElement('strong');h.textContent=displayPersonName(r)+(r.dates?' ('+r.dates+')':'');d.append(h);
  const id=document.createElement('div');id.className='meta-line';id.textContent=(r.gedcomId||'No GEDCOM ID')+' · '+[r.cemetery,r.county,r.state].filter(Boolean).join(', ');d.append(id);
  if(!r.gedcomId||!index.has(r.gedcomId)){const x=document.createElement('div');x.className='uncertain';x.textContent='Cannot calculate: this burial is not linked to a person in the loaded GEDCOM directory.';d.append(x);return d;}
  const rel=calculateRelationship(r.gedcomId,index,homeAnc);
