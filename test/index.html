@@ -853,13 +853,13 @@ function parseGedcomBurials(text){
    if(!location.hasCemetery&&best.place)noteBits.push('GEDCOM burial place (cemetery not identified): '+best.place);
    if(best.note&&!/^@[A-Za-z0-9_:-]+@$/.test(best.note.trim()))noteBits.push(best.note.slice(0,500));
    const memorial=best.link.match(/https?:\/\/[^\s<>"']+/i);
-   individuals.push({id:'ged-'+person.id.replace(/[^A-Za-z0-9_-]/g,''),gedcomId:person.id,name:gedName(person.name)||'Unnamed individual '+person.id,nameSuffix:gedNameSuffix(person.name),dates:dates==='–'?'':dates,relation:'',side:'',line:'',state:location.state,county:location.county,town:location.town,cemetery:location.cemetery,plot:'',findagrave:memorial?memorial[0]:'',notes:noteBits.join(' | '),visited:false,stone:false,photo:false,gps:false,gedcomBurial:best.place,source:'GEDCOM import'});
+   individuals.push({id:'ged-'+person.id.replace(/[^A-Za-z0-9_-]/g,''),gedcomId:person.id,name:gedName(person.name)||'Unnamed individual '+person.id,nameSuffix:person.nameSuffix||gedNameSuffix(person.name),dates:dates==='–'?'':dates,relation:'',side:'',line:'',state:location.state,county:location.county,town:location.town,cemetery:location.cemetery,plot:'',findagrave:memorial?memorial[0]:'',notes:noteBits.join(' | '),visited:false,stone:false,photo:false,gps:false,gedcomBurial:best.place,source:'GEDCOM import'});
  }}
  for(const row of lines){const m=row.match(/^(\d+)\s+(?:(@[^\s]+@)\s+)?(\S+)(?:\s+(.*))?$/);if(!m)continue;const lev=Number(m[1]),tag=m[3],value=(m[4]||'').trim();
-  if(lev===0){commit();person=(tag==='INDI'&&m[2])?{id:m[2],name:'',birth:'',death:'',burials:[]}:null;context='';level2='';burial=null;continue;}
+  if(lev===0){commit();person=(tag==='INDI'&&m[2])?{id:m[2],name:'',nameSuffix:'',birth:'',death:'',burials:[]}:null;context='';level2='';burial=null;continue;}
   if(!person)continue;
   if(lev===1){context=tag;level2='';burial=null;if(tag==='NAME'&&!person.name)person.name=value;if(tag==='BURI'){burial={place:'',date:'',link:'',note:''};person.burials.push(burial)};continue;}
-  if(lev===2){level2=tag;if(context==='BIRT'&&tag==='DATE')person.birth=value;
+  if(lev===2){level2=tag;if(context==='NAME'&&tag==='NSFX'&&!person.nameSuffix)person.nameSuffix=value;if(context==='BIRT'&&tag==='DATE')person.birth=value;
    if(context==='DEAT'&&tag==='DATE')person.death=value;
    if(context==='BURI'&&burial){if(tag==='PLAC')burial.place=value;else if(tag==='DATE')burial.date=value;else if(tag==='NOTE'&&(value.startsWith('https://')||value.startsWith('http://')))burial.link=value;else if(tag==='NOTE')burial.note=value;else if(tag==='_LINK')burial.link=value;}continue;}
   if(lev>=3&&context==='BURI'&&burial){if(tag==='_LINK'&&value.includes('findagrave.com'))burial.link=value;else if(tag==='NOTE'&&value.includes('findagrave.com'))burial.link=value;else if((tag==='CONT'||tag==='CONC')&&level2==='NOTE')burial.note+=(tag==='CONT'?'\n':'')+value;}
@@ -1146,9 +1146,13 @@ $('gedcomFile').onchange=async e=>{
   if(file.size>100*1024*1024)throw Error('This prototype accepts GEDCOM files up to 100 MB.');
   const gedcomText=await file.text();
   if(!/^0\s+HEAD\b/m.test(gedcomText.slice(0,1200)))throw Error('This does not appear to be a GEDCOM file.');
-  const entries=parseGedcomBurials(gedcomText),directory=parseGedcomPeople(gedcomText),unknown=entries.filter(x=>!x.cemetery).length;
+  const allEntries=parseGedcomBurials(gedcomText),directory=parseGedcomPeople(gedcomText);
+  const ambiguous=detectAmbiguousGedcomBurials(gedcomText),blockedIds=new Set(ambiguous.map(r=>r.id.toUpperCase()));
+  const entries=allEntries.filter(r=>!blockedIds.has(r.gedcomId.toUpperCase()));
+  const unknown=entries.filter(x=>!x.cemetery).length;
+  const withSuffix=entries.filter(x=>String(x.nameSuffix||'').trim()).length;
   if(!directory.length)throw Error('No individual records were found in this GEDCOM.');
-  pendingGedcom={entries,directory,fileName:file.name};
+  pendingGedcom={entries,directory,fileName:file.name,ambiguous};
   // Make every individual searchable right away. Only persist the new directory during a
   // confirmed burial import; previewing another GEDCOM cannot replace existing stored data.
   allGedcomPeople=directory;
@@ -1159,10 +1163,14 @@ $('gedcomFile').onchange=async e=>{
   preview.replaceChildren();
   preview.append(textNode('h3','','Preview — '+file.name));
   const counts=textNode('div','ged-counts');
-  for(const [num,label] of [[directory.length,'All GEDCOM individuals'],[entries.length,'People with burial facts'],[unknown,'Cemetery unknown']]){
+  for(const [num,label] of [[directory.length,'All GEDCOM individuals'],[entries.length,'Safe burial entries'],[ambiguous.length,'Conflicting burials held out'],[withSuffix,'Suffixes preserved'],[unknown,'Cemetery unknown']]){
    const box=textNode('div','ged-count');box.append(textNode('strong','',String(num)),textNode('span','tiny',label));counts.append(box);
   }
-  preview.append(counts,textNode('p','hint','The people directory is ready for Home Person selection. Cemetery names are inferred only when the burial place clearly identifies a cemetery. Nothing has been imported into burial records yet.'));
+  preview.append(counts,textNode('p','hint','The people directory is ready for Home Person selection. Name suffixes (including emojis) are saved as a separate field in the initial import. Conflicting burial facts are held out of automatic import for manual correction. Nothing has been imported yet.'));
+  if(ambiguous.length){const warn=document.createElement('details');warn.open=true;warn.append(textNode('summary','','Review: '+ambiguous.length+' GEDCOM people with conflicting burial facts (excluded from import)'));
+   warn.append(textNode('p','hint','These people remain in the GEDCOM people directory but their burial entries will NOT be imported until source conflicts are resolved. This prevents choosing the wrong cemetery or Find a Grave memorial.'));
+   for(const item of ambiguous){const ids=[...new Set(item.facts.flatMap(f=>f.memorialIds))];warn.append(textNode('div','ged-example',item.name+' ('+item.id+') · '+item.facts.map(f=>f.place||'No place').join(' | ')+(ids.length?' · Memorial IDs: '+ids.join(', '):'')));}preview.append(warn);}
+  const suffixSample=entries.filter(x=>x.nameSuffix).slice(0,8);if(suffixSample.length){const d=document.createElement('details');d.append(textNode('summary','','Sample imported suffixes (including emojis)'));for(const r of suffixSample)d.append(textNode('div','ged-example',r.name+' · suffix: '+r.nameSuffix+' · '+r.gedcomId));preview.append(d);}
   for(const x of entries.slice(0,5))preview.append(textNode('div','ged-example',x.name+' · '+(x.cemetery||'Cemetery unknown')+' · '+(x.county||x.town||x.gedcomBurial||'No location')));
   const btn=textNode('button','','Import '+entries.length+' burial entries');btn.type='button';
   btn.onclick=()=>{
@@ -1175,7 +1183,7 @@ $('gedcomFile').onchange=async e=>{
    if(seed.length||extras.length||Object.keys(updates).length||changeLog.length){
     alert('This first v7 importer only loads an EMPTY TEST dataset. Existing burial records and fieldwork have not been changed. Use a fresh Incognito test session; safe re-import and merging are planned next.');return;
    }
-   if(!confirm('Import '+entries.length+' burial entries from '+file.name+' with '+(allGedcomPeople.find(p=>p.id===homePersonId)?.name||homePersonId)+' as Home Person? This changes ONLY this test dataset.'))return;
+   if(!confirm('Import '+entries.length+' burial entries ('+withSuffix+' with preserved suffixes; '+ambiguous.length+' conflicting-burial people excluded) from '+file.name+' with '+(allGedcomPeople.find(p=>p.id===homePersonId)?.name||homePersonId)+' as Home Person? This changes ONLY this test dataset.'))return;
    try{
     localStorage.setItem(SEED_KEY,JSON.stringify(entries));
     localStorage.setItem(GED_PEOPLE_KEY,JSON.stringify(directory));
