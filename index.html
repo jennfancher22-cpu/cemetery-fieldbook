@@ -137,6 +137,19 @@
 #dataToolsFold .ged-count{background:#fff}
 @media(max-width:600px){#dataToolsFold .guided-step{padding:10px}#dataToolsFold .guided-step-title{font-size:15px}#dataToolsFold .guided-step summary{font-size:13px}}
 
+
+/* Person-centered GEDCOM update review */
+#dataToolsFold .person-review-search{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:10px 0 14px}
+#dataToolsFold .person-review-search input{flex:1;min-width:200px;margin:0}
+#dataToolsFold .person-review-card[hidden]{display:none}
+#dataToolsFold .person-review-card>summary{justify-content:flex-start;text-align:left}
+#dataToolsFold .person-review-heading{flex:1;min-width:0;overflow-wrap:anywhere;font-weight:650}
+#dataToolsFold .person-review-pill{flex:0 0 auto;font-size:11px;background:#fff;border-radius:100px;padding:4px 9px;color:#355b4e}
+#dataToolsFold .person-review-field span.person-review-values{display:block;margin-top:3px;font-size:12px;line-height:1.5;color:#355c51;font-weight:400;overflow-wrap:anywhere}
+#dataToolsFold .person-review-note{margin:9px 2px;padding:8px 10px;background:#f4f7f2;border-radius:7px;font-size:12px;color:#4e655d;line-height:1.5}
+#dataToolsFold .person-review-detail{padding:5px 3px;border-bottom:1px solid #e6eee7;font-size:13px;overflow-wrap:anywhere}
+#dataToolsFold .person-review-field strong{display:block}
+
 </style><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="icon" type="image/svg+xml" href="icon.svg"><style>
 /* v7 read-only relationship verification */
 .relationship-results{display:grid;gap:8px;margin-top:9px}
@@ -204,7 +217,7 @@
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7 LIVE · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 LIVE · Person-centered review · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -1236,9 +1249,6 @@ async function compareCurrentGedcom(file){
   const mergeHead=textNode('summary','','Review and approve GEDCOM updates');mergeBox.append(mergeHead);mergeBox.open=true;
   const mergeBody=textNode('div','cemetery-group-people');
   mergeBody.append(textNode('p','guided-step-hint','Choose only the changes you want. Existing nonblank information is never overwritten unless you explicitly approve that individual replacement.'));
-  const summary=textNode('div','guided-status',newBurials.length+' new burials · '+fillGroups.size+' safe blank-field records · '+ambiguous.length+' conflicting burial records held for manual review');
-  const safetyMessage=textNode('p','hint',idSafetyOK?'GEDCOM ID safety check passed: '+overlap+' matching individual IDs; '+mismatches+' name discrepancies.':'MERGE DISABLED: person-ID safety check failed ('+overlap+' matching IDs out of '+existing.length+' existing GEDCOM records; '+mismatches+' different names). This may be an export with changed IDs or another tree. No data may be merged.');
-  mergeBody.append(summary,safetyMessage);
   const identityDetails=document.createElement('details');identityDetails.className='cemetery-group';
   identityDetails.append(textNode('summary','','Review GEDCOM ID / name differences ('+identityDifferences.length+')'));
   const identityList=textNode('div','cemetery-group-people');identityList.style.maxHeight='260px';identityList.style.overflow='auto';
@@ -1267,130 +1277,125 @@ async function compareCurrentGedcom(file){
    if(!replacementGroups.has(item.id))replacementGroups.set(item.id,[]);
    replacementGroups.get(item.id).push(item);
   }
-  const reviewedDetails=document.createElement('details');reviewedDetails.className='cemetery-group';
+  // Person-centered review: build one card for each GEDCOM individual and show
+  // every eligible field on that card, whether blank or an existing value.
+  const manualSelections=[],replaceSelections=[],newSelections=[];
   const reviewFillCount=[...reviewFillGroups.values()].reduce((sum,items)=>sum+items.length,0);
-  reviewedDetails.append(textNode('summary','','Review individually: missing fields on records with differences ('+reviewFillGroups.size+' people, '+reviewFillCount+' fields)'));
-  const reviewedBody=textNode('div','cemetery-group-people');
-  reviewedBody.append(textNode('p','hint','These people have differences elsewhere in their records. Verify the GEDCOM ID and identity first, then tick only specific missing fields you want filled. Existing names and other nonempty values are never changed. Cemetery/town shifts and conflicting burial facts remain blocked.'));
-  const manualSelections=[];
-  for(const [id,items] of reviewFillGroups){
-   const old=existingMap.get(id),newPerson=incomingMap.get(id);
-   const section=document.createElement('details');section.className='cemetery-group';
-   section.append(textNode('summary','',''+(newPerson?.name||old?.name||id)+' ('+id+') — '+items.length+' proposed field'+(items.length===1?'':'s')));
-   const body=textNode('div','cemetery-group-people');
-   body.append(textNode('p','tiny','Saved Fieldbook name: '+(old?.name||'—')+' | Incoming GEDCOM name: '+(newPerson?.name||'—')));
-   const differences=reviews.filter(r=>r.id===id);
-   for(const x of differences)body.append(textNode('div','ged-example','Existing difference (NOT changed): '+readable(x.key)+' | Fieldbook: '+(x.current||'—')+' | GEDCOM: '+(x.incoming||'—')));
-   const identity=document.createElement('label');identity.className='merge-approval';
-   const identityCB=document.createElement('input');identityCB.type='checkbox';
-   identity.append(identityCB,textNode('span','','I verified that GEDCOM '+id+' is the same person as this Fieldbook record.'));
-   body.append(identity);
-   for(const x of items){
-    const label=document.createElement('label');label.className='merge-approval';
-    const cb=document.createElement('input');cb.type='checkbox';cb.disabled=true;
-    const caption=textNode('span','','Fill '+readable(x.key)+': blank → '+x.incoming);
-    label.append(cb,caption);body.append(label);
-    manualSelections.push({item:x,checkbox:cb,identity:identityCB});
-   }
-   identityCB.addEventListener('change',()=>{
-    for(const entry of manualSelections.filter(x=>x.identity===identityCB)){
-     entry.checkbox.disabled=!identityCB.checked||!idSafetyOK;
-     if(entry.checkbox.disabled)entry.checkbox.checked=false;
-    }
-   });
-   section.append(body);reviewedBody.append(section);
+  const replaceCount=[...replacementGroups.values()].reduce((sum,items)=>sum+items.length,0);
+  const individualReview=new Map();
+  function groupPerson(id){
+   if(!individualReview.has(id)) individualReview.set(id,{fills:[],replacements:[]});
+   return individualReview.get(id);
   }
-  if(!reviewFillGroups.size)reviewedBody.append(textNode('p','tiny','No additional blank fields eligible for individual review.'));
-  reviewedDetails.append(reviewedBody);mergeBody.append(reviewedDetails);
-  // A different workflow from filling blanks: the person and every
-  // nonblank field being replaced must be approved, with the exact old/new
-  // values visible before selection. Do not update suffixes via a name edit.
-  const replaceSelections=[];
-  const replaceDetails=document.createElement('details');replaceDetails.className='cemetery-group';
-  const replaceCount=[...replacementGroups.values()].reduce((n,items)=>n+items.length,0);
-  replaceDetails.append(textNode('summary','','Review individually: replace verified existing values ('+replacementGroups.size+' people, '+replaceCount+' fields)'));
-  const replaceBody=textNode('div','cemetery-group-people');
-  replaceBody.append(textNode('p','hint','Optional: verify the same GEDCOM person ID in FTM and approve EACH nonblank replacement you want. Blank GEDCOM values are never used to erase saved data. If two or more town/county/state fields differ, select ALL those location replacements together or none. Cemetery/town mapping shifts and conflicting burial facts remain blocked. Photos, notes, visits, plot and GPS are not changed.'));
-  for(const [id,items] of replacementGroups){
-   const old=existingMap.get(id),person=incomingMap.get(id);
-   const section=document.createElement('details');section.className='cemetery-group';
-   section.append(textNode('summary','',(person?.name||old?.name||id)+' ('+id+') — '+items.length+' existing value'+(items.length===1?'':'s')));
-   const body=textNode('div','cemetery-group-people');
-   body.append(textNode('p','tiny','Saved name: '+(old?.name||'—')+' | Incoming: '+(person?.name||'—')));
-   const identity=document.createElement('label');identity.className='merge-approval';
-   const verify=document.createElement('input');verify.type='checkbox';
-   identity.append(verify,textNode('span','','I checked GEDCOM '+id+' in FTM and verified this is the SAME person.'));
-   body.append(identity);
-   for(const x of items){
-    const label=document.createElement('label');label.className='merge-approval';
-    const cb=document.createElement('input');cb.type='checkbox';cb.disabled=true;
-    label.append(cb,textNode('span','','REPLACE '+readable(x.key)+': '+x.current+' → '+x.incoming));
-    body.append(label);
-    replaceSelections.push({item:x,checkbox:cb,identity:verify});
-   }
-   verify.addEventListener('change',()=>{
-    for(const x of replaceSelections.filter(x=>x.identity===verify)){
-     x.checkbox.disabled=!verify.checked||!idSafetyOK;
-     if(x.checkbox.disabled)x.checkbox.checked=false;
-    }
-   });
-   section.append(body);replaceBody.append(section);
-  }
-  if(!replacementGroups.size)replaceBody.append(textNode('p','tiny','No verified existing values need replacement.'));
-  replaceDetails.append(replaceBody);mergeBody.append(replaceDetails);
-  const addDetails=document.createElement('details');addDetails.append(textNode('summary','','Review new burial records ('+newBurials.length+')'));
-  const addList=textNode('div','cemetery-group-people');addList.style.maxHeight='240px';addList.style.overflow='auto';
-  for(const r of newBurials)addList.append(textNode('div','ged-example',displayPersonName(r)+' · '+idOf(r)+' · '+(r.cemetery||'Cemetery unknown')+' · '+[r.town,r.county,r.state].filter(Boolean).join(', ')));
-  if(!newBurials.length)addList.append(textNode('p','tiny','No eligible additions.'));
-  addDetails.append(addList);mergeBody.append(addDetails);
-  const fillDetails=document.createElement('details');fillDetails.append(textNode('summary','','Review missing-field completions ('+fillGroups.size+' people)'));
-  const fillList=textNode('div','cemetery-group-people');fillList.style.maxHeight='240px';fillList.style.overflow='auto';
-  for(const [id,items] of fillGroups)for(const x of items)fillList.append(textNode('div','ged-example',x.name+' ('+id+') · '+readable(x.key)+' ← '+x.incoming));
-  if(!fillGroups.size)fillList.append(textNode('p','tiny','No safe missing-field completions.'));
-  fillDetails.append(fillList);mergeBody.append(fillDetails);
-  function approval(textLabel){const label=document.createElement('label');label.className='merge-approval';const cb=document.createElement('input');cb.type='checkbox';const caption=document.createElement('span');caption.textContent=textLabel;label.append(cb,caption);mergeBody.append(label);return cb;}
-  const addApproval=approval('Approve all '+newBurials.length+' eligible new burial records (none with conflicting burial facts)');
-  const fillApproval=approval('Approve blank-field completions for '+fillGroups.size+' conflict-free people (never replace an existing value)');
-  addApproval.disabled=!newBurials.length||!idSafetyOK;fillApproval.disabled=!fillGroups.size||!idSafetyOK;
-  const apply=document.createElement('button');apply.type='button';apply.className='secondary';apply.textContent='Export rollback backup, then confirm approved merge';apply.disabled=!idSafetyOK||(!newBurials.length&&!fillGroups.size&&!reviewFillCount&&!replaceCount);
-  const mergeStatus=textNode('p','hint','No merge applied. Select categories above before continuing.');
-  // Replace the long nested developer flow with two practical review stages.
+  for(const [id,items] of fillGroups)groupPerson(id).fills.push(...items);
+  for(const [id,items] of reviewFillGroups)groupPerson(id).fills.push(...items);
+  for(const [id,items] of replacementGroups)groupPerson(id).replacements.push(...items);
+  const totalFields=[...individualReview.values()].reduce((n,g)=>n+g.fills.length+g.replacements.length,0);
   const reviewStep=textNode('section','guided-step');
-  reviewStep.append(textNode('h4','guided-step-title','1. Review proposed changes'));
-  reviewStep.append(textNode('p','guided-step-hint','Open only the category you want to update. Verify individual identities before approving existing-value replacements.'));
-  if(newBurials.length)reviewStep.append(addDetails); 
-  if(fillGroups.size)reviewStep.append(fillDetails);
-  if(reviewFillGroups.size)reviewStep.append(reviewedDetails);
-  if(replacementGroups.size)reviewStep.append(replaceDetails);
-  if(!newBurials.length&&!fillGroups.size&&!reviewFillGroups.size&&!replacementGroups.size)reviewStep.append(textNode('p','guided-empty','No new or changed information is eligible for merging from this GEDCOM.'));
+  reviewStep.append(textNode('h4','guided-step-title','1. Review people and select changes'));
+  reviewStep.append(textNode('p','guided-step-hint','Each person appears once, with all proposed fields together. For existing records, verify the person first, then check only what you want to accept. Unchecked values stay unchanged.'));
+  const findRow=document.createElement('div');findRow.className='person-review-search';
+  const findInput=document.createElement('input');findInput.type='search';findInput.placeholder='Find person by name or GEDCOM ID';findInput.setAttribute('aria-label','Find person in proposed GEDCOM changes');
+  const visibleCount=textNode('span','tiny','');findRow.append(findInput,visibleCount);
+  const personHolder=textNode('div','person-review-list');
+  reviewStep.append(findRow,personHolder);
+  const personCards=[];
+  function addPersonCard(name,id,kind,total,build){
+   const card=document.createElement('details');card.className='cemetery-group person-review-card';
+   const heading=document.createElement('summary');
+   const headerText=textNode('span','person-review-heading',name+' ('+id+')');
+   const pill=textNode('span','person-review-pill',kind+' · '+total+(kind==='New burial'?'':' field'+(total===1?'':'s')));
+   heading.append(headerText,pill);card.append(heading);
+   const body=textNode('div','cemetery-group-people');build(body);card.append(body);
+   personCards.push({card,search:(name+' '+id).toLowerCase()});personHolder.append(card);
+  }
+  for(const r of newBurials){
+   const id=idOf(r);const name=displayPersonName(r);
+   addPersonCard(name,id,'New burial',1,body=>{
+    body.append(textNode('p','hint','This person is not in Fieldbook. Review the burial details before adding.'));
+    for(const [label,value] of [['Cemetery',r.cemetery],['Town',r.town],['County',r.county],['State',r.state],['Find a Grave',r.findagrave]]){
+     if(String(value||'').trim())body.append(textNode('div','person-review-detail',label+': '+value));
+    }
+    const row=document.createElement('label');row.className='merge-approval';
+    const cb=document.createElement('input');cb.type='checkbox';cb.disabled=!idSafetyOK||Boolean(legacyUnlinked.length);
+    row.append(cb,textNode('span','','Add this burial record'));
+    body.append(row);newSelections.push({id,checkbox:cb});
+   });
+  }
+  const sortedPeople=[...individualReview.entries()].sort((a,b)=>{
+   const an=incomingMap.get(a[0])?.name||existingMap.get(a[0])?.name||a[0];
+   const bn=incomingMap.get(b[0])?.name||existingMap.get(b[0])?.name||b[0];
+   return an.localeCompare(bn);
+  });
+  for(const [id,group] of sortedPeople){
+   const old=existingMap.get(id),incoming=incomingMap.get(id);
+   const name=displayPersonName(incoming||old)||id;
+   const changes=[...group.fills.map(item=>({item,kind:'fill'})),...group.replacements.map(item=>({item,kind:'replace'}))];
+   const differentNames=old&&incoming&&!sameValue('name',nameWithoutSuffix(old.name||'',effectiveSavedSuffix(old,'')),nameWithoutSuffix(incoming.name||'',incoming.nameSuffix||''));
+   addPersonCard(name,id,'Update',changes.length,body=>{
+    if(differentNames)body.append(textNode('p','person-review-note','Saved name: '+(old.name||'—')+' | GEDCOM name: '+(incoming.name||'—')));
+    const verifyLabel=document.createElement('label');verifyLabel.className='merge-approval';
+    const verify=document.createElement('input');verify.type='checkbox';
+    verifyLabel.append(verify,textNode('span','','I verified GEDCOM '+id+' is the same person in FTM and Fieldbook'));
+    body.append(verifyLabel);
+    const choices=[];
+    for(const {item:x,kind} of changes){
+     const row=document.createElement('label');row.className='merge-approval person-review-field';
+     const cb=document.createElement('input');cb.type='checkbox';cb.disabled=true;
+     const textPart=textNode('span','');
+     const heading=textNode('strong','',readable(x.key)+' · '+(kind==='fill'?'Fill blank':'Replace existing'));
+     const description=textNode('span','person-review-values',(kind==='fill'?'Blank':String(x.current||'—'))+' → '+String(x.incoming||'—'));
+     textPart.append(heading,description);row.append(cb,textPart);body.append(row);
+     const selection={item:x,checkbox:cb,identity:verify};
+     if(kind==='fill')manualSelections.push(selection);else replaceSelections.push(selection);
+     choices.push(cb);
+    }
+    const locationChanges=group.replacements.filter(x=>['town','county','state'].includes(x.key));
+    if(locationChanges.length>1)body.append(textNode('p','person-review-note','Location safeguard: approve all '+locationChanges.length+' changed town/county/state fields together, or leave all unchecked.'));
+    verify.addEventListener('change',()=>{
+     for(const cb of choices){cb.disabled=!verify.checked||!idSafetyOK||Boolean(legacyUnlinked.length);if(cb.disabled)cb.checked=false;}
+    });
+   });
+  }
+  function refreshPeople(){
+   const q=findInput.value.trim().toLowerCase();let count=0;
+   for(const {card,search} of personCards){
+    const show=!q||search.includes(q);card.hidden=!show;
+    if(show){count++;if(q)card.open=true;}
+   }
+   visibleCount.textContent=count+' of '+personCards.length+' people';
+  }
+  findInput.addEventListener('input',refreshPeople);refreshPeople();
+  if(!personCards.length)reviewStep.append(textNode('p','guided-empty','No eligible changes. Your saved Fieldbook already matches the importable records in this GEDCOM.'));
   const identityMore=document.createElement('details');identityMore.className='cemetery-group compare-tech';
-  identityMore.append(textNode('summary','','Review GEDCOM identity checks ('+identityDifferences.length+' name differences)'));
+  identityMore.append(textNode('summary','','Identity differences and safety checks ('+identityDifferences.length+')'));
   const identityContent=textNode('div','cemetery-group-people');identityContent.append(identityDetails);identityMore.append(identityContent);
   if(identityDifferences.length||!idSafetyOK)reviewStep.append(identityMore);
+  const apply=document.createElement('button');apply.type='button';apply.className='secondary';apply.textContent='Export rollback backup, then apply selected changes';
+  apply.disabled=!idSafetyOK||Boolean(legacyUnlinked.length)||!personCards.length;
+  const mergeStatus=textNode('p','hint','No changes made. Select fields in the person cards above.');
   const approvalStep=textNode('section','guided-step');
-  approvalStep.append(textNode('h4','guided-step-title','2. Approve and apply'));
-  approvalStep.append(textNode('p','guided-step-hint','Select the group approvals below, or use individual checkboxes inside the review categories above. A full rollback backup is requested before confirmation.'));
-  if(newBurials.length)approvalStep.append(addApproval.parentElement);
-  if(fillGroups.size)approvalStep.append(fillApproval.parentElement);
-  if(!newBurials.length&&!fillGroups.size&&!reviewFillCount&&!replaceCount)approvalStep.append(textNode('p','guided-empty','Nothing to approve. Your saved entries already match the eligible data in this file.'));
+  approvalStep.append(textNode('h4','guided-step-title','2. Back up and apply selected changes'));
+  approvalStep.append(textNode('p','guided-step-hint','Only checked changes will be applied. You will be asked to save a full rollback backup and confirm. Photos, notes, visits, plot and GPS remain protected.'));
   approvalStep.append(apply,mergeStatus);
+  const summary=textNode('div','guided-status',newBurials.length+' new burial'+(newBurials.length===1?'':'s')+' · '+individualReview.size+' existing people with '+totalFields+' proposed fields · '+ambiguous.length+' conflicting burial people held for review');
+  const safetyMessage=textNode('p','hint',idSafetyOK?'Person ID safety check passed: '+overlap+' matched IDs; '+mismatches+' name differences (review names before approval).':'MERGE DISABLED: GEDCOM ID safety check failed ('+overlap+' matching IDs; '+mismatches+' name differences). No merge can be applied.');
   mergeBody.replaceChildren(summary,safetyMessage,reviewStep,approvalStep);
   mergeBox.replaceChildren(textNode('summary','','Review and apply updates'),mergeBody);
   if(legacyUnlinked.length){
-    const legacyWarning=textNode('div','notice','First LIVE migration safeguard: '+legacyUnlinked.length+' existing burial records do not have GEDCOM IDs. Importing a nationwide GEDCOM now could duplicate them. The comparison is available, but applying a merge is disabled until these records are linked. Your photos, visits, notes and history are unaffected.');
-    mergeBody.insertBefore(legacyWarning,mergeBody.firstChild);
-    apply.disabled=true;addApproval.disabled=true;fillApproval.disabled=true;
+   const warning=textNode('div','notice','Merge blocked: '+legacyUnlinked.length+' existing records have no GEDCOM ID. Match those entries first to avoid duplicates.');
+   mergeBody.insertBefore(warning,mergeBody.firstChild);
   }
-  mergeBox.open=Boolean(newBurials.length||fillGroups.size||reviewFillCount||replaceCount);
+  mergeBox.open=Boolean(personCards.length);
   container.append(mergeBox);
-  // Technical category dumps are separate from the everyday flow, searchable by person.
   diagnostics.classList.add('compare-tech');
   diagnostics.querySelector('summary').textContent='Find a person / investigate a difference (optional)';
   diagnosticsBody.insertBefore(inspector,diagnosticsBody.firstChild);
-  diagnosticsBody.querySelector('p.hint').textContent='Search for a person to see saved and incoming values side by side. Detailed category samples are provided below only for troubleshooting.';
+  diagnosticsBody.querySelector('p.hint').textContent='Search for a person to see saved and incoming values. Detailed categories below are for troubleshooting.';
   container.append(diagnostics);
   apply.onclick=async()=>{
-   const doAdd=addApproval.checked,doFill=fillApproval.checked;
+   const selectedNew=new Set(newSelections.filter(x=>x.checkbox.checked&&!x.checkbox.disabled).map(x=>x.id));
+   const doAdd=selectedNew.size>0,doFill=false;
    const approvedManual=manualSelections.filter(x=>x.checkbox.checked&&x.identity.checked&&!x.checkbox.disabled);
    const approvedReplacements=replaceSelections.filter(x=>x.checkbox.checked&&x.identity.checked&&!x.checkbox.disabled);
    if(legacyUnlinked.length){mergeStatus.textContent='Merge blocked to prevent duplicate relatives: '+legacyUnlinked.length+' existing LIVE entries have no GEDCOM ID. Their identities must be matched before the first nationwide update. No records were changed.';return;}
@@ -1399,7 +1404,7 @@ async function compareCurrentGedcom(file){
    // Revalidate against live data immediately before the write; comparison can
    // become stale if the user edits a record after previewing.
    const live=new Map(all().filter(r=>idOf(r)).map(r=>[idOf(r),r]));
-   const freshNew=doAdd?newBurials.filter(r=>!live.has(idOf(r))&&!blockedBurialIds.has(idOf(r))):[];
+   const freshNew=doAdd?newBurials.filter(r=>selectedNew.has(idOf(r))&&!live.has(idOf(r))&&!blockedBurialIds.has(idOf(r))):[];
    const freshFills=[];
    if(doFill)for(const [id,items] of fillGroups){
     const record=live.get(id);if(!record)continue;
@@ -1414,7 +1419,7 @@ async function compareCurrentGedcom(file){
    let manualCount=0;
    for(const selection of approvedManual){
     const x=selection.item,id=x.id;
-    if(shiftedIds.has(id)||blockedBurialIds.has(id.toUpperCase())||!reviewFillGroups.has(id))continue;
+    if(shiftedIds.has(id)||blockedBurialIds.has(id.toUpperCase())||!individualReview.has(id))continue;
     const record=live.get(id);if(!record)continue;
     const current=x.key==='nameSuffix'?effectiveSavedSuffix(record,x.incoming):record[x.key]||'';
     if(String(current).trim()||!String(x.incoming).trim())continue;
@@ -1501,7 +1506,7 @@ async function compareCurrentGedcom(file){
      refreshHomeDisplay();searchHomePeople();refreshOptions();render();renderChangeLog();
      const resultMessage='Merge complete: '+freshNew.length+' new burials added, '+freshFills.length+' blank fields filled, and '+freshReplacements.length+' verified existing values replaced. '+ambiguous.length+' conflicting-burial people held for review. Keep your downloaded PRE-MERGE backup.';
      mergeStatus.textContent=resultMessage+' Refreshing the comparison automatically…';
-     addApproval.checked=false;fillApproval.checked=false;for(const entry of [...manualSelections,...replaceSelections]){entry.checkbox.checked=false;entry.checkbox.disabled=true;entry.identity.checked=false;}apply.disabled=true;
+     for(const choice of newSelections)choice.checkbox.checked=false;for(const entry of [...manualSelections,...replaceSelections]){entry.checkbox.checked=false;entry.checkbox.disabled=true;entry.identity.checked=false;}apply.disabled=true;
      // Refresh asynchronously after the save and redraw; the SAME user-chosen file is reused.
      // Save the result banner outside the rebuilt review area so it stays visible.
      try{await compareCurrentGedcom(file);status.textContent=resultMessage+' The comparison below is now up to date.';}
