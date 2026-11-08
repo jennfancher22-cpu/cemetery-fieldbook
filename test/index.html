@@ -247,15 +247,15 @@
 </div></details>
 <details class="data-subfold" id="dataBackupsFold"><summary>3 · Backup and restore <span class="tool-subnote">Protect and transfer your data</span></summary><div class="data-subbody">
 <h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your v6.1 backup safe. This LIVE release opens your existing local records using the same storage keys. Do not restore a backup unless recovery is needed; restoring replaces current data.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The new full backup includes the original burial list, photos, notes, and change history. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This app stores records privately on this device and is not synced. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div>
-<details class="data-subfold" id="cloudBackupLab" style="margin-top:18px"><summary>☁️ OneDrive cloud backup (experimental) <span class="tool-subnote">TEST only · manual backup and recovery</span></summary>
+<details class="data-subfold" id="cloudBackupLab" style="margin-top:18px"><summary>☁️ OneDrive cloud backup (experimental) <span class="tool-subnote">TEST only · remembered sign-in and verified backups</span></summary>
 <div class="data-subbody">
-<p class="hint"><strong>Private beta experiment:</strong> Each user signs in to their own personal OneDrive. A dedicated app folder is used for date-stamped backup copies. This is <strong>not</strong> two-way synchronization. Uploaded backups are readable JSON; do not upload sensitive records until you are comfortable with that.</p>
+<p class="hint"><strong>Private beta experiment:</strong> Each user signs in to their own personal OneDrive. This browser may remember the authorization; clearing site data, sign-out, or Microsoft session expiry can require a new sign-in. A dedicated app folder is used for date-stamped backup copies. This is <strong>not</strong> two-way synchronization. Uploaded backups are readable JSON; do not upload sensitive records until you are comfortable with that.</p>
 <p class="hint"><strong>Developer setup:</strong> The app owner registers Fieldbook with Microsoft once. Enter the resulting <em>Application (client) ID</em> below, not your password or client secret. A Microsoft personal account can then connect through Microsoft's sign-in page. The configured redirect URI must exactly match this TEST page.</p>
 <label for="cloudClientId">Microsoft application (client) ID — developer setup</label>
 <input id="cloudClientId" type="text" autocomplete="off" placeholder="00000000-0000-0000-0000-000000000000" spellcheck="false">
 <p class="tiny" id="cloudRedirectHelp"></p>
 <div class="buttons"><button id="cloudConnect" type="button">Connect personal OneDrive</button><button id="cloudDisconnect" type="button" class="secondary">Disconnect</button></div>
-<p id="cloudState" class="hint" role="status">Not connected. No data has been uploaded.</p>
+<p id="cloudState" class="hint" role="status">Not connected. No data has been uploaded.</p><p class="tiny">Experimental remembered sign-in stores a Microsoft refresh token in this browser’s local storage. Only use on a trusted device. Disconnect removes it; clearing site data removes it too. Microsoft may require sign-in again periodically.</p>
 <div class="buttons"><button type="button" id="cloudPreview" class="secondary">Check backup contents</button><button type="button" id="cloudUpload">Back up to OneDrive now</button><button type="button" id="cloudList" class="secondary">View cloud backups</button></div>
 <p id="cloudDetails" class="hint" role="status"></p>
 <div id="cloudBackups" class="home-panel" hidden></div>
@@ -288,7 +288,7 @@
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7 TEST · OneDrive backup lab · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 TEST · OneDrive remembered sign-in and content-verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -1879,8 +1879,8 @@ const largeDataReady=(async()=>{
 </script>
 
 <script>
-/* TEST Cloud Backup Phase 1. No cloud request occurs until user selects Connect/Upload/List.
-   OAuth: Microsoft personal accounts, auth code + PKCE, session-only token.
+/* TEST Cloud Backup Phase 2. Cloud requests only occur for user-initiated actions.
+   OAuth: Microsoft personal accounts, auth code + PKCE, opt-in remembered authorization.
    Graph app-folder permission; no broad drive access. Requires app registration.
    Token is NOT put in downloaded backup or localStorage. */
 (()=>{'use strict';
@@ -1889,13 +1889,16 @@ const clientEl=el('cloudClientId'),state=el('cloudState'),detail=el('cloudDetail
 if(!clientEl||!crypto?.subtle){if(state)state.textContent='This browser does not support secure cloud authentication.';return;}
 const GRAPH='https://graph.microsoft.com/v1.0';
 const AUTH='https://login.microsoftonline.com/consumers/oauth2/v2.0';
-const SCOPES='Files.ReadWrite.AppFolder';
+const SCOPES='Files.ReadWrite.AppFolder offline_access';
 const CIDKEY='fieldbook_cloud_test_clientid';
 const TXKEY='fieldbook_cloud_test_oauth_transaction';
 const AUTHKEY='fieldbook_cloud_test_access_token';
+const REFRESHKEY='fieldbook_cloud_test_refresh_token_v2';
+const LASTKEY='fieldbook_cloud_test_last_verified_v2';
 const REDIRECT=new URL('./',location.href).href;
 let token=null;
 let expiresAt=0;
+let refreshPromise=null;
 let busy=false;
 clientEl.value=localStorage.getItem(CIDKEY)||'';
 el('cloudRedirectHelp').textContent='Required SPA redirect URI: '+REDIRECT;
@@ -1905,6 +1908,32 @@ function b64url(bytes){return btoa(String.fromCharCode(...bytes)).replace(/\+/g,
 function randomBytes(n){return crypto.getRandomValues(new Uint8Array(n));}
 async function challenge(verifier){let hash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier));return b64url(new Uint8Array(hash));}
 function activeToken(){return token&&Date.now()<expiresAt-90_000?token:null;}
+function saveTokenResponse(data){
+ token=data.access_token;expiresAt=Date.now()+(Number(data.expires_in)||3600)*1000;
+ sessionStorage.setItem(AUTHKEY,JSON.stringify({token,expiresAt}));
+ if(data.refresh_token)localStorage.setItem(REFRESHKEY,data.refresh_token);
+}
+async function freshToken(){
+ if(activeToken())return token;
+ if(refreshPromise)return refreshPromise;
+ const rt=localStorage.getItem(REFRESHKEY),cid=clientEl.value.trim();
+ if(!rt||!uuid.test(cid))throw Error('OneDrive sign-in is required. Select Connect personal OneDrive.');
+ refreshPromise=(async()=>{
+  const body=new URLSearchParams({client_id:cid,grant_type:'refresh_token',refresh_token:rt,scope:SCOPES});
+  let response;
+  try{response=await fetch(AUTH+'/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});}
+  catch(e){throw Error('Could not reach Microsoft to renew sign-in. Check your connection and try again.');}
+  const data=await response.json();
+  if(!response.ok||!data.access_token){
+   if(['invalid_grant','interaction_required'].includes(data.error))localStorage.removeItem(REFRESHKEY);
+   throw Error('Microsoft needs you to reconnect OneDrive. '+(data.error_description||data.error||'Session expired'));
+  }
+  saveTokenResponse(data);
+  return token;
+ })();
+ try{return await refreshPromise}finally{refreshPromise=null}
+}
+
 function safeJSON(s){try{return JSON.parse(s)}catch{return null}}
 clientEl.addEventListener('change',()=>{let value=clientEl.value.trim();if(value&& !uuid.test(value)){note('Client ID must be a valid Microsoft application GUID.',true);return;}localStorage.setItem(CIDKEY,value);note('Client ID saved in this TEST browser. Microsoft sign-in is not yet connected.');});
 el('cloudConnect').onclick=async()=>{
@@ -1928,17 +1957,23 @@ async function finishRedirect(){
  const body=new URLSearchParams({client_id:tx.clientId,grant_type:'authorization_code',code,redirect_uri:REDIRECT,code_verifier:tx.verifier,scope:SCOPES});
  const res=await fetch(AUTH+'/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});
  const data=await res.json();if(!res.ok||!data.access_token)throw Error(data.error_description||data.error||'Could not complete Microsoft sign-in');
- token=data.access_token;expiresAt=Date.now()+(Number(data.expires_in)||3600)*1000;
- sessionStorage.setItem(AUTHKEY,JSON.stringify({token,expiresAt}));
- note('Connected to OneDrive for this browser session. No files uploaded yet.');
+ saveTokenResponse(data);
+ note('OneDrive connected. This browser will try to reconnect automatically when possible.');
  }catch(e){note('Sign-in failed: '+e.message,true);}
 }
 const prior=safeJSON(sessionStorage.getItem(AUTHKEY)||'null');
-if(prior&&prior.expiresAt>Date.now()+90_000){token=prior.token;expiresAt=prior.expiresAt;note('OneDrive connection restored for this browser session.');}
-el('cloudDisconnect').onclick=()=>{token=null;expiresAt=0;sessionStorage.removeItem(AUTHKEY);note('Disconnected from this browser session. Backups already in OneDrive were not deleted.');results.hidden=true;};
+if(prior&&prior.expiresAt>Date.now()+90_000){token=prior.token;expiresAt=prior.expiresAt;note('OneDrive connected (restored).');}
+else if(localStorage.getItem(REFRESHKEY)){
+ note('OneDrive account remembered. Renewing connection when needed…');
+ freshToken().then(()=>note('OneDrive connected automatically.')).catch(()=>note('OneDrive account remembered; select Connect if Microsoft asks you to sign in again.'));
+}
+const last=safeJSON(localStorage.getItem(LASTKEY)||'null');
+if(last&&last.name){const p=document.createElement('p');p.className='tiny';p.textContent='Last verified cloud backup on this browser: '+new Date(last.date).toLocaleString()+' · '+last.name;el('cloudDetails').before(p);}
+
+el('cloudDisconnect').onclick=()=>{token=null;expiresAt=0;sessionStorage.removeItem(AUTHKEY);localStorage.removeItem(REFRESHKEY);note('Disconnected and forgotten on this browser. Cloud backups were not deleted.');results.hidden=true;};
 async function graph(path,options={}){
- if(!activeToken())throw Error('Please connect to OneDrive again; the sign-in session has expired.');
- const res=await fetch(GRAPH+path,{...options,headers:{Authorization:'Bearer '+activeToken(),...(options.headers||{})}});
+ const authorization=await freshToken();
+ const res=await fetch(GRAPH+path,{...options,headers:{Authorization:'Bearer '+authorization,...(options.headers||{})}});
  if(!res.ok){let explanation='HTTP '+res.status;try{const j=await res.json();const code=j.error?.code||'unknown';const message=j.error?.message||'Unknown Microsoft Graph error';explanation=`HTTP ${res.status} (${code}): ${message}`}catch{}throw Error(explanation)}
  return res;
 }
@@ -1970,21 +2005,50 @@ async function preview(){
 el('cloudPreview').onclick=async()=>{try{await preview()}catch(e){note('Cannot prepare backup: '+e.message,true)}};
 function setBusy(v){busy=v;for(const id of ['cloudUpload','cloudList','cloudPreview','cloudConnect'])el(id).disabled=v;}
 function uniqueName(){let d=new Date().toISOString().replace(/[:.]/g,'-');let tail=b64url(randomBytes(5));return `fieldbook-${d}-${tail}.json`}
+async function sha256(bytes){return b64url(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)));}
+async function verifyUploadedFile(file,expectedSize,expectedHash){
+ const metaResponse=await graph('/me/drive/special/approot:/'+encodeURIComponent(file)+'?$select=id,name,size,file');
+ const meta=await metaResponse.json();
+ if(meta.size!==expectedSize||!meta.id)throw Error('OneDrive file size or identity did not match.');
+ const downloadResponse=await graph('/me/drive/items/'+encodeURIComponent(meta.id)+'/content');
+ const remoteBytes=await downloadResponse.arrayBuffer();
+ if(remoteBytes.byteLength!==expectedSize)throw Error('Downloaded verification copy has unexpected size.');
+ if(await sha256(remoteBytes)!==expectedHash)throw Error('Downloaded verification copy does not match the original backup.');
+ const obj=JSON.parse(new TextDecoder().decode(remoteBytes));
+ if(obj.format!=='CemeteryFieldbookBackup'||obj.version!==5||!Array.isArray(obj.seed)||!Array.isArray(obj.photos))throw Error('Downloaded verification copy is not a valid full backup.');
+ return meta;
+}
+
 el('cloudUpload').onclick=async()=>{
  if(busy)return;setBusy(true);
+ let file=null,uploaded=false;
  try{
- if(!activeToken())throw Error('Connect to OneDrive before uploading.');
+ await freshToken();
  note('Preparing complete backup, including photographs…');let {json,bytes,payload}=await preview();
  if(bytes>240*1024*1024)throw Error('Backup is larger than this first-version upload limit. Download the regular full backup instead.');
  if(!confirm(`Upload a NEW, date-stamped backup of ${fmt(payload.seed.length)} burial records and ${fmt(payload.photos.length)} photo records (${(bytes/1024/1024).toFixed(2)} MB) to your OneDrive app folder?\n\nThis backup is not encrypted by Fieldbook. Existing cloud backups will not be overwritten.`)){note('Cloud backup cancelled; nothing uploaded.');return;}
- const file=uniqueName();note('Preparing private OneDrive app folder…');await ensureAppFolder();note('Uploading a new backup to OneDrive…');
- // Each backup gets a distinct timestamp + random filename; never replace existing backups.
- const response=await graph('/me/drive/special/approot:/'+encodeURIComponent(file)+':/content',{method:'PUT',headers:{'Content-Type':'application/json','If-None-Match':'*'},body:json});
- const metadata=await response.json();if(metadata.size!==bytes)throw Error('Upload returned unexpected file size. Do not rely on this backup until checked.');
- note(`Backup uploaded and file size verified: ${file} (${(bytes/1024/1024).toFixed(2)} MB). Recovery has not yet been tested.`);
- await listCloud();
- }catch(e){note('Cloud backup failed: '+e.message,true)}finally{setBusy(false)}
+ file=uniqueName();note('Preparing private OneDrive app folder…');await ensureAppFolder();
+ const sourceHash=await sha256(new TextEncoder().encode(json));
+ note('Uploading a new backup to OneDrive…');
+ try{
+  const response=await graph('/me/drive/special/approot:/'+encodeURIComponent(file)+':/content',{method:'PUT',headers:{'Content-Type':'application/json','If-None-Match':'*'},body:json});
+  const metadata=await response.json();uploaded=true;
+  if(metadata.size!==bytes)note('Upload response received; independently verifying saved contents…');
+ }catch(uploadError){
+  // A successful upload can be followed by an interrupted response. Check the
+  // exact filename before reporting failure or creating another backup.
+  note('Upload response uncertain. Checking for the saved file…');
+  try{await verifyUploadedFile(file,bytes,sourceHash);uploaded=true;}
+  catch(verificationError){throw Error('Upload could not be confirmed. '+uploadError.message+' Verification: '+verificationError.message+' Do not retry until you check the cloud file list.');}
+ }
+ note('Uploading finished. Downloading verification copy from OneDrive…');
+ await verifyUploadedFile(file,bytes,sourceHash);
+ localStorage.setItem(LASTKEY,JSON.stringify({name:file,date:new Date().toISOString(),bytes}));
+ note(`Backup VERIFIED (file and contents): ${file} (${(bytes/1024/1024).toFixed(2)} MB). Restore is still untested.`);
+ try{await listCloud()}catch(listError){note(`Backup VERIFIED: ${file}. Backup list could not refresh: ${listError.message}. The upload was successful.`,false)}
+ }catch(e){note((uploaded?'OneDrive received the backup, but verification was not completed: ':'Cloud backup not confirmed: ')+e.message,true)}finally{setBusy(false)}
 };
+
 async function listCloud(){
  await ensureAppFolder();
  const response=await graph('/me/drive/special/approot/children?$top=100&$select=id,name,size,createdDateTime,file');
