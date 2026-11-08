@@ -272,6 +272,16 @@
 <div class="buttons"><button type="button" id="cloudPreview" class="secondary">Check backup contents</button><button type="button" id="cloudUpload">Back up to OneDrive now</button><button type="button" id="cloudList" class="secondary">View cloud backups</button></div>
 <p id="cloudDetails" class="hint" role="status"></p>
 <div id="cloudBackups" class="home-panel" hidden></div>
+<div class="home-panel" style="margin:14px 0;padding:12px;border:1px solid #c4d1dc;border-radius:12px">
+<h4 style="margin:0 0 6px">🔍 Compare two cloud backups (sync readiness — read only)</h4>
+<p class="tiny">Choose one backup from your computer and one from your phone. Fieldbook compares saved records and photos without importing, restoring, uploading, modifying, or deleting anything. It does <strong>not</strong> synchronize data. Choose versions carefully: a newer GEDCOM import can create thousands of expected differences.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;max-width:100%">
+<label style="min-width:0">Backup A<select id="syncCompareA" style="width:100%;max-width:100%"><option value="">Load cloud backup list first</option></select></label>
+<label style="min-width:0">Backup B<select id="syncCompareB" style="width:100%;max-width:100%"><option value="">Load cloud backup list first</option></select></label>
+</div>
+<div class="buttons"><button type="button" id="syncCompareRefresh" class="secondary">Load backup choices</button><button type="button" id="syncCompareRun">Compare selected backups</button></div>
+<div id="syncCompareResult" class="hint" role="status">No comparison run. Read-only; no records will be changed.</div>
+</div>
 <div class="notice"><strong>Recovery:</strong> Select <em>Restore</em> beside a cloud backup to review it and replace this TEST browser's saved data after confirmation, without downloading a file first. <em>Download</em> remains available for an independent offline copy. A restore does not modify or delete cloud backups.</div>
 </div></details>
 <div id="resetFieldbookPanel" class="fieldbook-reset-panel" style="margin-top:18px;padding:14px;border:1px solid #d8b3ad;border-radius:12px;background:#fff9f7">
@@ -301,7 +311,7 @@
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7 TEST · Optional automatic OneDrive backup + direct restore + verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 TEST · Read-only cloud backup comparison · Optional automatic OneDrive backup + direct restore + verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -2327,6 +2337,85 @@ async function listCloud(){
   row.append(info,btn,restoreBtn);results.append(row);
  }
 }
+// Read-only two-backup comparison for planning safe future synchronization.
+// Separate browser databases are never read/written by this feature; cloud files are only GET requests.
+let syncCompareEntries=[];
+const syncA=el('syncCompareA'),syncB=el('syncCompareB'),syncResult=el('syncCompareResult');
+const backupNamePattern=/^(?:fieldbook-|cemetery-fieldbook-backup-).*\.json$/i;
+function syncSay(msg){syncResult.replaceChildren();const p=document.createElement('p');p.textContent=msg;syncResult.append(p);}
+async function loadSyncChoices(){
+  syncSay('Reading backup filenames from OneDrive…');
+  const files=(await allCloudFiles()).filter(f=>f.file&&backupNamePattern.test(f.name)).sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
+  syncCompareEntries=files;
+  for(const select of [syncA,syncB]){
+    const prior=select.value;select.replaceChildren();
+    const empty=document.createElement('option');empty.value='';empty.textContent='Choose a backup';select.append(empty);
+    for(const f of files){const opt=document.createElement('option');opt.value=f.id;opt.textContent=f.name+' · '+new Date(f.createdDateTime).toLocaleString();select.append(opt)}
+    if(files.some(f=>f.id===prior))select.value=prior;
+  }
+  syncSay(files.length+' cloud backups available. Choose the computer and phone backups to compare. No data changed.');
+}
+async function getSyncBackup(f){
+ const response=await graph('/me/drive/items/'+encodeURIComponent(f.id)+'/content');
+ const bytes=await response.arrayBuffer();
+ if(bytes.byteLength!==f.size)throw Error('File size does not match OneDrive metadata: '+f.name);
+ const doc=JSON.parse(new TextDecoder().decode(bytes));
+ if(doc.format!=='CemeteryFieldbookBackup'||doc.version!==5||!Array.isArray(doc.seed)||!Array.isArray(doc.photos))throw Error('Unsupported or incomplete Fieldbook backup: '+f.name);
+ if(!doc.seed.every(r=>r&&typeof r.id==='string'))throw Error('Invalid burial records in '+f.name);
+ return doc;
+}
+function canonicalValue(v){
+ if(Array.isArray(v))return '['+v.map(canonicalValue).join(',')+']';
+ if(v&&typeof v==='object')return '{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+canonicalValue(v[k])).join(',')+'}';
+ return JSON.stringify(v);
+}
+function effectiveRecord(r,doc){return {...r,...(doc.updates?.[r.id]||{})}}
+function indexById(records){const result=new Map(),duplicates=new Set();for(const r of records){if(result.has(r.id))duplicates.add(r.id);else result.set(r.id,r)}return {result,duplicates}}
+function compareSyncDocuments(a,b){
+ const A=indexById(a.seed),B=indexById(b.seed);
+ if(A.duplicates.size||B.duplicates.size)throw Error('Duplicate burial IDs found. No comparison available until IDs are reviewed.');
+ let onlyA=0,onlyB=0,changed=0,unchanged=0;
+ const examples=[],changedFields={};
+ for(const [id,ra] of A.result){
+  const rb=B.result.get(id);
+  if(!rb){onlyA++;if(examples.length<16)examples.push({name:ra.name||id,change:'Only in backup A'});continue;}
+  const ea=effectiveRecord(ra,a),eb=effectiveRecord(rb,b);
+  const keys=[...new Set([...Object.keys(ea),...Object.keys(eb)])].filter(k=>k!=='id');
+  const diff=keys.filter(k=>canonicalValue(ea[k])!==canonicalValue(eb[k]));
+  if(diff.length){changed++;for(const k of diff)changedFields[k]=(changedFields[k]||0)+1;if(examples.length<16)examples.push({name:eb.name||ra.name||id,change:'Different: '+diff.slice(0,6).join(', ')+(diff.length>6?'…':'')});}
+  else unchanged++;
+ }
+ for(const [id,rb] of B.result){if(!A.result.has(id)){onlyB++;if(examples.length<16)examples.push({name:rb.name||id,change:'Only in backup B'})}}
+ const photoA=indexById(a.photos.filter(x=>x&&typeof x.id==='string'));
+ const photoB=indexById(b.photos.filter(x=>x&&typeof x.id==='string'));
+ let pOnlyA=0,pOnlyB=0,pChanged=0;
+ for(const [id,pa] of photoA.result){if(!photoB.result.has(id))pOnlyA++;else if(canonicalValue(pa)!==canonicalValue(photoB.result.get(id)))pChanged++}
+ for(const id of photoB.result.keys())if(!photoA.result.has(id))pOnlyB++;
+ return {a:a.seed.length,b:b.seed.length,onlyA,onlyB,changed,unchanged,photosA:a.photos.length,photosB:b.photos.length,pOnlyA,pOnlyB,pChanged,historyA:a.changeLog?.length||0,historyB:b.changeLog?.length||0,peopleA:a.gedcomPeople?.length||0,peopleB:b.gedcomPeople?.length||0,changedFields,examples,duplicatePhotos:photoA.duplicates.size+photoB.duplicates.size};
+}
+function showSyncResult(r,fa,fb){
+ syncResult.replaceChildren();
+ const title=document.createElement('strong');title.textContent='Read-only comparison complete — no records modified';syncResult.append(title);
+ const p=document.createElement('p');p.textContent='Backup A: '+fa.name+' | Backup B: '+fb.name;syncResult.append(p);
+ const table=document.createElement('div');table.style.cssText='display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:13px';
+ const rows=[['Burials A / B',r.a.toLocaleString()+' / '+r.b.toLocaleString()],['Only in A',r.onlyA],['Only in B',r.onlyB],['Same ID, different fields',r.changed],['Same ID, same fields',r.unchanged],['Photos A / B',r.photosA+' / '+r.photosB],['Photo entries only A / only B',r.pOnlyA+' / '+r.pOnlyB],['Same photo ID, different content',r.pChanged],['History entries A / B',r.historyA+' / '+r.historyB],['GEDCOM people A / B',r.peopleA+' / '+r.peopleB]];
+ for(const [label,value] of rows){const l=document.createElement('span'),v=document.createElement('strong');l.textContent=label;v.textContent=String(value);table.append(l,v)}syncResult.append(table);
+ if(r.duplicatePhotos){const warning=document.createElement('p');warning.textContent='Warning: duplicate photo IDs found ('+r.duplicatePhotos+'); photo comparison is incomplete.';syncResult.append(warning)}
+ if(Object.keys(r.changedFields).length){const p2=document.createElement('p');p2.textContent='Fields differing most often: '+Object.entries(r.changedFields).sort((x,y)=>y[1]-x[1]).slice(0,10).map(([k,n])=>k+' ('+n+')').join(', ');syncResult.append(p2)}
+ if(r.examples.length){const details=document.createElement('details');details.style.marginTop='8px';const summ=document.createElement('summary');summ.textContent='View sample differences ('+r.examples.length+')';details.append(summ);for(const e of r.examples){const d=document.createElement('div');d.style.cssText='padding:5px 0;border-bottom:1px solid #ddd;overflow-wrap:anywhere';d.textContent=e.name+' — '+e.change;details.append(d)}syncResult.append(details)}
+ const caution=document.createElement('p');caution.style.marginTop='12px';caution.textContent='Important: IDs may differ after GEDCOM re-exports, and a same ID does not prove the same person. This comparison is a planning tool, NOT a safe merge. It cannot yet reconcile offline edits or photos.';syncResult.append(caution);
+}
+el('syncCompareRefresh').onclick=async()=>{if(busy)return;setBusy(true);try{await loadSyncChoices()}catch(e){syncSay('Could not load cloud backups: '+e.message)}finally{setBusy(false)}};
+el('syncCompareRun').onclick=async()=>{
+ if(busy)return;
+ const fa=syncCompareEntries.find(f=>f.id===syncA.value),fb=syncCompareEntries.find(f=>f.id===syncB.value);
+ if(!fa||!fb){syncSay('Choose both backups first.');return}
+ if(fa.id===fb.id){syncSay('Choose two different backups.');return}
+ setBusy(true);
+ try{syncSay('Downloading the two backups into memory for read-only comparison…');const a=await getSyncBackup(fa);const b=await getSyncBackup(fb);showSyncResult(compareSyncDocuments(a,b),fa,fb)}
+ catch(e){syncSay('Comparison could not finish: '+e.message+'. No data changed.')}finally{setBusy(false)}
+};
+
 el('cloudList').onclick=async()=>{if(busy)return;setBusy(true);try{note('Reading backup list from OneDrive…');await listCloud();note('Cloud backup list updated.')}catch(e){note('Could not list cloud backups: '+e.message,true)}finally{setBusy(false)}};
 finishRedirect();
 })();
