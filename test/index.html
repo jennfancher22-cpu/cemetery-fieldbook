@@ -137,6 +137,75 @@
 #dataToolsFold .ged-count{background:#fff}
 @media(max-width:600px){#dataToolsFold .guided-step{padding:10px}#dataToolsFold .guided-step-title{font-size:15px}#dataToolsFold .guided-step summary{font-size:13px}}
 
+
+/* Person-centered GEDCOM update review */
+#dataToolsFold .person-review-search{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:10px 0 14px}
+#dataToolsFold .person-review-search input{flex:1;min-width:200px;margin:0}
+#dataToolsFold .person-review-card[hidden]{display:none}
+#dataToolsFold .person-review-card>summary{justify-content:flex-start;text-align:left}
+#dataToolsFold .person-review-heading{flex:1;min-width:0;overflow-wrap:anywhere;font-weight:650}
+#dataToolsFold .person-review-pill{flex:0 0 auto;font-size:11px;background:#fff;border-radius:100px;padding:4px 9px;color:#355b4e}
+#dataToolsFold .person-review-field span.person-review-values{display:block;margin-top:3px;font-size:12px;line-height:1.5;color:#355c51;font-weight:400;overflow-wrap:anywhere}
+#dataToolsFold .person-review-note{margin:9px 2px;padding:8px 10px;background:#f4f7f2;border-radius:7px;font-size:12px;color:#4e655d;line-height:1.5}
+#dataToolsFold .person-review-detail{padding:5px 3px;border-bottom:1px solid #e6eee7;font-size:13px;overflow-wrap:anywhere}
+#dataToolsFold .person-review-field strong{display:block}
+#dataToolsFold .person-review-card>summary{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px}
+#dataToolsFold .person-review-accept{display:inline-flex;align-items:center;gap:6px;margin:0;padding:5px 7px;border-radius:8px;background:#edf5ee;color:#1c5548;font-size:12px;font-weight:650;cursor:pointer}
+#dataToolsFold .person-review-accept input[type="checkbox"]{width:19px;height:19px;min-height:19px;flex:0 0 19px;margin:0;accent-color:#14675e}
+#dataToolsFold .person-review-accept input:disabled{cursor:not-allowed}
+#dataToolsFold .person-review-progress{font-size:11px;color:#536b60;white-space:nowrap}
+@media(max-width:550px){#dataToolsFold .person-review-card>summary{gap:7px}#dataToolsFold .person-review-heading{flex:1 1 100%;font-size:13px}#dataToolsFold .person-review-accept{margin-left:0}#dataToolsFold .person-review-pill{font-size:10px}}
+
+
+
+/* v7 mobile person-review layout: reclaim width from nested panels and keep controls usable. */
+@media (max-width: 640px) {
+  main {padding-left:6px;padding-right:6px}
+  main > .panel {padding:8px}
+  #dataToolsFold, #dataToolsFold .data-subfold {max-width:100%;min-width:0}
+  #dataToolsFold .data-subbody {padding:6px}
+  #dataToolsFold .home-panel, #dataToolsFold .ged-preview {padding:8px;margin-left:0;margin-right:0;min-width:0}
+  #dataToolsFold .guided-step {padding:8px 6px;margin:9px 0;min-width:0}
+  #dataToolsFold .guided-step-title {font-size:15px;line-height:1.35}
+  #dataToolsFold .guided-step-hint {font-size:12px;line-height:1.45}
+  #dataToolsFold .guided-step .cemetery-group-people {padding:8px 7px}
+  #dataToolsFold .person-review-list {min-width:0}
+  #dataToolsFold .person-review-card {margin:8px 0;min-width:0}
+  #dataToolsFold .person-review-card>summary {padding:10px 9px;gap:7px;display:grid;grid-template-columns:15px minmax(0,1fr);align-items:start}
+  #dataToolsFold .person-review-card>summary::before {grid-column:1;grid-row:1;margin-top:1px}
+  #dataToolsFold .person-review-heading {grid-column:2;grid-row:1;display:block;min-width:0;font-size:14px;line-height:1.3;flex:none;overflow-wrap:anywhere}
+  #dataToolsFold .person-review-pill {grid-column:2;font-size:11px;justify-self:start;white-space:normal}
+  #dataToolsFold .person-review-accept {grid-column:2;justify-self:start;padding:5px 3px;background:transparent;font-size:13px}
+  #dataToolsFold .person-review-progress {grid-column:2;justify-self:start;font-size:11px}
+  #dataToolsFold .person-review-card .merge-approval {font-size:12px;padding:9px 8px;gap:8px;line-height:1.4}
+  #dataToolsFold .person-review-detail {font-size:12px;line-height:1.5}
+  #dataToolsFold .person-review-search {display:block;margin:9px 0 12px}
+  #dataToolsFold .person-review-search input {display:block;min-width:0;width:100%;font-size:16px;padding:10px 11px}
+  #dataToolsFold .person-review-search .tiny {display:block;margin-top:6px}
+  #dataToolsFold .guided-status {font-size:12px;line-height:1.5;padding:9px}
+}
+
+
+/* Mobile GEDCOM review v2: prioritize readable person cards over nested containers. */
+@media (max-width: 640px) {
+ #dataToolsFold .ged-preview, #dataToolsFold .home-panel {border:0 !important;box-shadow:none !important;padding:6px 2px !important;background:transparent !important}
+ #dataToolsFold .guided-step {border:0 !important;box-shadow:none !important;border-radius:0 !important;padding:7px 0 !important;background:transparent !important}
+ #dataToolsFold .guided-step .cemetery-group-people {padding:8px 4px 10px !important}
+ #dataToolsFold .person-review-card {border:1px solid #cfded3;border-radius:12px;background:#fff;margin:7px 0 !important;overflow:hidden}
+ #dataToolsFold .person-review-card>summary {padding:11px 10px !important;grid-template-columns:12px minmax(0,1fr) !important;column-gap:8px !important;row-gap:6px !important}
+ #dataToolsFold .person-review-heading {font-size:15px !important;line-height:1.35 !important;overflow-wrap:break-word !important}
+ #dataToolsFold .person-review-pill {font-size:11px !important;padding:3px 9px !important}
+ #dataToolsFold .person-review-accept {font-size:14px !important;min-height:34px !important;gap:9px !important}
+ #dataToolsFold .person-review-accept input[type=checkbox] {width:22px !important;height:22px !important;flex-basis:22px !important}
+ #dataToolsFold .person-review-progress {font-size:12px !important}
+ #dataToolsFold .person-review-card .merge-approval {background:transparent !important;border:0 !important;border-bottom:1px solid #e0e9e2 !important;border-radius:0 !important;margin:0 !important;padding:12px 6px !important;font-size:13px !important;gap:10px !important}
+ #dataToolsFold .person-review-card .merge-approval:has(input:disabled) {opacity:.65}
+ #dataToolsFold .person-review-field strong {font-size:13px !important;line-height:1.4}
+ #dataToolsFold .person-review-field .person-review-values {font-size:13px !important;line-height:1.5 !important}
+ #dataToolsFold .person-review-note {padding:8px !important;margin:8px 2px !important;font-size:12px !important}
+ #dataToolsFold .person-review-detail {font-size:13px !important}
+ #dataToolsFold .person-review-search input {box-sizing:border-box !important}
+}
 </style><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="icon" type="image/svg+xml" href="icon.svg"><style>
 /* v7 read-only relationship verification */
 .relationship-results{display:grid;gap:8px;margin-top:9px}
@@ -145,8 +214,8 @@
 .relationship-card .meta-line{font-size:12px;color:#546b60;margin:4px 0}
 .relationship-card .uncertain{font-size:12px;color:#8a6230;background:#fff7e8;border-radius:6px;padding:6px 8px;margin-top:7px}
 .relationship-card .rel-title{font-size:14px;font-weight:700;color:#174e40;margin:7px 0}
-</style></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#fff3cb;color:#765113">V7 CLEAN DATA TOOLS TEST · PRIVATE STORAGE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div></div></header><main>
-<div class="stats"><div class="stat"><div id="sPeople" class="num">—</div><div class="small">Burial entries</div></div><div class="stat"><div id="sCem" class="num">—</div><div class="small">Cemeteries</div></div><div class="stat"><div id="sVisited" class="num">—</div><div class="small">Visited</div></div></div>
+</style></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#fff3cb;color:#765113">V7 TEST · ONEDRIVE BACKUP LAB</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div></div></header><main>
+<div class="notice" style="border:2px solid #d0a23f;margin:10px 0;padding:12px;border-radius:12px"><strong>TEST ONLY — Cloud backup experiment.</strong> This is separate from LIVE data. Cloud sign-in needs a developer application ID; do not enter passwords here. Backups uploaded to OneDrive are not encrypted by Fieldbook yet.</div><div class="stats"><div class="stat"><div id="sPeople" class="num">—</div><div class="small">Burial entries</div></div><div class="stat"><div id="sCem" class="num">—</div><div class="small">Cemeteries</div></div><div class="stat"><div id="sVisited" class="num">—</div><div class="small">Visited</div></div></div>
 <section class="panel" id="nearbyPanel"><details class="finder-fold" id="nearbyFold"><summary>📍 Find cemeteries nearby <span class="finder-sub">Search by distance</span></summary><div class="finder-body"><p class="hint">Straight-line distance, not driving distance. Works offline with saved cemetery coordinates. Choose a starting town or try your phone location.</p><div class="filters"><div><label for="startPlace">Starting point</label><select id="startPlace"><option value="39.7684,-86.1581">Indianapolis, IN</option><option value="38.9592,-85.8903" selected>Seymour, IN</option><option value="39.6128,-86.3742">Mooresville, IN</option><option value="39.2014,-85.9214">Columbus, IN</option><option value="custom">Custom coordinates</option></select></div><div><label for="radius">Within</label><select id="radius"><option>10</option><option selected>25</option><option>50</option><option>100</option><option>250</option><option>500</option></select></div><div><label for="startLat">Latitude</label><input id="startLat" type="number" step="any" placeholder="39.123"></div><div><label for="startLon">Longitude</label><input id="startLon" type="number" step="any" placeholder="-86.123"></div></div><div class="buttons" style="margin-top:10px"><button id="nearSearch">Find nearby cemeteries</button><button class="secondary" id="myLocation">Use phone GPS</button></div><div id="geoNote" class="hint" role="status"></div><div id="nearResults"></div></div></details></section><section class="panel" id="relativePanel"><details class="finder-fold" id="relativeFold" open><summary>🔎 Find a relative or cemetery <span class="finder-sub">Search names &amp; filters</span></summary><div class="finder-body"><div class="filters"><div class="wide"><input id="q" type="search" placeholder="Search name, cemetery, town, family line…" aria-label="Search"></div><div><label for="stateFilter">State</label><select id="stateFilter"><option value="">All states</option></select></div><div><label for="county">County</label><select id="county"><option value="">All counties</option></select></div><div><label for="cem">Cemetery</label><select id="cem"><option value="">All cemeteries</option></select></div><div><label for="status">Visit filter</label><select id="status"><option value="">All records</option><option value="unvisited">Not visited</option><option value="nophoto">Photo needed</option><option value="nogps">GPS needed</option></select></div></div><div class="buttons" style="margin-top:12px"><button id="add">+ Add discovery</button><button class="secondary" id="clear">Clear filters</button><button class="outline" id="showAll">Show all records</button><button class="secondary" type="button" id="showMatches">Show filtered results</button></div></div></details></section>
 <section class="panel" id="burialPanel"><div class="resulthead"><h2 style="margin:0">Burial records</h2><span class="tiny" id="count"></span></div><div class="burial-list-controls"><span class="hint">Tap a name to view details and edit.</span><div class="inline-controls"><button class="secondary" id="hideResultsTop" type="button">Hide results</button><button class="secondary" id="clearResultsTop" type="button">Clear filters</button></div></div><div id="out"></div><div class="burial-list-controls"><button id="more" class="secondary" hidden>Show more</button><div class="inline-controls"><button class="secondary" id="hideResultsBottom" type="button">Hide results</button><button class="secondary" id="clearResultsBottom" type="button">Clear filters</button></div></div></section>
 <section class="panel" id="changeLogPanel"><div class="resulthead"><h2 style="margin:0">📋 Cemetery change log</h2><span class="tiny" id="changeCount"></span></div><p class="hint">Keep a complete activity history, and review just the discoveries and corrections you still need to enter in your family tree. Tracking starts with edits made in v5. v6 hides reversed and superseded field edits from outstanding tree updates, while preserving their activity history.</p><div class="buttons"><button id="viewTreeChanges">Changes to enter in tree</button><button id="viewHistory" class="secondary">Complete activity history</button></div><div id="changeList" hidden></div><div class="buttons" id="changeTools" hidden style="margin-top:10px"><button id="downloadChangeCsv">Export tree changes (Excel)</button><button class="secondary" id="downloadHistoryCsv">Export full history (Excel)</button><button class="secondary" id="hideChangeLog">Hide reports</button></div></section>
@@ -177,7 +246,28 @@
 <div id="compareGedcomResults" class="ged-preview" hidden></div></div>
 </div></details>
 <details class="data-subfold" id="dataBackupsFold"><summary>3 · Backup and restore <span class="tool-subnote">Protect and transfer your data</span></summary><div class="data-subbody">
-<h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your existing OneDrive backup and restore it in this version. Do not discard either version until you have verified the imported notes and photos.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The new full backup includes the original burial list, photos, notes, and change history. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This is a single-file offline test, not a synced app. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div></div></details>
+<h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your v6.1 backup safe. This LIVE release opens your existing local records using the same storage keys. Do not restore a backup unless recovery is needed; restoring replaces current data.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The new full backup includes the original burial list, photos, notes, and change history. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This app stores records privately on this device and is not synced. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div>
+<details class="data-subfold" id="cloudBackupLab" style="margin-top:18px"><summary>☁️ OneDrive cloud backup (experimental) <span class="tool-subnote">TEST only · manual backup and recovery</span></summary>
+<div class="data-subbody">
+<p class="hint"><strong>Private beta experiment:</strong> Each user signs in to their own personal OneDrive. A dedicated app folder is used for date-stamped backup copies. This is <strong>not</strong> two-way synchronization. Uploaded backups are readable JSON; do not upload sensitive records until you are comfortable with that.</p>
+<p class="hint"><strong>Developer setup:</strong> The app owner registers Fieldbook with Microsoft once. Enter the resulting <em>Application (client) ID</em> below, not your password or client secret. A Microsoft personal account can then connect through Microsoft's sign-in page. The configured redirect URI must exactly match this TEST page.</p>
+<label for="cloudClientId">Microsoft application (client) ID — developer setup</label>
+<input id="cloudClientId" type="text" autocomplete="off" placeholder="00000000-0000-0000-0000-000000000000" spellcheck="false">
+<p class="tiny" id="cloudRedirectHelp"></p>
+<div class="buttons"><button id="cloudConnect" type="button">Connect personal OneDrive</button><button id="cloudDisconnect" type="button" class="secondary">Disconnect</button></div>
+<p id="cloudState" class="hint" role="status">Not connected. No data has been uploaded.</p>
+<div class="buttons"><button type="button" id="cloudPreview" class="secondary">Check backup contents</button><button type="button" id="cloudUpload">Back up to OneDrive now</button><button type="button" id="cloudList" class="secondary">View cloud backups</button></div>
+<p id="cloudDetails" class="hint" role="status"></p>
+<div id="cloudBackups" class="home-panel" hidden></div>
+<div class="notice"><strong>Recovery:</strong> Choose <em>Download</em> next to a cloud backup, then use the existing <em>Restore backup</em> button above. Restoring replaces local data only after its own confirmation. Keep regular offline backups too. A verified upload is not yet a tested restore.</div>
+</div></details>
+<div id="resetFieldbookPanel" class="fieldbook-reset-panel" style="margin-top:18px;padding:14px;border:1px solid #d8b3ad;border-radius:12px;background:#fff9f7">
+<h3 style="margin:0 0 6px;color:#813d32">Start over / reset Fieldbook data</h3>
+<p class="hint" style="margin:0 0 10px">Use this only when you want an empty Fieldbook before a fresh GEDCOM import. This erases this browser's <strong>TEST burial entries, edits, discoveries, photographs, visit statuses, change history, saved cemetery coordinates, Home Person, and GEDCOM directory</strong>. It does not delete your downloaded backups or the app on GitHub. It does not erase TEST Fieldbook records.</p>
+<label style="display:flex;align-items:flex-start;gap:9px;margin:8px 0;font-size:13px"><input id="resetBackupAck" type="checkbox" style="width:18px;height:18px;min-height:18px;flex:0 0 18px;margin-top:2px"><span>I have saved a full backup and understand that resetting removes my LIVE data from this browser.</span></label>
+<button type="button" class="danger" id="resetFieldbookButton" disabled>Reset TEST Fieldbook data…</button>
+<p id="resetFieldbookStatus" class="hint" role="status" style="margin:8px 0 0"></p>
+</div></div></details>
 <details class="data-subfold" id="advancedToolsFold"><summary>4 · Advanced tools <span class="tool-subnote">Legacy repairs and troubleshooting · usually not needed</span></summary><div class="data-subbody">
 <p class="hint" style="margin-top:0">These are retained for older Fieldbook data, relationship troubleshooting, and recovery. Initial GEDCOM imports and routine updates already handle suffix emojis and Find a Grave links, so you normally do not need separate repair tools. Back up before using any repair action.</p>
 <div class="home-panel" id="suffixRepairPanel"><h3 style="margin-top:0">Preview missing GEDCOM name suffixes</h3>
@@ -198,12 +288,23 @@
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7 CLEAN UPDATE WORKFLOW TEST · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 TEST · OneDrive backup lab · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
 const $=x=>document.getElementById(x);
 const SEED_KEY='cemeteryFieldbook_V7_TEST_private_seed';
+let largeDataHydrated=false; // Prevent stale localStorage counts before IndexedDB hydration.
+
+
+// Large GEDCOM directories and burial lists are saved in IndexedDB, NOT localStorage.
+// Only the LIVE app uses this database; TEST has a different database name.
+const LARGE_DB_NAME='cemeteryFieldbook_V7_TEST_LargeData_v7';
+function openLargeDB(){return new Promise((resolve,reject)=>{const q=indexedDB.open(LARGE_DB_NAME,1);q.onupgradeneeded=()=>{if(!q.result.objectStoreNames.contains('datasets'))q.result.createObjectStore('datasets')};q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error||Error('Cannot open Fieldbook large-data storage'))})}
+async function readLargeData(){const db=await openLargeDB();return new Promise((resolve,reject)=>{const tx=db.transaction('datasets','readonly');const a=tx.objectStore('datasets').get('burials'),b=tx.objectStore('datasets').get('people');tx.oncomplete=()=>{db.close();resolve({burials:a.result,people:b.result})};tx.onerror=()=>{db.close();reject(tx.error)};tx.onabort=()=>{db.close();reject(tx.error)}})}
+async function saveLargeData(burials,people){const db=await openLargeDB();return new Promise((resolve,reject)=>{const tx=db.transaction('datasets','readwrite'),st=tx.objectStore('datasets');st.put(burials,'burials');st.put(people,'people');tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{db.close();reject(tx.error||Error('Large-data save failed'))};tx.onabort=()=>{db.close();reject(tx.error||Error('Large-data save aborted'))}})}
+async function clearLargeData(){const db=await openLargeDB();return new Promise((resolve,reject)=>{const tx=db.transaction('datasets','readwrite');tx.objectStore('datasets').clear();tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{db.close();reject(tx.error)}})}
+
 let seed=[];
 try { const saved=localStorage.getItem(SEED_KEY); if(saved) {const parsed=JSON.parse(saved); if(Array.isArray(parsed))seed=parsed;} } catch(err) {alert('Could not read private cemetery records: '+err.message)}
 const KEY='cemeteryFieldbook_V7_TEST_records', BACKUP_KEY='cemeteryFieldbook_V7_TEST_backup_time';
@@ -534,6 +635,12 @@ function displayPersonName(record){
 function matching(){const t=$('q').value.trim().toLowerCase(),state=$('stateFilter').value,county=$('county').value,cem=$('cem').value,status=$('status').value;return all().filter(r=>{if(state&&r.state!==state||county&&r.county!==county||cem&&r.cemetery!==cem)return false;if(t&&![r.name,r.nameSuffix,r.dates,r.relation,r.line,r.cemetery,r.county,r.town,r.state,r.notes,r.plot].join(' ').toLowerCase().includes(t))return false;if(status==='unvisited'&&r.visited||status==='nophoto'&&r.photo||status==='nogps'&&r.gps)return false;return true})}
 function textNode(tag,cls,value){const e=document.createElement(tag);if(cls)e.className=cls;e.textContent=value||'';return e}
 function render(){
+ if(!largeDataHydrated){
+  for(const id of ['sPeople','sCem','sVisited'])$(id).textContent='…';
+  $('count').textContent='Loading your Fieldbook…';
+  $('out').replaceChildren(textNode('p','hint','Loading your saved burial records…'));
+  return;
+ }
  const hasFilter=!!($('q').value.trim()||$('stateFilter').value||$('county').value||$('cem').value||$('status').value);
  const shouldShow=(hasFilter||showAllRecords)&&!resultsSuppressed;
  const rows=shouldShow?matching():[];
@@ -634,7 +741,7 @@ $('showMatches').onclick=()=>{resultsSuppressed=false;render();$('burialPanel').
 $('more').onclick=()=>{visible+=65;render()};
 $('showAll').onclick=()=>{showAllRecords=true;resultsSuppressed=false;visible=65;render();$('burialPanel').scrollIntoView({block:'start',behavior:'smooth'})};
 // Binary images are stored in IndexedDB; record changes are stored in localStorage.
-function openDB(){return new Promise((res,rej)=>{if(!indexedDB){rej(Error('IndexedDB unavailable'));return}const req=indexedDB.open('cemeteryFieldbook_V7_TEST_photos',1);req.onupgradeneeded=()=>{req.result.createObjectStore('photos',{keyPath:'id'})};req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error)})}
+function openDB(){return new Promise((res,rej)=>{if(!indexedDB){rej(Error('IndexedDB unavailable'));return}const req=indexedDB.open('cemeteryFieldbook_V7_TEST_Photos_v1',1);req.onupgradeneeded=()=>{req.result.createObjectStore('photos',{keyPath:'id'})};req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error)})}
 async function store(mode,act){if(!db)db=await openDB();return new Promise((res,rej)=>{let tx=db.transaction('photos',mode),s=tx.objectStore('photos');let q=act(s);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
 const getPhotos=async()=>await store('readonly',s=>s.getAll());
 async function photoDeleteAll(recordId){try{for(const p of (await getPhotos()).filter(p=>p.person===recordId))await store('readwrite',s=>s.delete(p.id))}catch(e){console.warn(e)}}
@@ -642,10 +749,10 @@ function compress(file){return new Promise((resolve,reject)=>{const fr=new FileR
 async function renderPhotos(){const container=$('photos');container.replaceChildren();if(!current)return;try{const photos=(await getPhotos()).filter(p=>p.person===current);photos.forEach(p=>{const d=textNode('div','photoitem'),im=document.createElement('img');im.src=p.data;im.alt='Field photo';const b=textNode('button','','×');b.type='button';b.onclick=async()=>{if(confirm('Remove this photograph?')){await store('readwrite',s=>s.delete(p.id));addChange('Photo deleted',(all().find(x=>x.id===current)||{}).name,current,p.name||'Photograph');renderPhotos()}};d.append(im,b);container.append(d)});if(!photos.length)container.append(textNode('span','hint','No attached photographs yet.'))}catch(e){container.append(textNode('div','hint','Photo storage unavailable: '+e.message))}}
 $('photoFile').onchange=async e=>{if(!current){alert('Save the new entry first, then reopen it to attach photos.');e.target.value='';return}const files=[...e.target.files];for(const f of files){try{const data=await compress(f);await store('readwrite',s=>s.put({id:'ph-'+Date.now()+'-'+Math.random().toString(36).slice(2),person:current,name:f.name,created:new Date().toISOString(),data}));addChange('Photo attached',(all().find(x=>x.id===current)||{}).name,current,f.name);}catch(err){alert('Could not attach '+f.name+': '+err.message)}}$('photoFile').value='';renderPhotos()};
 function download(blob,name){const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
-$('backup').onclick=async()=>{try{const photos=await getPhotos();const payload={format:'CemeteryFieldbookBackup',version:1,exported:new Date().toISOString(),updates,extras,photos};download(new Blob([JSON.stringify(payload)],{type:'application/json'}),'cemetery-fieldbook-backup-'+new Date().toISOString().slice(0,10)+'.json');localStorage.setItem(BACKUP_KEY,new Date().toLocaleString());$('lastbackup').textContent='Last backup exported: '+localStorage.getItem(BACKUP_KEY)}catch(e){alert('Backup failed: '+e.message)}};
+$('backup').onclick=async()=>{try{await largeDataReady;const photos=await getPhotos();const payload={format:'CemeteryFieldbookBackup',version:1,exported:new Date().toISOString(),updates,extras,photos};download(new Blob([JSON.stringify(payload)],{type:'application/json'}),'cemetery-fieldbook-backup-'+new Date().toISOString().slice(0,10)+'.json');localStorage.setItem(BACKUP_KEY,new Date().toLocaleString());$('lastbackup').textContent='Last backup exported: '+localStorage.getItem(BACKUP_KEY)}catch(e){alert('Backup failed: '+e.message)}};
 $('restore').onclick=()=>$('restoreFile').click();$('restoreFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{const data=JSON.parse(await f.text());if(data.format!=='CemeteryFieldbookBackup'||data.version!==1||!Array.isArray(data.extras)||!Array.isArray(data.photos)||!data.updates)throw Error('Unsupported backup format');if(!confirm('Restore this backup? Existing edits and photos on this device will be replaced.'))return;updates=data.updates;extras=data.extras;persist();if(!db)db=await openDB();await new Promise((resolve,reject)=>{const tx=db.transaction('photos','readwrite'),s=tx.objectStore('photos');s.clear();for(const p of data.photos)s.put(p);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});refreshOptions();render();alert('Backup restored successfully')}catch(err){alert('Restore failed: '+err.message)}finally{e.target.value=''}};
 $('importPrivateSeed').onclick=()=>$('privateSeedFile').click();
-$('privateSeedFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const list=JSON.parse(await f.text());if(!Array.isArray(list)||!list.length||!list.every(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.name==='string'))throw Error('Not a compatible burial list');if(!confirm('Import '+list.length+' private burial records to this browser?'))return;localStorage.setItem(SEED_KEY,JSON.stringify(list));seed=list;refreshOptions();render();$('privateSeedStatus').textContent=seed.length+' private burial records loaded on this device';alert('Burial list loaded. Now restore your fieldwork backup to recover photos and edits.')}catch(err){alert('Could not import burial list: '+err.message)}finally{e.target.value=''}};
+$('privateSeedFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const list=JSON.parse(await f.text());if(!Array.isArray(list)||!list.length||!list.every(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.name==='string'))throw Error('Not a compatible burial list');if(!confirm('Import '+list.length+' private burial records to this browser?'))return;await largeDataReady;await saveLargeData(list,allGedcomPeople);localStorage.removeItem(SEED_KEY);seed=list;refreshOptions();render();$('privateSeedStatus').textContent=seed.length+' private burial records loaded on this device';alert('Burial list loaded. Now restore your fieldwork backup to recover photos and edits.')}catch(err){alert('Could not import burial list: '+err.message)}finally{e.target.value=''}};
 $('privateSeedStatus').textContent=seed.length+' private burial records loaded on this device';
 refreshOptions();render();$('lastbackup').textContent=localStorage.getItem(BACKUP_KEY)?'Last backup exported: '+localStorage.getItem(BACKUP_KEY):'No backup exported yet.';
 
@@ -682,15 +789,16 @@ function nearbySearch(){let p=coordinatesFromUI();if(!p){message('Enter a valid 
 $('nearSearch').onclick=nearbySearch;
 $('myLocation').onclick=()=>{if(location.protocol==='file:'){message('GPS is restricted when opening the downloaded HTML file. The town-based distance search still works offline. A secure HTTPS installation is required for reliable location permission.');return}if(!window.isSecureContext){message('GPS requires HTTPS (a secure connection). Select a town for offline searching.');return}if(!navigator.geolocation){message('This browser does not support location. Use a listed city or enter coordinates.');return}message('Requesting GPS location…');navigator.geolocation.getCurrentPosition(pos=>{$('startPlace').value='custom';$('startLat').value=pos.coords.latitude.toFixed(6);$('startLon').value=pos.coords.longitude.toFixed(6);message('Phone location received. Approximate GPS accuracy: '+Math.round(pos.coords.accuracy)+' meters.');nearbySearch()},err=>message('Phone GPS unavailable: '+err.message+'. Local HTML files may not receive location permission. You can still select a town.'),{enableHighAccuracy:true,timeout:15000,maximumAge:60000})};
 // V2 backup includes geolocations; restores still accept V1 backups (and retain V2 coordinate edits).
-$('backup').onclick=async()=>{try{const photos=await getPhotos();const payload={format:'CemeteryFieldbookBackup',version:5,exported:new Date().toISOString(),seed,updates,extras,photos,geoEdits,changeLog,gedcomPeople:allGedcomPeople,homePersonId};download(new Blob([JSON.stringify(payload)],{type:'application/json'}),'cemetery-fieldbook-backup-'+new Date().toISOString().slice(0,10)+'.json');localStorage.setItem(BACKUP_KEY,new Date().toLocaleString());$('lastbackup').textContent='Last backup exported: '+localStorage.getItem(BACKUP_KEY)}catch(e){alert('Backup failed: '+e.message)}};
-$('restoreFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const data=JSON.parse(await f.text());if(data.format!=='CemeteryFieldbookBackup'||![1,2,3,4,5].includes(data.version)||!Array.isArray(data.extras)||!Array.isArray(data.photos)||!data.updates||typeof data.updates!=='object')throw Error('Unsupported backup format');if(data.version>=4&&(!Array.isArray(data.seed)||!data.seed.every(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.name==='string')))throw Error('Full backup contains an invalid burial list');
-if(!confirm('Restore this backup? Existing test records, history, and photos on this device will be replaced.'))return;
+$('backup').onclick=async()=>{try{await largeDataReady;const photos=await getPhotos();const payload={format:'CemeteryFieldbookBackup',version:5,exported:new Date().toISOString(),seed,updates,extras,photos,geoEdits,changeLog,gedcomPeople:allGedcomPeople,homePersonId};download(new Blob([JSON.stringify(payload)],{type:'application/json'}),'cemetery-fieldbook-backup-'+new Date().toISOString().slice(0,10)+'.json');localStorage.setItem(BACKUP_KEY,new Date().toLocaleString());$('lastbackup').textContent='Last backup exported: '+localStorage.getItem(BACKUP_KEY)}catch(e){alert('Backup failed: '+e.message)}};
+$('restoreFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{await largeDataReady;const data=JSON.parse(await f.text());if(data.format!=='CemeteryFieldbookBackup'||![1,2,3,4,5].includes(data.version)||!Array.isArray(data.extras)||!Array.isArray(data.photos)||!data.updates||typeof data.updates!=='object')throw Error('Unsupported backup format');if(data.version>=4&&(!Array.isArray(data.seed)||!data.seed.every(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.name==='string')))throw Error('Full backup contains an invalid burial list');
+if(!confirm('Restore this backup? Existing records, history, and photos on this device will be replaced.'))return;
 // Backups v1-v3 did not contain a burial list. Keep any separately loaded list.
 // Stage and write photos before mutating record edits.
 if(!db)db=await openDB();await new Promise((resolve,reject)=>{const tx=db.transaction('photos','readwrite'),s=tx.objectStore('photos');s.clear();for(const p of data.photos)s.put(p);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
-if(data.version>=4){localStorage.setItem(SEED_KEY,JSON.stringify(data.seed));seed=data.seed;}updates=data.updates;extras=data.extras;persist();if(data.version>=2&&data.geoEdits&&typeof data.geoEdits==='object'){geoEdits=data.geoEdits;localStorage.setItem(GEO_KEY,JSON.stringify(geoEdits))}if(data.version>=3&&Array.isArray(data.changeLog)){changeLog=data.changeLog;localStorage.setItem(CHANGE_KEY,JSON.stringify(changeLog))}else{changeLog=[];localStorage.setItem(CHANGE_KEY,'[]')}if(data.version===5){
+if(data.version>=4){await saveLargeData(data.seed,data.version===5?data.gedcomPeople:allGedcomPeople);localStorage.removeItem(SEED_KEY);seed=data.seed;}updates=data.updates;extras=data.extras;persist();if(data.version>=2&&data.geoEdits&&typeof data.geoEdits==='object'){geoEdits=data.geoEdits;localStorage.setItem(GEO_KEY,JSON.stringify(geoEdits))}if(data.version>=3&&Array.isArray(data.changeLog)){changeLog=data.changeLog;localStorage.setItem(CHANGE_KEY,JSON.stringify(changeLog))}else{changeLog=[];localStorage.setItem(CHANGE_KEY,'[]')}if(data.version===5){
  if(!Array.isArray(data.gedcomPeople)||!data.gedcomPeople.every(p=>p&&typeof p.id==='string'&&typeof p.name==='string'))throw Error('Backup people directory is invalid');
- localStorage.setItem(GED_PEOPLE_KEY,JSON.stringify(data.gedcomPeople));allGedcomPeople=data.gedcomPeople;
+ if(data.version<4)await saveLargeData(seed,data.gedcomPeople);
+ localStorage.removeItem(GED_PEOPLE_KEY);allGedcomPeople=data.gedcomPeople;
  homePersonId=typeof data.homePersonId==='string'&&allGedcomPeople.some(p=>p.id===data.homePersonId)?data.homePersonId:'';
  if(homePersonId)localStorage.setItem(HOME_PERSON_KEY,homePersonId);else localStorage.removeItem(HOME_PERSON_KEY);
  refreshHomeDisplay();searchHomePeople();
@@ -759,7 +867,7 @@ $('refreshRelFile').onchange=async e=>{
  const file=e.target.files[0];if(!file)return;
  try {const people=parseGedcomPeople(await file.text());if(!people.length)throw Error('No individuals found');
   if(!confirm('Update only the relationship directory with '+people.length+' individuals from '+file.name+'? Cemetery records and fieldwork will not change.'))return;
-  allGedcomPeople=people;localStorage.setItem(GED_PEOPLE_KEY,JSON.stringify(people));
+  await largeDataReady;await saveLargeData(seed,people);allGedcomPeople=people;localStorage.removeItem(GED_PEOPLE_KEY);
   if(homePersonId&&!people.some(p=>p.id===homePersonId)){$('refreshRelStatus').textContent='Directory refreshed, but saved Home Person was not found. Please choose a Home Person.';}
   else $('refreshRelStatus').textContent='Directory refreshed: '+people.length+' individuals. Guardians and other explicitly nonbiological links excluded from ancestry calculations. No burials changed.';
   refreshHomeDisplay();if(typeof render==='function')render();
@@ -852,7 +960,7 @@ $('suffixRepairFile').onchange=async e=>{
   preview.append(list);out.append(preview);
   if(conflicting.length){const conflicts=document.createElement('details');conflicts.append(textNode('summary','','Skipped suffix conflicts ('+conflicting.length+')'));for(const item of conflicting)conflicts.append(textNode('div','ged-example',item.name+' ('+item.id+') · '+item.reason));out.append(conflicts);}
   if(eligible.length){
-   const apply=textNode('button','secondary','Apply '+eligible.length+' missing suffixes to this TEST Fieldbook');apply.type='button';
+   const apply=textNode('button','secondary','Apply '+eligible.length+' missing suffixes to this Fieldbook');apply.type='button';
    apply.onclick=()=>{
     // Re-check against current records at commit time: do not overwrite edits
     // made while this preview was open.
@@ -1008,6 +1116,7 @@ async function compareCurrentGedcom(file){
   const ambiguous=detectAmbiguousGedcomBurials(raw);
   const idOf=r=>burialGedcomKey(r)||'';
   const existing=all().filter(r=>idOf(r));
+  const legacyUnlinked=all().filter(r=>!idOf(r)); // v6.1 entries must be linked before safely adding the same people again
   const existingMap=new Map(existing.map(r=>[idOf(r),r]));
   const incomingMap=new Map(incoming.filter(r=>idOf(r)).map(r=>[idOf(r),r]));
   // These IDs have incompatible burial facts. Keep them visible in manual
@@ -1216,12 +1325,9 @@ async function compareCurrentGedcom(file){
   const minimumOverlap=existing.length>=100?0.85:0.65;
   const idSafetyOK=existing.length>0&&overlap>=Math.min(existing.length,20)&&overlap/existing.length>=minimumOverlap&&mismatches<=Math.max(1,Math.floor(overlap*0.005));
   const mergeBox=document.createElement('details');mergeBox.className='cemetery-group';
-  const mergeHead=textNode('summary','','Review and approve GEDCOM updates (TEST only)');mergeBox.append(mergeHead);mergeBox.open=true;
+  const mergeHead=textNode('summary','','Review and approve GEDCOM updates');mergeBox.append(mergeHead);mergeBox.open=true;
   const mergeBody=textNode('div','cemetery-group-people');
   mergeBody.append(textNode('p','guided-step-hint','Choose only the changes you want. Existing nonblank information is never overwritten unless you explicitly approve that individual replacement.'));
-  const summary=textNode('div','guided-status',newBurials.length+' new burials · '+fillGroups.size+' safe blank-field records · '+ambiguous.length+' conflicting burial records held for manual review');
-  const safetyMessage=textNode('p','hint',idSafetyOK?'GEDCOM ID safety check passed: '+overlap+' matching individual IDs; '+mismatches+' name discrepancies.':'MERGE DISABLED: person-ID safety check failed ('+overlap+' matching IDs out of '+existing.length+' existing GEDCOM records; '+mismatches+' different names). This may be an export with changed IDs or another tree. No data may be merged.');
-  mergeBody.append(summary,safetyMessage);
   const identityDetails=document.createElement('details');identityDetails.className='cemetery-group';
   identityDetails.append(textNode('summary','','Review GEDCOM ID / name differences ('+identityDifferences.length+')'));
   const identityList=textNode('div','cemetery-group-people');identityList.style.maxHeight='260px';identityList.style.overflow='auto';
@@ -1250,133 +1356,156 @@ async function compareCurrentGedcom(file){
    if(!replacementGroups.has(item.id))replacementGroups.set(item.id,[]);
    replacementGroups.get(item.id).push(item);
   }
-  const reviewedDetails=document.createElement('details');reviewedDetails.className='cemetery-group';
+  // Person-centered review: build one card for each GEDCOM individual and show
+  // every eligible field on that card, whether blank or an existing value.
+  const manualSelections=[],replaceSelections=[],newSelections=[];
   const reviewFillCount=[...reviewFillGroups.values()].reduce((sum,items)=>sum+items.length,0);
-  reviewedDetails.append(textNode('summary','','Review individually: missing fields on records with differences ('+reviewFillGroups.size+' people, '+reviewFillCount+' fields)'));
-  const reviewedBody=textNode('div','cemetery-group-people');
-  reviewedBody.append(textNode('p','hint','These people have differences elsewhere in their records. Verify the GEDCOM ID and identity first, then tick only specific missing fields you want filled. Existing names and other nonempty values are never changed. Cemetery/town shifts and conflicting burial facts remain blocked.'));
-  const manualSelections=[];
-  for(const [id,items] of reviewFillGroups){
-   const old=existingMap.get(id),newPerson=incomingMap.get(id);
-   const section=document.createElement('details');section.className='cemetery-group';
-   section.append(textNode('summary','',''+(newPerson?.name||old?.name||id)+' ('+id+') — '+items.length+' proposed field'+(items.length===1?'':'s')));
-   const body=textNode('div','cemetery-group-people');
-   body.append(textNode('p','tiny','Saved Fieldbook name: '+(old?.name||'—')+' | Incoming GEDCOM name: '+(newPerson?.name||'—')));
-   const differences=reviews.filter(r=>r.id===id);
-   for(const x of differences)body.append(textNode('div','ged-example','Existing difference (NOT changed): '+readable(x.key)+' | Fieldbook: '+(x.current||'—')+' | GEDCOM: '+(x.incoming||'—')));
-   const identity=document.createElement('label');identity.className='merge-approval';
-   const identityCB=document.createElement('input');identityCB.type='checkbox';
-   identity.append(identityCB,textNode('span','','I verified that GEDCOM '+id+' is the same person as this Fieldbook record.'));
-   body.append(identity);
-   for(const x of items){
-    const label=document.createElement('label');label.className='merge-approval';
-    const cb=document.createElement('input');cb.type='checkbox';cb.disabled=true;
-    const caption=textNode('span','','Fill '+readable(x.key)+': blank → '+x.incoming);
-    label.append(cb,caption);body.append(label);
-    manualSelections.push({item:x,checkbox:cb,identity:identityCB});
-   }
-   identityCB.addEventListener('change',()=>{
-    for(const entry of manualSelections.filter(x=>x.identity===identityCB)){
-     entry.checkbox.disabled=!identityCB.checked||!idSafetyOK;
-     if(entry.checkbox.disabled)entry.checkbox.checked=false;
-    }
-   });
-   section.append(body);reviewedBody.append(section);
+  const replaceCount=[...replacementGroups.values()].reduce((sum,items)=>sum+items.length,0);
+  const individualReview=new Map();
+  function groupPerson(id){
+   if(!individualReview.has(id)) individualReview.set(id,{fills:[],replacements:[]});
+   return individualReview.get(id);
   }
-  if(!reviewFillGroups.size)reviewedBody.append(textNode('p','tiny','No additional blank fields eligible for individual review.'));
-  reviewedDetails.append(reviewedBody);mergeBody.append(reviewedDetails);
-  // A different workflow from filling blanks: the person and every
-  // nonblank field being replaced must be approved, with the exact old/new
-  // values visible before selection. Do not update suffixes via a name edit.
-  const replaceSelections=[];
-  const replaceDetails=document.createElement('details');replaceDetails.className='cemetery-group';
-  const replaceCount=[...replacementGroups.values()].reduce((n,items)=>n+items.length,0);
-  replaceDetails.append(textNode('summary','','Review individually: replace verified existing values ('+replacementGroups.size+' people, '+replaceCount+' fields)'));
-  const replaceBody=textNode('div','cemetery-group-people');
-  replaceBody.append(textNode('p','hint','Optional: verify the same GEDCOM person ID in FTM and approve EACH nonblank replacement you want. Blank GEDCOM values are never used to erase saved data. If two or more town/county/state fields differ, select ALL those location replacements together or none. Cemetery/town mapping shifts and conflicting burial facts remain blocked. Photos, notes, visits, plot and GPS are not changed.'));
-  for(const [id,items] of replacementGroups){
-   const old=existingMap.get(id),person=incomingMap.get(id);
-   const section=document.createElement('details');section.className='cemetery-group';
-   section.append(textNode('summary','',(person?.name||old?.name||id)+' ('+id+') — '+items.length+' existing value'+(items.length===1?'':'s')));
-   const body=textNode('div','cemetery-group-people');
-   body.append(textNode('p','tiny','Saved name: '+(old?.name||'—')+' | Incoming: '+(person?.name||'—')));
-   const identity=document.createElement('label');identity.className='merge-approval';
-   const verify=document.createElement('input');verify.type='checkbox';
-   identity.append(verify,textNode('span','','I checked GEDCOM '+id+' in FTM and verified this is the SAME person.'));
-   body.append(identity);
-   for(const x of items){
-    const label=document.createElement('label');label.className='merge-approval';
-    const cb=document.createElement('input');cb.type='checkbox';cb.disabled=true;
-    label.append(cb,textNode('span','','REPLACE '+readable(x.key)+': '+x.current+' → '+x.incoming));
-    body.append(label);
-    replaceSelections.push({item:x,checkbox:cb,identity:verify});
-   }
-   verify.addEventListener('change',()=>{
-    for(const x of replaceSelections.filter(x=>x.identity===verify)){
-     x.checkbox.disabled=!verify.checked||!idSafetyOK;
-     if(x.checkbox.disabled)x.checkbox.checked=false;
-    }
-   });
-   section.append(body);replaceBody.append(section);
-  }
-  if(!replacementGroups.size)replaceBody.append(textNode('p','tiny','No verified existing values need replacement.'));
-  replaceDetails.append(replaceBody);mergeBody.append(replaceDetails);
-  const addDetails=document.createElement('details');addDetails.append(textNode('summary','','Review new burial records ('+newBurials.length+')'));
-  const addList=textNode('div','cemetery-group-people');addList.style.maxHeight='240px';addList.style.overflow='auto';
-  for(const r of newBurials)addList.append(textNode('div','ged-example',displayPersonName(r)+' · '+idOf(r)+' · '+(r.cemetery||'Cemetery unknown')+' · '+[r.town,r.county,r.state].filter(Boolean).join(', ')));
-  if(!newBurials.length)addList.append(textNode('p','tiny','No eligible additions.'));
-  addDetails.append(addList);mergeBody.append(addDetails);
-  const fillDetails=document.createElement('details');fillDetails.append(textNode('summary','','Review missing-field completions ('+fillGroups.size+' people)'));
-  const fillList=textNode('div','cemetery-group-people');fillList.style.maxHeight='240px';fillList.style.overflow='auto';
-  for(const [id,items] of fillGroups)for(const x of items)fillList.append(textNode('div','ged-example',x.name+' ('+id+') · '+readable(x.key)+' ← '+x.incoming));
-  if(!fillGroups.size)fillList.append(textNode('p','tiny','No safe missing-field completions.'));
-  fillDetails.append(fillList);mergeBody.append(fillDetails);
-  function approval(textLabel){const label=document.createElement('label');label.className='merge-approval';const cb=document.createElement('input');cb.type='checkbox';const caption=document.createElement('span');caption.textContent=textLabel;label.append(cb,caption);mergeBody.append(label);return cb;}
-  const addApproval=approval('Approve all '+newBurials.length+' eligible new burial records (none with conflicting burial facts)');
-  const fillApproval=approval('Approve blank-field completions for '+fillGroups.size+' conflict-free people (never replace an existing value)');
-  addApproval.disabled=!newBurials.length||!idSafetyOK;fillApproval.disabled=!fillGroups.size||!idSafetyOK;
-  const apply=document.createElement('button');apply.type='button';apply.className='secondary';apply.textContent='Export rollback backup, then confirm approved merge';apply.disabled=!idSafetyOK||(!newBurials.length&&!fillGroups.size&&!reviewFillCount&&!replaceCount);
-  const mergeStatus=textNode('p','hint','No merge applied. Select categories above before continuing.');
-  // Replace the long nested developer flow with two practical review stages.
+  for(const [id,items] of fillGroups)groupPerson(id).fills.push(...items);
+  for(const [id,items] of reviewFillGroups)groupPerson(id).fills.push(...items);
+  for(const [id,items] of replacementGroups)groupPerson(id).replacements.push(...items);
+  const totalFields=[...individualReview.values()].reduce((n,g)=>n+g.fills.length+g.replacements.length,0);
   const reviewStep=textNode('section','guided-step');
-  reviewStep.append(textNode('h4','guided-step-title','1. Review proposed changes'));
-  reviewStep.append(textNode('p','guided-step-hint','Open only the category you want to update. Verify individual identities before approving existing-value replacements.'));
-  if(newBurials.length)reviewStep.append(addDetails); 
-  if(fillGroups.size)reviewStep.append(fillDetails);
-  if(reviewFillGroups.size)reviewStep.append(reviewedDetails);
-  if(replacementGroups.size)reviewStep.append(replaceDetails);
-  if(!newBurials.length&&!fillGroups.size&&!reviewFillGroups.size&&!replacementGroups.size)reviewStep.append(textNode('p','guided-empty','No new or changed information is eligible for merging from this GEDCOM.'));
+  reviewStep.append(textNode('h4','guided-step-title','1. Review people and select changes'));
+  reviewStep.append(textNode('p','guided-step-hint','Review the proposed changes for each person. Selecting Accept all approves every eligible field for that person; you can deselect individual fields. Unchecked values stay unchanged.'));
+  reviewStep.append(textNode('p','person-review-note','Please confirm each record is the correct person before selecting changes. GEDCOM IDs help identify matches but are not proof of identity. Your selections are your approval; no separate person-by-person confirmation is required.'));
+  const findRow=document.createElement('div');findRow.className='person-review-search';
+  const findInput=document.createElement('input');findInput.type='search';findInput.placeholder='Search name or ID';findInput.setAttribute('aria-label','Find person in proposed GEDCOM changes');
+  const visibleCount=textNode('span','tiny','');findRow.append(findInput,visibleCount);
+  const personHolder=textNode('div','person-review-list');
+  reviewStep.append(findRow,personHolder);
+  const personCards=[];
+  function addPersonCard(name,id,kind,total,build){
+   const card=document.createElement('details');card.className='cemetery-group person-review-card';
+   const heading=document.createElement('summary');
+   const headerText=textNode('span','person-review-heading',name+' ('+id+')');
+   const pill=textNode('span','person-review-pill',kind+' · '+total+(kind==='New burial'?'':' field'+(total===1?'':'s')));
+   heading.append(headerText,pill);card.append(heading);
+   const body=textNode('div','cemetery-group-people');build(body,heading);card.append(body);
+   personCards.push({card,search:(name+' '+id).toLowerCase()});personHolder.append(card);
+  }
+  for(const r of newBurials){
+   const id=idOf(r);const name=displayPersonName(r);
+   addPersonCard(name,id,'New burial',1,(body,heading)=>{
+    body.append(textNode('p','hint','This person is not in Fieldbook. Review the burial details before adding.'));
+    for(const [label,value] of [['Cemetery',r.cemetery],['Town',r.town],['County',r.county],['State',r.state],['Find a Grave',r.findagrave]]){
+     if(String(value||'').trim())body.append(textNode('div','person-review-detail',label+': '+value));
+    }
+    const row=document.createElement('label');row.className='merge-approval';
+    const cb=document.createElement('input');cb.type='checkbox';cb.disabled=!idSafetyOK||Boolean(legacyUnlinked.length);
+    row.append(cb,textNode('span','','Add this burial record'));
+    body.append(row);newSelections.push({id,checkbox:cb});
+    const acceptLabel=document.createElement('label');acceptLabel.className='person-review-accept';acceptLabel.title='Select this burial for import';
+    const accept=document.createElement('input');accept.type='checkbox';accept.disabled=cb.disabled;
+    acceptLabel.append(accept,document.createTextNode('Accept all'));heading.append(acceptLabel);
+    acceptLabel.addEventListener('click',e=>e.stopPropagation());
+    accept.addEventListener('change',()=>{cb.checked=accept.checked;});
+    cb.addEventListener('change',()=>{accept.checked=cb.checked;});
+
+   });
+  }
+  const sortedPeople=[...individualReview.entries()].sort((a,b)=>{
+   const an=incomingMap.get(a[0])?.name||existingMap.get(a[0])?.name||a[0];
+   const bn=incomingMap.get(b[0])?.name||existingMap.get(b[0])?.name||b[0];
+   return an.localeCompare(bn);
+  });
+  for(const [id,group] of sortedPeople){
+   const old=existingMap.get(id),incoming=incomingMap.get(id);
+   const name=displayPersonName(incoming||old)||id;
+   const changes=[...group.fills.map(item=>({item,kind:'fill'})),...group.replacements.map(item=>({item,kind:'replace'}))];
+   const differentNames=old&&incoming&&!sameValue('name',nameWithoutSuffix(old.name||'',effectiveSavedSuffix(old,'')),nameWithoutSuffix(incoming.name||'',incoming.nameSuffix||''));
+   addPersonCard(name,id,'Update',changes.length,(body,heading)=>{
+    if(differentNames)body.append(textNode('p','person-review-note','Saved name: '+(old.name||'—')+' | GEDCOM name: '+(incoming.name||'—')));
+    const choices=[];
+    for(const {item:x,kind} of changes){
+     const row=document.createElement('label');row.className='merge-approval person-review-field';
+     const cb=document.createElement('input');cb.type='checkbox';cb.disabled=!idSafetyOK||Boolean(legacyUnlinked.length);
+     const textPart=textNode('span','');
+     const heading=textNode('strong','',readable(x.key)+' · '+(kind==='fill'?'Fill blank':'Replace existing'));
+     const description=textNode('span','person-review-values',(kind==='fill'?'Blank':String(x.current||'—'))+' → '+String(x.incoming||'—'));
+     textPart.append(heading,description);row.append(cb,textPart);body.append(row);
+     const selection={item:x,checkbox:cb};
+     if(kind==='fill')manualSelections.push(selection);else replaceSelections.push(selection);
+     choices.push(cb);
+    }
+    const locationChanges=group.replacements.filter(x=>['town','county','state'].includes(x.key));
+    if(locationChanges.length>1)body.append(textNode('p','person-review-note','Location safeguard: approve all '+locationChanges.length+' changed town/county/state fields together, or leave all unchecked.'));
+    const acceptLabel=document.createElement('label');acceptLabel.className='person-review-accept';
+    const acceptAll=document.createElement('input');acceptAll.type='checkbox';acceptAll.disabled=!idSafetyOK||Boolean(legacyUnlinked.length);
+    acceptAll.setAttribute('aria-label','Accept all changes for '+name);
+    acceptLabel.append(acceptAll,document.createTextNode('Accept all'));
+    const progress=textNode('span','person-review-progress','0 of '+choices.length+' selected');
+    heading.append(acceptLabel,progress);
+    // A checkbox in a <summary> must not accidentally open/close the person card.
+    acceptLabel.addEventListener('click',e=>e.stopPropagation());
+    const syncSelection=()=>{
+     const n=choices.filter(cb=>cb.checked).length;
+     acceptAll.checked=n===choices.length&&n>0;
+     acceptAll.indeterminate=n>0&&n<choices.length;
+     progress.textContent=n+' of '+choices.length+' selected';
+    };
+    for(const cb of choices)cb.addEventListener('change',syncSelection);
+    acceptAll.addEventListener('change',()=>{
+     const requested=acceptAll.checked;
+     const allow=idSafetyOK&&!legacyUnlinked.length;
+     for(const cb of choices){cb.disabled=!allow;cb.checked=Boolean(allow&&requested);}
+     syncSelection();
+    });
+   });
+  }
+  function refreshPeople(){
+   const q=findInput.value.trim().toLowerCase();let count=0;
+   for(const {card,search} of personCards){
+    const show=!q||search.includes(q);card.hidden=!show;
+    if(show){count++;if(q)card.open=true;}
+   }
+   visibleCount.textContent=count+' of '+personCards.length+' people';
+  }
+  findInput.addEventListener('input',refreshPeople);refreshPeople();
+  if(!personCards.length)reviewStep.append(textNode('p','guided-empty','No eligible changes. Your saved Fieldbook already matches the importable records in this GEDCOM.'));
   const identityMore=document.createElement('details');identityMore.className='cemetery-group compare-tech';
-  identityMore.append(textNode('summary','','Review GEDCOM identity checks ('+identityDifferences.length+' name differences)'));
+  identityMore.append(textNode('summary','','Identity differences and safety checks ('+identityDifferences.length+')'));
   const identityContent=textNode('div','cemetery-group-people');identityContent.append(identityDetails);identityMore.append(identityContent);
   if(identityDifferences.length||!idSafetyOK)reviewStep.append(identityMore);
+  const apply=document.createElement('button');apply.type='button';apply.className='secondary';apply.textContent='Export rollback backup, then apply selected changes';
+  apply.disabled=!idSafetyOK||Boolean(legacyUnlinked.length)||!personCards.length;
+  const mergeStatus=textNode('p','hint','No changes made. Select fields in the person cards above.');
   const approvalStep=textNode('section','guided-step');
-  approvalStep.append(textNode('h4','guided-step-title','2. Approve and apply'));
-  approvalStep.append(textNode('p','guided-step-hint','Select the group approvals below, or use individual checkboxes inside the review categories above. A full rollback backup is requested before confirmation.'));
-  if(newBurials.length)approvalStep.append(addApproval.parentElement);
-  if(fillGroups.size)approvalStep.append(fillApproval.parentElement);
-  if(!newBurials.length&&!fillGroups.size&&!reviewFillCount&&!replaceCount)approvalStep.append(textNode('p','guided-empty','Nothing to approve. Your saved entries already match the eligible data in this file.'));
+  approvalStep.append(textNode('h4','guided-step-title','2. Back up and apply selected changes'));
+  approvalStep.append(textNode('p','guided-step-hint','Only checked changes will be applied. You will be asked to save a full rollback backup and confirm. Photos, notes, visits, plot and GPS remain protected.'));
   approvalStep.append(apply,mergeStatus);
+  const summary=textNode('div','guided-status',newBurials.length+' new burial'+(newBurials.length===1?'':'s')+' · '+individualReview.size+' existing people with '+totalFields+' proposed fields · '+ambiguous.length+' conflicting burial people held for review');
+  const safetyMessage=textNode('p','hint',idSafetyOK?'Person ID safety check passed: '+overlap+' matched IDs; '+mismatches+' name differences (review names before approval).':'MERGE DISABLED: GEDCOM ID safety check failed ('+overlap+' matching IDs; '+mismatches+' name differences). No merge can be applied.');
   mergeBody.replaceChildren(summary,safetyMessage,reviewStep,approvalStep);
   mergeBox.replaceChildren(textNode('summary','','Review and apply updates'),mergeBody);
-  mergeBox.open=Boolean(newBurials.length||fillGroups.size||reviewFillCount||replaceCount);
+  if(legacyUnlinked.length){
+   const warning=textNode('div','notice','Merge blocked: '+legacyUnlinked.length+' existing records have no GEDCOM ID. Match those entries first to avoid duplicates.');
+   mergeBody.insertBefore(warning,mergeBody.firstChild);
+  }
+  mergeBox.open=Boolean(personCards.length);
   container.append(mergeBox);
-  // Technical category dumps are separate from the everyday flow, searchable by person.
   diagnostics.classList.add('compare-tech');
   diagnostics.querySelector('summary').textContent='Find a person / investigate a difference (optional)';
   diagnosticsBody.insertBefore(inspector,diagnosticsBody.firstChild);
-  diagnosticsBody.querySelector('p.hint').textContent='Search for a person to see saved and incoming values side by side. Detailed category samples are provided below only for troubleshooting.';
+  diagnosticsBody.querySelector('p.hint').textContent='Search for a person to see saved and incoming values. Detailed categories below are for troubleshooting.';
   container.append(diagnostics);
   apply.onclick=async()=>{
-   const doAdd=addApproval.checked,doFill=fillApproval.checked;
-   const approvedManual=manualSelections.filter(x=>x.checkbox.checked&&x.identity.checked&&!x.checkbox.disabled);
-   const approvedReplacements=replaceSelections.filter(x=>x.checkbox.checked&&x.identity.checked&&!x.checkbox.disabled);
+   const selectedNew=new Set(newSelections.filter(x=>x.checkbox.checked&&!x.checkbox.disabled).map(x=>x.id));
+   const doAdd=selectedNew.size>0,doFill=false;
+   const approvedManual=manualSelections.filter(x=>x.checkbox.checked&&!x.checkbox.disabled);
+   const approvedReplacements=replaceSelections.filter(x=>x.checkbox.checked&&!x.checkbox.disabled);
+   if(legacyUnlinked.length){mergeStatus.textContent='Merge blocked to prevent duplicate relatives: '+legacyUnlinked.length+' existing LIVE entries have no GEDCOM ID. Their identities must be matched before the first nationwide update. No records were changed.';return;}
    if(!idSafetyOK){mergeStatus.textContent='Blocked: GEDCOM person IDs are not safe to match.';return;}
    if(!doAdd&&!doFill&&!approvedManual.length&&!approvedReplacements.length){mergeStatus.textContent='Select at least one category or approved individual field to apply.';return;}
    // Revalidate against live data immediately before the write; comparison can
    // become stale if the user edits a record after previewing.
    const live=new Map(all().filter(r=>idOf(r)).map(r=>[idOf(r),r]));
-   const freshNew=doAdd?newBurials.filter(r=>!live.has(idOf(r))&&!blockedBurialIds.has(idOf(r))):[];
+   const freshNew=doAdd?newBurials.filter(r=>selectedNew.has(idOf(r))&&!live.has(idOf(r))&&!blockedBurialIds.has(idOf(r))):[];
    const freshFills=[];
    if(doFill)for(const [id,items] of fillGroups){
     const record=live.get(id);if(!record)continue;
@@ -1391,7 +1520,7 @@ async function compareCurrentGedcom(file){
    let manualCount=0;
    for(const selection of approvedManual){
     const x=selection.item,id=x.id;
-    if(shiftedIds.has(id)||blockedBurialIds.has(id.toUpperCase())||!reviewFillGroups.has(id))continue;
+    if(shiftedIds.has(id)||blockedBurialIds.has(id.toUpperCase())||!individualReview.has(id))continue;
     const record=live.get(id);if(!record)continue;
     const current=x.key==='nameSuffix'?effectiveSavedSuffix(record,x.incoming):record[x.key]||'';
     if(String(current).trim()||!String(x.incoming).trim())continue;
@@ -1438,6 +1567,7 @@ async function compareCurrentGedcom(file){
     if(!confirmed){mergeStatus.textContent='Cancelled. No records changed; the rollback backup was requested.';return;}
     const oldExtras=extras,oldUpdates=updates,oldDirectory=allGedcomPeople,oldLog=changeLog;
     const priorRecords=localStorage.getItem(KEY),priorPeople=localStorage.getItem(GED_PEOPLE_KEY),priorLog=localStorage.getItem(CHANGE_KEY);
+    const priorLarge=await readLargeData();
     try{
      const nextExtras=[...extras,...freshNew];
      const nextUpdates={...updates};
@@ -1464,7 +1594,8 @@ async function compareCurrentGedcom(file){
      const event={id:'evt-'+Date.now()+'-gedcom',at:new Date().toISOString(),type:'GEDCOM merge',person:'GEDCOM import',personId:'',detail:'Source: '+file.name+'; Added burials: '+freshNew.length+'; Missing fields filled: '+freshFills.length+'; Verified existing fields replaced: '+freshReplacements.length+'; Conflicting burials excluded: '+ambiguous.length,enteredFTM:true,needsTree:false};
      // Stage all data in memory, and rollback ALL local storage keys on any quota failure.
      localStorage.setItem(KEY,JSON.stringify({updates:nextUpdates,extras:nextExtras}));
-     localStorage.setItem(GED_PEOPLE_KEY,JSON.stringify([...nextDirectory.values()]));
+     await saveLargeData(seed,[...nextDirectory.values()]);
+     localStorage.removeItem(GED_PEOPLE_KEY);
      const replacementEvents=freshReplacements.map((x,i)=>({
       id:'evt-'+Date.now()+'-replace-'+i,at:new Date().toISOString(),
       type:'GEDCOM verified replacement',person:x.record.name||x.id,personId:x.record.id,
@@ -1476,13 +1607,14 @@ async function compareCurrentGedcom(file){
      refreshHomeDisplay();searchHomePeople();refreshOptions();render();renderChangeLog();
      const resultMessage='Merge complete: '+freshNew.length+' new burials added, '+freshFills.length+' blank fields filled, and '+freshReplacements.length+' verified existing values replaced. '+ambiguous.length+' conflicting-burial people held for review. Keep your downloaded PRE-MERGE backup.';
      mergeStatus.textContent=resultMessage+' Refreshing the comparison automatically…';
-     addApproval.checked=false;fillApproval.checked=false;for(const entry of [...manualSelections,...replaceSelections]){entry.checkbox.checked=false;entry.checkbox.disabled=true;entry.identity.checked=false;}apply.disabled=true;
+     for(const choice of newSelections)choice.checkbox.checked=false;for(const entry of [...manualSelections,...replaceSelections]){entry.checkbox.checked=false;entry.checkbox.disabled=!idSafetyOK||Boolean(legacyUnlinked.length);}apply.disabled=true;
      // Refresh asynchronously after the save and redraw; the SAME user-chosen file is reused.
      // Save the result banner outside the rebuilt review area so it stays visible.
      try{await compareCurrentGedcom(file);status.textContent=resultMessage+' The comparison below is now up to date.';}
      catch(refreshErr){status.textContent=resultMessage+' Automatic verification could not finish: '+refreshErr.message+'. You can compare the file again manually.';}
     }catch(err){
      extras=oldExtras;updates=oldUpdates;allGedcomPeople=oldDirectory;changeLog=oldLog;
+     try{await saveLargeData(priorLarge.burials||[],priorLarge.people||[])}catch(_){}
      for(const [key,value] of [[KEY,priorRecords],[GED_PEOPLE_KEY,priorPeople],[CHANGE_KEY,priorLog]]){
       try{if(value===null)localStorage.removeItem(key);else localStorage.setItem(key,value);}catch(_){}
      }
@@ -1522,7 +1654,7 @@ $('gedcomFile').onchange=async e=>{
   preview.replaceChildren();
   preview.append(textNode('h3','','Preview — '+file.name));
   const counts=textNode('div','ged-counts');
-  for(const [num,label] of [[directory.length,'All GEDCOM individuals'],[entries.length,'Safe burial entries'],[ambiguous.length,'Conflicting burials held out'],[withSuffix,'Suffixes preserved'],[unknown,'Cemetery unknown']]){
+  for(const [num,label] of [[directory.length,'All GEDCOM individuals'],[entries.length,'Safe burial entries'],[ambiguous.length,'Conflicting burials held out'],[unknown,'Cemetery unknown']]){
    const box=textNode('div','ged-count');box.append(textNode('strong','',String(num)),textNode('span','tiny',label));counts.append(box);
   }
   preview.append(counts,textNode('p','hint','The people directory is ready for Home Person selection. Name suffixes (including emojis) are saved as a separate field in the initial import. Conflicting burial facts are held out of automatic import for manual correction. Nothing has been imported yet.'));
@@ -1532,7 +1664,8 @@ $('gedcomFile').onchange=async e=>{
   const suffixSample=entries.filter(x=>x.nameSuffix).slice(0,8);if(suffixSample.length){const d=document.createElement('details');d.append(textNode('summary','','Sample imported suffixes (including emojis)'));for(const r of suffixSample)d.append(textNode('div','ged-example',r.name+' · suffix: '+r.nameSuffix+' · '+r.gedcomId));preview.append(d);}
   for(const x of entries.slice(0,5))preview.append(textNode('div','ged-example',x.name+' · '+(x.cemetery||'Cemetery unknown')+' · '+(x.county||x.town||x.gedcomBurial||'No location')));
   const btn=textNode('button','','Import '+entries.length+' burial entries');btn.type='button';
-  btn.onclick=()=>{
+  btn.onclick=async()=>{
+   await largeDataReady;
    if(!pendingGedcom){alert('Choose a GEDCOM file first.');return;}
    if(!homePersonId || !directory.some(p=>p.id===homePersonId)){
     alert('First, search for and select your Home Person in step 2. You do not need to choose the GEDCOM file again.');
@@ -1540,12 +1673,14 @@ $('gedcomFile').onchange=async e=>{
    }
    if(!entries.length){alert('This GEDCOM has no burial facts to import. The people directory was prepared, but no burial list was created.');return;}
    if(seed.length||extras.length||Object.keys(updates).length||changeLog.length){
-    alert('This first v7 importer only loads an EMPTY TEST dataset. Existing burial records and fieldwork have not been changed. Use a fresh Incognito test session; safe re-import and merging are planned next.');return;
+    alert('Initial import requires an EMPTY Fieldbook. Your existing LIVE burial records are protected. Use Update from GEDCOM after legacy records are matched to GEDCOM IDs.');return;
    }
-   if(!confirm('Import '+entries.length+' burial entries ('+withSuffix+' with preserved suffixes; '+ambiguous.length+' conflicting-burial people excluded) from '+file.name+' with '+(allGedcomPeople.find(p=>p.id===homePersonId)?.name||homePersonId)+' as Home Person? This changes ONLY this test dataset.'))return;
+   if(!confirm('Import '+entries.length+' burial entries ('+withSuffix+' with preserved suffixes; '+ambiguous.length+' conflicting-burial people excluded) from '+file.name+' with '+(allGedcomPeople.find(p=>p.id===homePersonId)?.name||homePersonId)+' as Home Person? This changes ONLY this browser dataset.'))return;
    try{
-    localStorage.setItem(SEED_KEY,JSON.stringify(entries));
-    localStorage.setItem(GED_PEOPLE_KEY,JSON.stringify(directory));
+    await saveLargeData(entries,directory);
+    // Remove any old small-storage copies only AFTER IndexedDB commits.
+    localStorage.removeItem(SEED_KEY);
+    localStorage.removeItem(GED_PEOPLE_KEY);
     localStorage.setItem(HOME_PERSON_KEY,homePersonId);
     seed=entries;allGedcomPeople=directory;pendingGedcom=null;
     refreshHomeDisplay();searchHomePeople();refreshOptions();render();
@@ -1554,7 +1689,7 @@ $('gedcomFile').onchange=async e=>{
     preview.hidden=true;$('gedcomImportHint').textContent='Import complete: '+seed.length+' burial records loaded. To import a different GEDCOM, choose its file in Step 1. Safe re-import into an existing dataset is not available yet.';$('gedcomImportButtons').replaceChildren();
    }catch(err){alert('Import could not be saved: '+err.message)}
   };
-  $('gedcomImportButtons').replaceChildren(btn);$('gedcomImportHint').textContent='Your GEDCOM preview is ready. After choosing your Home Person in Step 2, use this button to import the burial entries. This first importer requires an empty test dataset.';preview.hidden=false;
+  $('gedcomImportButtons').replaceChildren(btn);$('gedcomImportHint').textContent='Your GEDCOM preview is ready. After choosing your Home Person in Step 2, use this button to import the burial entries. Initial import requires an empty Fieldbook.';preview.hidden=false;
   status.textContent='People directory ready ('+directory.length+' people). Step 2: Select your Home Person below. Step 3: Import burial entries from this same GEDCOM.';
  }catch(err){status.textContent='GEDCOM preview failed: '+err.message;$('gedcomImportHint').textContent='Please choose a valid GEDCOM in Step 1 to enable importing.';$('gedcomImportButtons').replaceChildren();const disabled=textNode('button','secondary','Choose a GEDCOM file first');disabled.disabled=true;$('gedcomImportButtons').append(disabled);}
  finally{e.target.value=''};
@@ -1680,4 +1815,187 @@ $rel('relationshipSample').addEventListener('click',()=>{relSearch.value='';prev
 relSearch.addEventListener('input',()=>previewRelationship(false));
 relStatus.textContent='Select your Home Person and search for someone buried in your GEDCOM.';
 })();
-</script></body></html>
+</script><script>
+// LIVE-only, deliberate reset. Never clear the whole origin: TEST shares this GitHub Pages origin.
+(function () {
+ 'use strict';
+ const ack=document.getElementById('resetBackupAck');
+ const button=document.getElementById('resetFieldbookButton');
+ const status=document.getElementById('resetFieldbookStatus');
+ if(!ack||!button||!status)return;
+ ack.addEventListener('change',()=>{button.disabled=!ack.checked});
+ button.addEventListener('click',async()=>{
+  if(!ack.checked)return;
+  const answer=prompt('FINAL CHECK: This will permanently clear all TEST Fieldbook data stored in this browser, including photos and history.\n\nType RESET to continue:');
+  if(answer!=='RESET'){status.textContent='Reset cancelled. No data changed.';return;}
+  if(!confirm('Clear TEST Fieldbook data from this browser now? Your saved backup files will not be deleted.')){
+   status.textContent='Reset cancelled. No data changed.';return;
+  }
+  button.disabled=true;status.textContent='Clearing TEST photos and records…';
+  try {
+   // Photos are stored separately in IndexedDB. Clear them first, before deleting any record data.
+   const database=await openDB();
+   await new Promise((resolve,reject)=>{
+    const tx=database.transaction('photos','readwrite');
+    tx.objectStore('photos').clear();
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error||Error('Photo database failed'));
+    tx.onabort=()=>reject(tx.error||Error('Photo clearing was aborted'));
+   });
+   await clearLargeData();
+   // Only TEST-specific keys: do not touch TEST keys on the same origin.
+   const liveKeys=[
+    'cemeteryFieldbook_V7_TEST_private_seed',
+    'cemeteryFieldbook_V7_TEST_records',
+    'cemeteryFieldbook_V7_TEST_backup_time',
+    'cemeteryFieldbook_V7_TEST_changelog',
+    'cemeteryFieldbook_V7_TEST_geo',
+    'cemeteryFieldbook_V7_TEST_all_gedcom_people',
+    'cemeteryFieldbook_V7_TEST_home_person_id'
+   ];
+   for(const key of liveKeys)localStorage.removeItem(key);
+   status.textContent='TEST data cleared. Reloading Fieldbook…';
+   location.reload();
+  } catch(err) {
+   status.textContent='Reset did not finish: '+(err?.message||String(err))+'. Do not import until you verify that the Fieldbook is empty. Your original backup remains available.';
+   button.disabled=false;
+  }
+ });
+})();
+</script>
+<script>
+// Hydrate persistent large data after all app modules have initialized.
+// Existing v6.1 small-storage records remain readable for migration.
+const largeDataReady=(async()=>{
+ try{
+  const saved=await readLargeData();
+  if(Array.isArray(saved.burials))seed=saved.burials;
+  if(Array.isArray(saved.people))allGedcomPeople=saved.people;
+  largeDataHydrated=true;
+  refreshOptions();render();refreshHomeDisplay();searchHomePeople();
+  const st=document.getElementById('privateSeedStatus');if(st)st.textContent=seed.length+' burial records loaded (expanded storage)';
+ }catch(e){$('count').textContent='Storage load failed — do not import or reset';alert('Fieldbook could not load its saved burial data: '+e.message+'. Please do not import or reset until storage works.');throw e;}
+})();
+</script>
+
+<script>
+/* TEST Cloud Backup Phase 1. No cloud request occurs until user selects Connect/Upload/List.
+   OAuth: Microsoft personal accounts, auth code + PKCE, session-only token.
+   Graph app-folder permission; no broad drive access. Requires app registration.
+   Token is NOT put in downloaded backup or localStorage. */
+(()=>{'use strict';
+const el=id=>document.getElementById(id);
+const clientEl=el('cloudClientId'),state=el('cloudState'),detail=el('cloudDetails'),results=el('cloudBackups');
+if(!clientEl||!crypto?.subtle){if(state)state.textContent='This browser does not support secure cloud authentication.';return;}
+const GRAPH='https://graph.microsoft.com/v1.0';
+const AUTH='https://login.microsoftonline.com/consumers/oauth2/v2.0';
+const SCOPES='Files.ReadWrite.AppFolder';
+const CIDKEY='fieldbook_cloud_test_clientid';
+const TXKEY='fieldbook_cloud_test_oauth_transaction';
+const AUTHKEY='fieldbook_cloud_test_access_token';
+const REDIRECT=new URL('./',location.href).href;
+let token=null;
+let expiresAt=0;
+let busy=false;
+clientEl.value=localStorage.getItem(CIDKEY)||'';
+el('cloudRedirectHelp').textContent='Required SPA redirect URI: '+REDIRECT;
+const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function note(msg,isError=false){state.textContent=msg;state.style.color=isError?'#9f2f2f':'';}
+function b64url(bytes){return btoa(String.fromCharCode(...bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+function randomBytes(n){return crypto.getRandomValues(new Uint8Array(n));}
+async function challenge(verifier){let hash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier));return b64url(new Uint8Array(hash));}
+function activeToken(){return token&&Date.now()<expiresAt-90_000?token:null;}
+function safeJSON(s){try{return JSON.parse(s)}catch{return null}}
+clientEl.addEventListener('change',()=>{let value=clientEl.value.trim();if(value&& !uuid.test(value)){note('Client ID must be a valid Microsoft application GUID.',true);return;}localStorage.setItem(CIDKEY,value);note('Client ID saved in this TEST browser. Microsoft sign-in is not yet connected.');});
+el('cloudConnect').onclick=async()=>{
+ const cid=clientEl.value.trim();if(!uuid.test(cid)){note('A registered Microsoft application client ID is needed first. Do not enter your account password.',true);return;}
+ if(!window.isSecureContext){note('Sign-in requires HTTPS.',true);return;}
+ const verifier=b64url(randomBytes(32));const check=await challenge(verifier);const challengeState=b64url(randomBytes(24));
+ sessionStorage.setItem(TXKEY,JSON.stringify({verifier,state:challengeState,clientId:cid,issued:Date.now()}));
+ localStorage.setItem(CIDKEY,cid);
+ const query=new URLSearchParams({client_id:cid,response_type:'code',redirect_uri:REDIRECT,response_mode:'query',scope:SCOPES,code_challenge:check,code_challenge_method:'S256',state:challengeState,prompt:'select_account'});
+ location.assign(AUTH+'/authorize?'+query.toString());
+};
+async function finishRedirect(){
+ const u=new URL(location.href);
+ if(!u.searchParams.has('code')&&!u.searchParams.has('error'))return;
+ const code=u.searchParams.get('code'),incomingState=u.searchParams.get('state'),error=u.searchParams.get('error');
+ history.replaceState({},'',REDIRECT);
+ const tx=safeJSON(sessionStorage.getItem(TXKEY)||'null');sessionStorage.removeItem(TXKEY);
+ if(error){note('Microsoft sign-in failed: '+(u.searchParams.get('error_description')||error),true);return;}
+ if(!tx||tx.state!==incomingState||Date.now()-tx.issued>10*60_000){note('Sign-in response could not be verified; please connect again.',true);return;}
+ try{
+ const body=new URLSearchParams({client_id:tx.clientId,grant_type:'authorization_code',code,redirect_uri:REDIRECT,code_verifier:tx.verifier,scope:SCOPES});
+ const res=await fetch(AUTH+'/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});
+ const data=await res.json();if(!res.ok||!data.access_token)throw Error(data.error_description||data.error||'Could not complete Microsoft sign-in');
+ token=data.access_token;expiresAt=Date.now()+(Number(data.expires_in)||3600)*1000;
+ sessionStorage.setItem(AUTHKEY,JSON.stringify({token,expiresAt}));
+ note('Connected to OneDrive for this browser session. No files uploaded yet.');
+ }catch(e){note('Sign-in failed: '+e.message,true);}
+}
+const prior=safeJSON(sessionStorage.getItem(AUTHKEY)||'null');
+if(prior&&prior.expiresAt>Date.now()+90_000){token=prior.token;expiresAt=prior.expiresAt;note('OneDrive connection restored for this browser session.');}
+el('cloudDisconnect').onclick=()=>{token=null;expiresAt=0;sessionStorage.removeItem(AUTHKEY);note('Disconnected from this browser session. Backups already in OneDrive were not deleted.');results.hidden=true;};
+async function graph(path,options={}){
+ if(!activeToken())throw Error('Please connect to OneDrive again; the sign-in session has expired.');
+ const res=await fetch(GRAPH+path,{...options,headers:{Authorization:'Bearer '+activeToken(),...(options.headers||{})}});
+ if(!res.ok){let explanation='HTTP '+res.status;try{const j=await res.json();explanation=j.error?.message||explanation}catch{}throw Error(explanation)}
+ return res;
+}
+async function makePayload(){
+ await largeDataReady;
+ const photos=await getPhotos();
+ const payload={format:'CemeteryFieldbookBackup',version:5,exported:new Date().toISOString(),seed,updates,extras,photos,geoEdits,changeLog,gedcomPeople:allGedcomPeople,homePersonId};
+ return payload;
+}
+function fmt(n){return Number(n).toLocaleString()}
+async function preview(){
+ const payload=await makePayload();const json=JSON.stringify(payload);const bytes=new Blob([json]).size;
+ detail.textContent=`Ready: ${fmt(payload.seed.length)} burials · ${fmt(payload.photos.length)} attached photo records · ${fmt(payload.changeLog.length)} history entries · ${fmt(payload.gedcomPeople.length)} people in directory · ${(bytes/1024/1024).toFixed(2)} MB backup.`;
+ return {json,bytes,payload};
+}
+el('cloudPreview').onclick=async()=>{try{await preview()}catch(e){note('Cannot prepare backup: '+e.message,true)}};
+function setBusy(v){busy=v;for(const id of ['cloudUpload','cloudList','cloudPreview','cloudConnect'])el(id).disabled=v;}
+function uniqueName(){let d=new Date().toISOString().replace(/[:.]/g,'-');let tail=b64url(randomBytes(5));return `fieldbook-${d}-${tail}.json`}
+el('cloudUpload').onclick=async()=>{
+ if(busy)return;setBusy(true);
+ try{
+ if(!activeToken())throw Error('Connect to OneDrive before uploading.');
+ note('Preparing complete backup, including photographs…');let {json,bytes,payload}=await preview();
+ if(bytes>240*1024*1024)throw Error('Backup is larger than this first-version upload limit. Download the regular full backup instead.');
+ if(!confirm(`Upload a NEW, date-stamped backup of ${fmt(payload.seed.length)} burial records and ${fmt(payload.photos.length)} photo records (${(bytes/1024/1024).toFixed(2)} MB) to your OneDrive app folder?\n\nThis backup is not encrypted by Fieldbook. Existing cloud backups will not be overwritten.`)){note('Cloud backup cancelled; nothing uploaded.');return;}
+ const file=uniqueName();note('Uploading a new backup to OneDrive…');
+ // Each backup gets a distinct timestamp + random filename; never replace existing backups.
+ const response=await graph('/me/drive/special/approot:/'+encodeURIComponent(file)+':/content',{method:'PUT',headers:{'Content-Type':'application/json','If-None-Match':'*'},body:json});
+ const metadata=await response.json();if(metadata.size!==bytes)throw Error('Upload returned unexpected file size. Do not rely on this backup until checked.');
+ note(`Backup uploaded and file size verified: ${file} (${(bytes/1024/1024).toFixed(2)} MB). Recovery has not yet been tested.`);
+ await listCloud();
+ }catch(e){note('Cloud backup failed: '+e.message,true)}finally{setBusy(false)}
+};
+async function listCloud(){
+ const response=await graph('/me/drive/special/approot/children?$top=100&$select=id,name,size,createdDateTime,file');
+ const data=await response.json();const entries=(data.value||[]).filter(x=>/^fieldbook-.*\.json$/i.test(x.name)&&x.file).sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
+ results.replaceChildren();results.hidden=false;
+ const h=document.createElement('h4');h.textContent=`OneDrive backups (${entries.length}${data['@odata.nextLink']?' shown; more may exist':''})`;results.append(h);
+ if(!entries.length){const p=document.createElement('p');p.textContent='No Fieldbook backup files found in this app folder.';results.append(p)}
+ for(const item of entries){
+  const row=document.createElement('div');row.style.cssText='border-bottom:1px solid #ddd;padding:10px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center';
+  const info=document.createElement('div');info.style.cssText='flex:1 1 180px;min-width:0;overflow-wrap:anywhere;font-size:13px';
+  const strong=document.createElement('strong');strong.textContent=item.name;info.append(strong);
+  const small=document.createElement('div');small.textContent=`${(item.size/1024/1024).toFixed(2)} MB · ${new Date(item.createdDateTime).toLocaleString()}`;info.append(small);
+  const btn=document.createElement('button');btn.type='button';btn.className='secondary';btn.textContent='Download';
+  btn.onclick=async()=>{btn.disabled=true;try{
+   note('Downloading backup for manual restore…');const r=await graph('/me/drive/items/'+encodeURIComponent(item.id)+'/content');
+   const blob=await r.blob();if(blob.size!==item.size)throw Error('Download size differed from OneDrive metadata.');
+   // Validate JSON envelope before offering to download (never restore automatically).
+   const doc=JSON.parse(await blob.text());if(doc.format!=='CemeteryFieldbookBackup'||doc.version!==5||!Array.isArray(doc.photos)||!Array.isArray(doc.seed))throw Error('Backup does not have the expected Fieldbook format.');
+   download(blob,item.name);note('Backup downloaded and checked. Use Restore backup above only when ready to replace local data.');
+  }catch(e){note('Download failed: '+e.message,true)}finally{btn.disabled=false}};
+  row.append(info,btn);results.append(row);
+ }
+}
+el('cloudList').onclick=async()=>{if(busy)return;setBusy(true);try{note('Reading backup list from OneDrive…');await listCloud();note('Cloud backup list updated.')}catch(e){note('Could not list cloud backups: '+e.message,true)}finally{setBusy(false)}};
+finishRedirect();
+})();
+</script>
+</body></html>
