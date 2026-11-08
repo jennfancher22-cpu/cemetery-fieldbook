@@ -281,6 +281,13 @@
 </div>
 <div class="buttons"><button type="button" id="syncCompareRefresh" class="secondary">Load backup choices</button><button type="button" id="syncCompareRun">Compare selected backups</button></div>
 <div id="syncCompareResult" class="hint" role="status">No comparison run. Read-only; no records will be changed.</div>
+<div id="syncStagePanel" class="home-panel" style="display:none;margin-top:14px;border:1px solid #b6d8c6" aria-live="polite">
+<h4 style="margin:0 0 6px">Prepare a one-way recovery backup (TEST only)</h4>
+<p class="hint">Choose records found <strong>only in Backup B</strong> (phone). Their attached photographs and applicable activity entries come along. Original Backup A records and existing values remain unchanged. <strong>This generates a downloadable backup file only; it never edits either device or any OneDrive backup.</strong></p>
+<div id="syncStageCandidates"></div>
+<div class="buttons" style="margin-top:12px"><button type="button" id="syncStageDownload" disabled>Download merged TEST backup</button></div>
+<p id="syncStageStatus" class="hint" role="status">Select an addition above.</p>
+</div>
 </div>
 <div class="notice"><strong>Recovery:</strong> Select <em>Restore</em> beside a cloud backup to review it and replace this TEST browser's saved data after confirmation, without downloading a file first. <em>Download</em> remains available for an independent offline copy. A restore does not modify or delete cloud backups.</div>
 </div></details>
@@ -311,7 +318,7 @@
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7 TEST · Complete-record backup comparison (seed + additions) · Optional automatic OneDrive backup + direct restore + verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 TEST · Selective one-way backup staging (TEST only) · Optional automatic OneDrive backup + direct restore + verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -2339,11 +2346,15 @@ async function listCloud(){
 }
 // Read-only two-backup comparison for planning safe future synchronization.
 // Separate browser databases are never read/written by this feature; cloud files are only GET requests.
+let syncStageA=null,syncStageB=null,syncStageLabels=[],syncStageChoiceA='',syncStageChoiceB='';
+const syncStagePanel=el('syncStagePanel'),syncStageList=el('syncStageCandidates'),syncStageDownload=el('syncStageDownload'),syncStageStatus=el('syncStageStatus');
+function syncStageReset(){syncStageA=null;syncStageB=null;syncStageLabels=[];syncStageChoiceA='';syncStageChoiceB='';syncStagePanel.style.display='none';syncStageList.replaceChildren();syncStageDownload.disabled=true;}
 let syncCompareEntries=[];
 const syncA=el('syncCompareA'),syncB=el('syncCompareB'),syncResult=el('syncCompareResult');
 const backupNamePattern=/^(?:fieldbook-|cemetery-fieldbook-backup-).*\.json$/i;
 function syncSay(msg){syncResult.replaceChildren();const p=document.createElement('p');p.textContent=msg;syncResult.append(p);}
 async function loadSyncChoices(){
+  syncStageReset();
   syncSay('Reading backup filenames from OneDrive…');
   const files=(await allCloudFiles()).filter(f=>f.file&&backupNamePattern.test(f.name)).sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
   syncCompareEntries=files;
@@ -2396,6 +2407,73 @@ function compareSyncDocuments(a,b){
  for(const id of photoB.result.keys())if(!photoA.result.has(id))pOnlyB++;
  return {a:combinedA.length,b:combinedB.length,seedA:a.seed.length,seedB:b.seed.length,extrasA:a.extras.length,extrasB:b.extras.length,onlyA,onlyB,changed,unchanged,photosA:a.photos.length,photosB:b.photos.length,pOnlyA,pOnlyB,pChanged,historyA:a.changeLog?.length||0,historyB:b.changeLog?.length||0,peopleA:a.gedcomPeople?.length||0,peopleB:b.gedcomPeople?.length||0,changedFields,examples,duplicatePhotos:photoA.duplicates.size+photoB.duplicates.size};
 }
+function prepareSyncStage(a,b,r,fa,fb){
+ syncStageReset();
+ // Phase 1 is deliberately limited: no conflicting IDs, no A-only records, no
+ // changed shared records, and no shared-photo alterations may be present.
+ // It stages ONLY B-only record additions and the photos attached to those IDs.
+ const aIndex=indexById([...a.seed,...a.extras]);
+ const bIndex=indexById([...b.seed,...b.extras]);
+ const pa=indexById(a.photos.filter(p=>p&&typeof p.id==='string'));
+ const pb=indexById(b.photos.filter(p=>p&&typeof p.id==='string'));
+ const blocked=r.onlyA!==0||r.changed!==0||r.pOnlyA!==0||r.pChanged!==0||pa.duplicates.size!==0||pb.duplicates.size!==0;
+ syncStagePanel.style.display='block';
+ if(blocked){
+   syncStageStatus.textContent='One-way staging blocked: the backups include changes that cannot safely be resolved by additions alone. No backup generated.';
+   return;
+ }
+ const candidates=[...bIndex.result.values()].filter(person=>!aIndex.result.has(person.id));
+ // Reject if photo IDs being copied already exist in A and refer to different content.
+ for(const p of b.photos){if(!p||!p.person||!p.id)continue;if(!bIndex.result.has(p.person)||aIndex.result.has(p.person))continue;
+   if(pa.result.has(p.id)&&canonicalValue(pa.result.get(p.id))!==canonicalValue(p)){
+     syncStageStatus.textContent='Photo ID collision detected. No backup generated.';return;
+   }
+ }
+ if(!candidates.length){syncStageStatus.textContent='No B-only burial records to add. Nothing to stage.';return;}
+ syncStageA=a;syncStageB=b;syncStageChoiceA=fa.id;syncStageChoiceB=fb.id;
+ for(const person of candidates){
+  const matchingPhotos=b.photos.filter(photo=>photo.person===person.id);
+  const label=document.createElement('label');label.style.cssText='display:flex;align-items:flex-start;gap:10px;padding:10px;border:1px solid #dce7dd;border-radius:9px;margin:8px 0;';
+  const cb=document.createElement('input');cb.type='checkbox';cb.style.cssText='width:20px;height:20px;min-height:20px;flex:none;margin:1px 0;';cb.dataset.syncid=person.id;
+  const text=document.createElement('span');text.style.cssText='overflow-wrap:anywhere;';
+  const name=document.createElement('strong');name.textContent=person.name||person.id;
+  const desc=document.createElement('div');desc.className='tiny';desc.textContent=[person.cemetery,person.town,person.county,person.state].filter(Boolean).join(' · ')+(matchingPhotos.length?' · '+matchingPhotos.length+' attached photo(s)':'');
+  text.append(name,desc);label.append(cb,text);syncStageList.append(label);
+  cb.addEventListener('change',()=>{syncStageDownload.disabled=![...syncStageList.querySelectorAll('input:checked')].length;syncStageStatus.textContent=[...syncStageList.querySelectorAll('input:checked')].length+' burial addition(s) selected. No data changed.';});
+ }
+ syncStageStatus.textContent='Select B-only burial records to include. Their associated photos are included automatically. Existing records will not be modified.';
+}
+syncStageDownload.onclick=()=>{
+ try{
+  if(!syncStageA||!syncStageB||!syncStageChoiceA||!syncStageChoiceB||syncA.value!==syncStageChoiceA||syncB.value!==syncStageChoiceB)throw Error('Backup selection changed. Compare again.');
+  const selected=new Set([...syncStageList.querySelectorAll('input:checked')].map(input=>input.dataset.syncid));
+  if(!selected.size)throw Error('Select at least one person first.');
+  const a=syncStageA,b=syncStageB;
+  // Re-validate all records at export time, even if the review controls were changed.
+  const r=compareSyncDocuments(a,b);
+  if(r.onlyA||r.changed||r.pOnlyA||r.pChanged||r.duplicatePhotos)throw Error('Conflicts detected. A selective merge is not safe.');
+  const aIds=new Set([...a.seed,...a.extras].map(x=>x.id));
+  const additions=[...b.seed,...b.extras].filter(x=>selected.has(x.id)&&!aIds.has(x.id));
+  if(additions.length!==selected.size)throw Error('The selected person IDs are not unique new records.');
+  const aPhotoIds=new Set(a.photos.map(x=>x.id));
+  const newPhotos=b.photos.filter(x=>selected.has(x.person)&&!aPhotoIds.has(x.id));
+  const originalEventIds=new Set((a.changeLog||[]).map(x=>x.id));
+  const newEvents=(b.changeLog||[]).filter(x=>selected.has(x.personId)&&x.id&&!originalEventIds.has(x.id));
+  const merged=JSON.parse(JSON.stringify(a));
+  // New records live in `extras` in Fieldbook; do not alter seed or shared records.
+  merged.extras.push(...additions);
+  for(const row of additions){if(b.updates[row.id]&&typeof b.updates[row.id]==='object')merged.updates[row.id]=b.updates[row.id];}
+  merged.photos.push(...newPhotos);
+  merged.changeLog=[...newEvents,...(merged.changeLog||[])];
+  merged.exported=new Date().toISOString();
+  // This provenance is ignored by older Fieldbook versions during restore.
+  merged.stagedSync={mode:'B-only additions',sourceA:syncCompareEntries.find(x=>x.id===syncStageChoiceA)?.name||'',sourceB:syncCompareEntries.find(x=>x.id===syncStageChoiceB)?.name||'',burials:additions.length,photos:newPhotos.length,events:newEvents.length,created:merged.exported};
+  if(!confirm(`CREATE TEST RECOVERY FILE\n\n${additions.length} new burial(s), ${newPhotos.length} photo(s), ${newEvents.length} related history event(s) copied from Backup B into a COPY of Backup A.\n\nNothing will be changed in Fieldbook or OneDrive. Download the new JSON file and restore ONLY in a separate Incognito TEST session for verification. Proceed?`))return;
+  const blob=new Blob([JSON.stringify(merged)],{type:'application/json'});
+  download(blob,'fieldbook-TEST-merged-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json');
+  syncStageStatus.textContent=`Downloaded a staged backup: ${merged.seed.length+merged.extras.length} burials, ${merged.photos.length} photos, ${merged.changeLog.length} history entries. No stored data changed. Test restore in Incognito TEST only.`;
+ }catch(error){syncStageStatus.textContent='No file generated: '+error.message;}
+};
 function showSyncResult(r,fa,fb){
  syncResult.replaceChildren();
  const title=document.createElement('strong');title.textContent='Read-only comparison complete — no records modified';syncResult.append(title);
@@ -2415,7 +2493,7 @@ el('syncCompareRun').onclick=async()=>{
  if(!fa||!fb){syncSay('Choose both backups first.');return}
  if(fa.id===fb.id){syncSay('Choose two different backups.');return}
  setBusy(true);
- try{syncSay('Downloading the two backups into memory for read-only comparison…');const a=await getSyncBackup(fa);const b=await getSyncBackup(fb);showSyncResult(compareSyncDocuments(a,b),fa,fb)}
+ try{syncStageReset();syncSay('Downloading the two backups into memory for read-only comparison…');const a=await getSyncBackup(fa);const b=await getSyncBackup(fb);const comparison=compareSyncDocuments(a,b);showSyncResult(comparison,fa,fb);prepareSyncStage(a,b,comparison,fa,fb)}
  catch(e){syncSay('Comparison could not finish: '+e.message+'. No data changed.')}finally{setBusy(false)}
 };
 
