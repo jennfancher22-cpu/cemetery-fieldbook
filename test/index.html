@@ -246,25 +246,24 @@
 <div id="compareGedcomResults" class="ged-preview" hidden></div></div>
 </div></details>
 <details class="data-subfold" id="dataBackupsFold"><summary>3 · Backup and restore <span class="tool-subnote">Protect and transfer your data</span></summary><div class="data-subbody">
-<h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your v6.1 backup safe. This LIVE release opens your existing local records using the same storage keys. Do not restore a backup unless recovery is needed; restoring replaces current data.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The new full backup includes the original burial list, photos, notes, and change history. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This app stores records privately on this device and is not synced. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div>
-<details class="data-subfold" id="cloudBackupLab" style="margin-top:18px"><summary>☁️ OneDrive cloud backup (experimental) <span class="tool-subnote">TEST only · remembered sign-in and verified backups</span></summary>
+<h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your v6.1 backup safe. This TEST version uses separate storage from your LIVE Fieldbook. Do not restore a backup unless recovery is needed; restoring replaces current data.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The new full backup includes the original burial list, photos, notes, and change history. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This app stores records privately on this device and is not synced. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div>
+<details class="data-subfold" id="cloudBackupLab" style="margin-top:18px"><summary>☁️ OneDrive cloud backup (experimental) <span class="tool-subnote">TEST only · direct recovery and verified backups</span></summary>
 <div class="data-subbody">
 <p class="hint"><strong>Private beta experiment:</strong> Each user signs in to their own personal OneDrive. This browser may remember the authorization; clearing site data, sign-out, or Microsoft session expiry can require a new sign-in. A dedicated app folder is used for date-stamped backup copies. This is <strong>not</strong> two-way synchronization. Uploaded backups are readable JSON; do not upload sensitive records until you are comfortable with that.</p>
-<p class="hint"><strong>Developer setup:</strong> The app owner registers Fieldbook with Microsoft once. Enter the resulting <em>Application (client) ID</em> below, not your password or client secret. A Microsoft personal account can then connect through Microsoft's sign-in page. The configured redirect URI must exactly match this TEST page.</p>
-<label for="cloudClientId">Microsoft application (client) ID — developer setup</label>
-<input id="cloudClientId" type="text" autocomplete="off" placeholder="00000000-0000-0000-0000-000000000000" spellcheck="false">
+<p class="hint"><strong>Connect your personal OneDrive:</strong> Cemetery Fieldbook's Microsoft application is preconfigured. Sign in with your own Microsoft account; no application ID or developer setup is needed. Cloud backups stay in the application folder of your own OneDrive.</p>
+<input id="cloudClientId" type="hidden" value="648dce44-a29d-4be8-83f4-603e9edafcb6">
 <p class="tiny" id="cloudRedirectHelp"></p>
 <div class="buttons"><button id="cloudConnect" type="button">Connect personal OneDrive</button><button id="cloudDisconnect" type="button" class="secondary">Disconnect</button></div>
 <p id="cloudState" class="hint" role="status">Not connected. No data has been uploaded.</p><p class="tiny">Experimental remembered sign-in stores a Microsoft refresh token in this browser’s local storage. Only use on a trusted device. Disconnect removes it; clearing site data removes it too. Microsoft may require sign-in again periodically.</p>
 <div class="buttons"><button type="button" id="cloudPreview" class="secondary">Check backup contents</button><button type="button" id="cloudUpload">Back up to OneDrive now</button><button type="button" id="cloudList" class="secondary">View cloud backups</button></div>
 <p id="cloudDetails" class="hint" role="status"></p>
 <div id="cloudBackups" class="home-panel" hidden></div>
-<div class="notice"><strong>Recovery:</strong> Choose <em>Download</em> next to a cloud backup, then use the existing <em>Restore backup</em> button above. Restoring replaces local data only after its own confirmation. Keep regular offline backups too. A verified upload is not yet a tested restore.</div>
+<div class="notice"><strong>Recovery:</strong> Select <em>Restore</em> beside a cloud backup to review it and replace this TEST browser's saved data after confirmation, without downloading a file first. <em>Download</em> remains available for an independent offline copy. A restore does not modify or delete cloud backups.</div>
 </div></details>
 <div id="resetFieldbookPanel" class="fieldbook-reset-panel" style="margin-top:18px;padding:14px;border:1px solid #d8b3ad;border-radius:12px;background:#fff9f7">
 <h3 style="margin:0 0 6px;color:#813d32">Start over / reset Fieldbook data</h3>
-<p class="hint" style="margin:0 0 10px">Use this only when you want an empty Fieldbook before a fresh GEDCOM import. This erases this browser's <strong>TEST burial entries, edits, discoveries, photographs, visit statuses, change history, saved cemetery coordinates, Home Person, and GEDCOM directory</strong>. It does not delete your downloaded backups or the app on GitHub. It does not erase TEST Fieldbook records.</p>
-<label style="display:flex;align-items:flex-start;gap:9px;margin:8px 0;font-size:13px"><input id="resetBackupAck" type="checkbox" style="width:18px;height:18px;min-height:18px;flex:0 0 18px;margin-top:2px"><span>I have saved a full backup and understand that resetting removes my LIVE data from this browser.</span></label>
+<p class="hint" style="margin:0 0 10px">Use this only when you want an empty Fieldbook before a fresh GEDCOM import. This erases this browser's <strong>TEST burial entries, edits, discoveries, photographs, visit statuses, change history, saved cemetery coordinates, Home Person, and GEDCOM directory</strong>. It does not delete your downloaded backups or the app on GitHub. It does not erase your separate LIVE Fieldbook records.</p>
+<label style="display:flex;align-items:flex-start;gap:9px;margin:8px 0;font-size:13px"><input id="resetBackupAck" type="checkbox" style="width:18px;height:18px;min-height:18px;flex:0 0 18px;margin-top:2px"><span>I have saved a full backup and understand that resetting removes my TEST data from this browser.</span></label>
 <button type="button" class="danger" id="resetFieldbookButton" disabled>Reset TEST Fieldbook data…</button>
 <p id="resetFieldbookStatus" class="hint" role="status" style="margin:8px 0 0"></p>
 </div></div></details>
@@ -288,7 +287,7 @@
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7 TEST · OneDrive remembered sign-in and content-verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 TEST · OneDrive direct restore + remembered sign-in and verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -790,8 +789,8 @@ $('nearSearch').onclick=nearbySearch;
 $('myLocation').onclick=()=>{if(location.protocol==='file:'){message('GPS is restricted when opening the downloaded HTML file. The town-based distance search still works offline. A secure HTTPS installation is required for reliable location permission.');return}if(!window.isSecureContext){message('GPS requires HTTPS (a secure connection). Select a town for offline searching.');return}if(!navigator.geolocation){message('This browser does not support location. Use a listed city or enter coordinates.');return}message('Requesting GPS location…');navigator.geolocation.getCurrentPosition(pos=>{$('startPlace').value='custom';$('startLat').value=pos.coords.latitude.toFixed(6);$('startLon').value=pos.coords.longitude.toFixed(6);message('Phone location received. Approximate GPS accuracy: '+Math.round(pos.coords.accuracy)+' meters.');nearbySearch()},err=>message('Phone GPS unavailable: '+err.message+'. Local HTML files may not receive location permission. You can still select a town.'),{enableHighAccuracy:true,timeout:15000,maximumAge:60000})};
 // V2 backup includes geolocations; restores still accept V1 backups (and retain V2 coordinate edits).
 $('backup').onclick=async()=>{try{await largeDataReady;const photos=await getPhotos();const payload={format:'CemeteryFieldbookBackup',version:5,exported:new Date().toISOString(),seed,updates,extras,photos,geoEdits,changeLog,gedcomPeople:allGedcomPeople,homePersonId};download(new Blob([JSON.stringify(payload)],{type:'application/json'}),'cemetery-fieldbook-backup-'+new Date().toISOString().slice(0,10)+'.json');localStorage.setItem(BACKUP_KEY,new Date().toLocaleString());$('lastbackup').textContent='Last backup exported: '+localStorage.getItem(BACKUP_KEY)}catch(e){alert('Backup failed: '+e.message)}};
-$('restoreFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{await largeDataReady;const data=JSON.parse(await f.text());if(data.format!=='CemeteryFieldbookBackup'||![1,2,3,4,5].includes(data.version)||!Array.isArray(data.extras)||!Array.isArray(data.photos)||!data.updates||typeof data.updates!=='object')throw Error('Unsupported backup format');if(data.version>=4&&(!Array.isArray(data.seed)||!data.seed.every(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.name==='string')))throw Error('Full backup contains an invalid burial list');
-if(!confirm('Restore this backup? Existing records, history, and photos on this device will be replaced.'))return;
+async function restoreBackupObject(data){await largeDataReady;if(data.format!=='CemeteryFieldbookBackup'||![1,2,3,4,5].includes(data.version)||!Array.isArray(data.extras)||!Array.isArray(data.photos)||!data.updates||typeof data.updates!=='object')throw Error('Unsupported backup format');if(data.version>=4&&(!Array.isArray(data.seed)||!data.seed.every(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.name==='string')))throw Error('Full backup contains an invalid burial list');
+if(!confirm('Restore this backup? Existing records, history, and photos on this device will be replaced.'))return false;
 // Backups v1-v3 did not contain a burial list. Keep any separately loaded list.
 // Stage and write photos before mutating record edits.
 if(!db)db=await openDB();await new Promise((resolve,reject)=>{const tx=db.transaction('photos','readwrite'),s=tx.objectStore('photos');s.clear();for(const p of data.photos)s.put(p);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
@@ -803,7 +802,9 @@ if(data.version>=4){await saveLargeData(data.seed,data.version===5?data.gedcomPe
  if(homePersonId)localStorage.setItem(HOME_PERSON_KEY,homePersonId);else localStorage.removeItem(HOME_PERSON_KEY);
  refreshHomeDisplay();searchHomePeople();
 }
-refreshOptions();render();renderChangeLog();nearbySearch();$('privateSeedStatus').textContent=seed.length+' private burial records loaded on this device';alert(data.version>=4?'Complete backup restored, including '+seed.length+' original burial records.':'Older backup restored. If original burials are missing, load the private burial list separately.')}catch(err){alert('Restore failed: '+err.message)}finally{e.target.value=''}};
+refreshOptions();render();renderChangeLog();nearbySearch();$('privateSeedStatus').textContent=seed.length+' private burial records loaded on this device';alert(data.version>=4?'Complete backup restored, including '+seed.length+' original burial records.':'Older backup restored. If original burials are missing, load the private burial list separately.');return true;}
+window.fieldbookRestoreFromObject=restoreBackupObject;
+$('restoreFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{await restoreBackupObject(JSON.parse(await f.text()))}catch(err){alert('Restore failed: '+err.message)}finally{e.target.value=''}};
 renderChangeLog();$('nearResults').append(textNode('p','hint','Choose a starting point and tap Find nearby cemeteries to see results.'));
 </script><script>if ('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
 // v7 GEDCOM first-import prototype. Parser operates entirely on locally selected text.
@@ -1882,7 +1883,7 @@ const largeDataReady=(async()=>{
 /* TEST Cloud Backup Phase 2. Cloud requests only occur for user-initiated actions.
    OAuth: Microsoft personal accounts, auth code + PKCE, opt-in remembered authorization.
    Graph app-folder permission; no broad drive access. Requires app registration.
-   Token is NOT put in downloaded backup or localStorage. */
+   Access token is not put in downloadable backup; the experimental refresh token is stored in localStorage. */
 (()=>{'use strict';
 const el=id=>document.getElementById(id);
 const clientEl=el('cloudClientId'),state=el('cloudState'),detail=el('cloudDetails'),results=el('cloudBackups');
@@ -1900,7 +1901,7 @@ let token=null;
 let expiresAt=0;
 let refreshPromise=null;
 let busy=false;
-clientEl.value=localStorage.getItem(CIDKEY)||'';
+clientEl.value='648dce44-a29d-4be8-83f4-603e9edafcb6';
 el('cloudRedirectHelp').textContent='Required SPA redirect URI: '+REDIRECT;
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 function note(msg,isError=false){state.textContent=msg;state.style.color=isError?'#9f2f2f':'';}
@@ -1935,9 +1936,9 @@ async function freshToken(){
 }
 
 function safeJSON(s){try{return JSON.parse(s)}catch{return null}}
-clientEl.addEventListener('change',()=>{let value=clientEl.value.trim();if(value&& !uuid.test(value)){note('Client ID must be a valid Microsoft application GUID.',true);return;}localStorage.setItem(CIDKEY,value);note('Client ID saved in this TEST browser. Microsoft sign-in is not yet connected.');});
+
 el('cloudConnect').onclick=async()=>{
- const cid=clientEl.value.trim();if(!uuid.test(cid)){note('A registered Microsoft application client ID is needed first. Do not enter your account password.',true);return;}
+ const cid=clientEl.value.trim();if(!uuid.test(cid)){note('Fieldbook Microsoft registration is misconfigured. Contact the app developer.',true);return;}
  if(!window.isSecureContext){note('Sign-in requires HTTPS.',true);return;}
  const verifier=b64url(randomBytes(32));const check=await challenge(verifier);const challengeState=b64url(randomBytes(24));
  sessionStorage.setItem(TXKEY,JSON.stringify({verifier,state:challengeState,clientId:cid,issued:Date.now()}));
@@ -2049,6 +2050,22 @@ el('cloudUpload').onclick=async()=>{
  }catch(e){note((uploaded?'OneDrive received the backup, but verification was not completed: ':'Cloud backup not confirmed: ')+e.message,true)}finally{setBusy(false)}
 };
 
+async function recoverCloudBackup(item){
+ const r=await graph('/me/drive/items/'+encodeURIComponent(item.id)+'/content');
+ const bytes=await r.arrayBuffer();
+ if(bytes.byteLength!==item.size)throw Error('Downloaded backup size differs from OneDrive metadata. No data changed.');
+ const data=JSON.parse(new TextDecoder().decode(bytes));
+ if(data.format!=='CemeteryFieldbookBackup'||data.version!==5||!Array.isArray(data.seed)||!Array.isArray(data.photos)||!Array.isArray(data.gedcomPeople)||!Array.isArray(data.extras)||!data.updates||typeof data.updates!=='object')throw Error('Downloaded file is not a complete v5 Fieldbook backup. No data changed.');
+ if(!data.seed.every(x=>x&&typeof x.id==='string'&&typeof x.name==='string'))throw Error('Backup burial list is invalid. No data changed.');
+ if(!data.gedcomPeople.every(x=>x&&typeof x.id==='string'&&typeof x.name==='string'))throw Error('Backup people directory is invalid. No data changed.');
+ await largeDataReady;
+ const current=seed.length;
+ if(!confirm(`RESTORE FROM ONEDRIVE (TEST ONLY)\n\nCloud backup: ${item.name}\nBurials: ${data.seed.length.toLocaleString()}\nPhotos: ${data.photos.length.toLocaleString()}\nPeople directory: ${data.gedcomPeople.length.toLocaleString()}\n\nThis will REPLACE all ${current.toLocaleString()} local TEST burial records, your local photos, edits, and history. Your cloud backups are NOT changed.\n\nHave you kept a separate backup of any TEST work you want to preserve?`))return false;
+ // The shared restore function performs a final confirmation before modifying local data.
+ const success=await window.fieldbookRestoreFromObject(data);
+ if(success)note(`RESTORE COMPLETE: ${data.seed.length.toLocaleString()} burials and ${data.photos.length.toLocaleString()} photo records recovered from OneDrive. Refresh the page to verify persistence.`);
+ return success;
+}
 async function listCloud(){
  await ensureAppFolder();
  const response=await graph('/me/drive/special/approot/children?$top=100&$select=id,name,size,createdDateTime,file');
@@ -2069,7 +2086,11 @@ async function listCloud(){
    const doc=JSON.parse(await blob.text());if(doc.format!=='CemeteryFieldbookBackup'||doc.version!==5||!Array.isArray(doc.photos)||!Array.isArray(doc.seed))throw Error('Backup does not have the expected Fieldbook format.');
    download(blob,item.name);note('Backup downloaded and checked. Use Restore backup above only when ready to replace local data.');
   }catch(e){note('Download failed: '+e.message,true)}finally{btn.disabled=false}};
-  row.append(info,btn);results.append(row);
+  const restoreBtn=document.createElement('button');restoreBtn.type='button';restoreBtn.className='secondary';restoreBtn.textContent='Restore';
+  restoreBtn.onclick=async()=>{if(busy)return;setBusy(true);restoreBtn.disabled=true;try{
+    note('Checking selected backup in OneDrive…');await recoverCloudBackup(item);
+   }catch(e){note('Cloud restore failed: '+e.message,true)}finally{restoreBtn.disabled=false;setBusy(false)}};
+  row.append(info,btn,restoreBtn);results.append(row);
  }
 }
 el('cloudList').onclick=async()=>{if(busy)return;setBusy(true);try{note('Reading backup list from OneDrive…');await listCloud();note('Cloud backup list updated.')}catch(e){note('Could not list cloud backups: '+e.message,true)}finally{setBusy(false)}};
