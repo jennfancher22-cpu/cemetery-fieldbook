@@ -1,0 +1,14 @@
+Cemetery Fieldbook v7 LIVE — OneDrive Backup Beta
+
+1. Preserve a downloadable full backup and a copy of the current LIVE index.html.
+2. In Microsoft Entra app registration > Authentication, ADD a Single-page application redirect URI:
+   https://jennfancher22-cpu.github.io/cemetery-fieldbook/
+   Keep the existing /test/ redirect as well. Do not create a client secret.
+3. Upload index.html to the repository ROOT (not /test), commit, and await GitHub Pages deployment.
+4. Confirm existing LIVE burial records and photos are present; do not restore anything unnecessarily.
+5. Open Backup & Restore > OneDrive cloud backup; connect your personal OneDrive.
+6. Make one manual verified cloud backup, then enable automatic backups only if desired.
+7. Automatic backup works only while Fieldbook is open and online, not two-way sync.
+8. Cloud backup files are unencrypted JSON; ensure your cloud account is protected.
+9. Automatic retention DELETION is disabled in this LIVE beta; preview only.
+10. This registration shares an app folder between TEST and LIVE, so carefully inspect backup details before restore.
