@@ -281,6 +281,20 @@
 </div>
 <div class="buttons"><button type="button" id="syncCompareRefresh" class="secondary">Load backup choices</button><button type="button" id="syncCompareRun">Compare selected backups</button></div>
 <div id="syncCompareResult" class="hint" role="status">No comparison run. Read-only; no records will be changed.</div>
+<div class="home-panel" id="sharedCheckpointLab" style="margin:14px 0;padding:12px;border:1px solid #a8c9bc;border-radius:12px">
+<h4 style="margin:0 0 8px">Shared baseline reference — TEST (no sync)</h4>
+<p class="hint">A <strong>baseline reference</strong> lets a computer and phone recognize the same reviewed backup in OneDrive. It does not restore data, mark any device as synchronized, or enable automatic changes. Choose a merged TEST backup you have already restored and checked. Keep the underlying backup in OneDrive.</p>
+<div class="buttons"><button type="button" class="secondary" id="checkpointLoad">Find shared reference</button></div>
+<div id="checkpointCurrent" class="hint" role="status">No cloud reference checked yet.</div>
+<details style="margin-top:10px"><summary>Publish a reviewed backup as a baseline candidate (advanced TEST)</summary>
+<p class="hint">Only after independently verifying a merged backup in an isolated TEST restore. No older references or backup files will be overwritten or deleted.</p>
+<label style="display:block">Verified merged backup in OneDrive<select id="checkpointSource" style="width:100%;margin-top:5px"><option value="">Load cloud backup choices</option></select></label>
+<label style="display:flex;align-items:flex-start;gap:8px;margin:10px 0"><input type="checkbox" id="checkpointVerified" style="flex:none;width:19px;height:19px;min-height:19px"> <span>I restored this exact backup in an isolated TEST session and verified its records and photos.</span></label>
+<div class="buttons"><button type="button" id="checkpointPublish" class="secondary">Publish candidate reference in OneDrive</button></div>
+<div id="checkpointPublishStatus" class="hint" role="status">Nothing published.</div>
+</details>
+<p class="tiny">This is a cloud-visible marker, not a shared sync cursor. No records or backup files are modified. Automatic synchronization remains OFF.</p>
+</div>
 <div class="home-panel" style="margin:14px 0;padding:12px;border:1px solid #a8c9bc;border-radius:12px">
 <h4 style="margin:0 0 7px">Three-way sync safety and merged-backup preview — TEST</h4>
 <p class="tiny">Select the <strong>last shared backup</strong> (the baseline), then the computer and phone backups made after it. This compares one-sided edits and conflicting fields. You can generate a separate merged TEST backup without modifying any device or OneDrive file.</p>
@@ -2329,7 +2343,7 @@ async function cleanAfterVerifiedUpload(uploadedName){
 }
 async function listCloud(){
  await ensureAppFolder();
- const files=await allCloudFiles();const entries=files.filter(x=>/^(?:fieldbook-|cemetery-fieldbook-backup-).*\.json$/i.test(x.name)&&x.file).sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
+ const files=await allCloudFiles();const entries=files.filter(x=>/^(?:fieldbook-|cemetery-fieldbook-backup-).*\.json$/i.test(x.name)&&!x.name.endsWith('.checkpoint.json')&&x.file).sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
  results.replaceChildren();results.hidden=false;
  const h=document.createElement('h4');h.textContent=`OneDrive backups (${entries.length})`;results.append(h); const help=document.createElement('p');help.className='tiny';help.textContent='Includes cloud-created backups and full Fieldbook backups manually placed in this app folder. Restores validate the file before replacing local data.';results.append(help);
  if(!entries.length){const p=document.createElement('p');p.textContent='No Fieldbook backup files found in this app folder. The list includes both automatic cloud backups and manually uploaded full Fieldbook backups.';results.append(p)}
@@ -2381,8 +2395,9 @@ function syncSay(msg){syncResult.replaceChildren();const p=document.createElemen
 async function loadSyncChoices(){
   syncStageReset();
   syncSay('Reading backup filenames from OneDrive…');
-  const files=(await allCloudFiles()).filter(f=>f.file&&backupNamePattern.test(f.name)).sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
+  const files=(await allCloudFiles()).filter(f=>f.file&&backupNamePattern.test(f.name)&&!f.name.endsWith('.checkpoint.json')).sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
   syncCompareEntries=files;
+  populateCheckpointChoices(files);
   for(const select of [syncA,syncB]){
     const prior=select.value;select.replaceChildren();
     const empty=document.createElement('option');empty.value='';empty.textContent='Choose a backup';select.append(empty);
@@ -2829,6 +2844,77 @@ el('syncCompareRun').onclick=async()=>{
  setBusy(true);
  try{syncStageReset();syncSay('Downloading the two backups into memory for read-only comparison…');const a=await getSyncBackup(fa);const b=await getSyncBackup(fb);const comparison=compareSyncDocuments(a,b);showSyncResult(comparison,fa,fb,a,b);prepareSyncStage(a,b,comparison,fa,fb)}
  catch(e){syncSay('Comparison could not finish: '+e.message+'. No data changed.')}finally{setBusy(false)}
+};
+
+// Shared, cloud-visible baseline *candidate*, not a claim that devices have synchronized.
+// Every published marker is immutable and named separately from backups. Only explicit user action writes a marker.
+const checkpointCurrent=el('checkpointCurrent'),checkpointSource=el('checkpointSource'),checkpointPublishStatus=el('checkpointPublishStatus');
+const CPFILE=/^fieldbook-sync-reference-\d{4}-\d{2}-\d{2}T[\w-]+\.checkpoint\.json$/i;
+function populateCheckpointChoices(files){
+ const prev=checkpointSource.value;checkpointSource.replaceChildren();
+ const empty=document.createElement('option');empty.value='';empty.textContent='Choose a verified merged backup';checkpointSource.append(empty);
+ // Only three-way merged backups are eligible, never arbitrary live or old GEDCOM snapshots.
+ for(const f of files.filter(f=>/^fieldbook-TEST-three-way-merged-.*\.json$/i.test(f.name))){const op=document.createElement('option');op.value=f.id;op.textContent=f.name;checkpointSource.append(op)}
+ if([...checkpointSource.options].some(x=>x.value===prev))checkpointSource.value=prev;
+}
+async function digestBytes(bytes){return b64url(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)))}
+async function fetchCloudBackupBytes(file){
+ const response=await graph('/me/drive/items/'+encodeURIComponent(file.id)+'/content');const bytes=await response.arrayBuffer();
+ if(bytes.byteLength!==file.size)throw Error('Backup size changed in OneDrive. Nothing published.');return bytes;
+}
+async function readCheckpointFiles(){
+ const files=(await allCloudFiles()).filter(f=>f.file&&CPFILE.test(f.name));
+ files.sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
+ return files;
+}
+async function inspectCheckpoint(){
+ checkpointCurrent.textContent='Checking shared reference in OneDrive…';
+ const markers=await readCheckpointFiles();
+ if(!markers.length){checkpointCurrent.textContent='No shared baseline reference published yet. Both devices still require manually chosen backups.';return}
+ const current=markers[0];
+ const response=await graph('/me/drive/items/'+encodeURIComponent(current.id)+'/content');
+ const record=await response.json();
+ if(record?.format!=='CemeteryFieldbookSyncReference'||record.schema!==1||record.status!=='candidate'||!record.backup?.id||!record.backup?.sha256)throw Error('Latest reference is malformed; do not synchronize.');
+ // Validate referenced backup is still present and bytes are identical.
+ let backupStatus='Not verified';
+ try{
+  const resp=await graph('/me/drive/items/'+encodeURIComponent(record.backup.id)+'?$select=id,name,size,file');const meta=await resp.json();
+  if(meta.size!==record.backup.bytes||meta.name!==record.backup.filename)throw Error('Metadata mismatch');
+  const bytes=await fetchCloudBackupBytes(meta);if(await digestBytes(bytes)!==record.backup.sha256)throw Error('Content digest mismatch');
+  backupStatus='Backup verified against SHA-256 fingerprint';
+ }catch(e){checkpointCurrent.textContent='Reference found, but its backup is missing or different ('+e.message+'). DO NOT use as sync baseline.';return}
+ checkpointCurrent.textContent='Shared candidate found: '+record.backup.filename+' · '+record.burials.toLocaleString()+' burials · '+record.photos+' photos · '+backupStatus+'. '+markers.length+' candidate marker(s) found. No device is marked synced.';
+}
+el('checkpointLoad').onclick=async()=>{if(busy)return;setBusy(true);try{await inspectCheckpoint()}catch(e){checkpointCurrent.textContent='Could not check shared reference: '+e.message}finally{setBusy(false)}};
+el('checkpointPublish').onclick=async()=>{
+ if(busy)return;
+ if(!el('checkpointVerified').checked){checkpointPublishStatus.textContent='Confirm that you independently restored and checked the exact merged backup first.';return}
+ const chosen=syncCompareEntries.find(f=>f.id===checkpointSource.value);
+ if(!chosen){checkpointPublishStatus.textContent='Select a merged backup after clicking Load backup choices.';return}
+ if(!confirm('Publish a TEST baseline CANDIDATE referring to '+chosen.name+'?\n\nThis does NOT synchronize devices. It creates a new small metadata file in OneDrive. Older markers and backups stay unchanged.'))return;
+ setBusy(true);
+ try{
+  checkpointPublishStatus.textContent='Reading and validating selected backup…';
+  const bytes=await fetchCloudBackupBytes(chosen);const doc=JSON.parse(new TextDecoder().decode(bytes));
+  if(doc.format!=='CemeteryFieldbookBackup'||doc.version!==5||!Array.isArray(doc.seed)||!Array.isArray(doc.extras)||!Array.isArray(doc.photos))throw Error('Not a complete Fieldbook backup');
+  if(doc.syncCheckpoint?.kind!=='unapplied-three-way-merge')throw Error('Backup does not contain a three-way merge provenance checkpoint');
+  const idSet=new Set([...doc.seed,...doc.extras].map(r=>r.id));
+  if(idSet.size!==doc.seed.length+doc.extras.length)throw Error('Duplicate burial IDs in selected backup');
+  const marker={format:'CemeteryFieldbookSyncReference',schema:1,status:'candidate',created:new Date().toISOString(),
+    backup:{id:chosen.id,filename:chosen.name,bytes:bytes.byteLength,sha256:await digestBytes(bytes)},
+    burials:idSet.size,photos:doc.photos.length,history:doc.changeLog?.length||0,
+    caution:'Reference candidate only. Neither device has adopted a sync cursor. Do not use as automatic-sync authorization.'};
+  const name='fieldbook-sync-reference-'+new Date().toISOString().replace(/[:.]/g,'-')+'-'+b64url(randomBytes(5))+'.checkpoint.json';
+  await ensureAppFolder();
+  const upload=await graph('/me/drive/special/approot:/'+encodeURIComponent(name)+':/content',
+    {method:'PUT',headers:{'Content-Type':'application/json','If-None-Match':'*'},body:JSON.stringify(marker)});
+  const saved=await upload.json();if(!saved.id)throw Error('Microsoft did not return the marker file ID');
+  const downloaded=await graph('/me/drive/items/'+encodeURIComponent(saved.id)+'/content');const copy=await downloaded.json();
+  if(canonicalValue(marker)!==canonicalValue(copy))throw Error('Marker read-back differs. Do not rely on this reference.');
+  checkpointPublishStatus.textContent='Candidate reference published and verified. No device data or sync cursor changed.';
+  el('checkpointVerified').checked=false;
+  await inspectCheckpoint();
+ }catch(e){checkpointPublishStatus.textContent='Candidate not confirmed: '+e.message+' (no device data changed).'}finally{setBusy(false)}
 };
 
 el('cloudList').onclick=async()=>{if(busy)return;setBusy(true);try{note('Reading backup list from OneDrive…');await listCloud();note('Cloud backup list updated.')}catch(e){note('Could not list cloud backups: '+e.message,true)}finally{setBusy(false)}};
