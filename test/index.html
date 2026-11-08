@@ -282,15 +282,23 @@
 <div class="buttons"><button type="button" id="syncCompareRefresh" class="secondary">Load backup choices</button><button type="button" id="syncCompareRun">Compare selected backups</button></div>
 <div id="syncCompareResult" class="hint" role="status">No comparison run. Read-only; no records will be changed.</div>
 <div class="home-panel" style="margin:14px 0;padding:12px;border:1px solid #a8c9bc;border-radius:12px">
-<h4 style="margin:0 0 7px">Three-way sync safety preview — TEST, read only</h4>
-<p class="tiny">Select the <strong>last shared backup</strong> (the baseline), then the computer and phone backups made after it. This classifies one-sided edits as candidates for automatic syncing and different edits to the same field as conflicts. It does <strong>not</strong> save or transfer changes.</p>
+<h4 style="margin:0 0 7px">Three-way sync safety and merged-backup preview — TEST</h4>
+<p class="tiny">Select the <strong>last shared backup</strong> (the baseline), then the computer and phone backups made after it. This compares one-sided edits and conflicting fields. You can generate a separate merged TEST backup without modifying any device or OneDrive file.</p>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
 <label style="min-width:0">Last common backup<select id="syncBaselineSelect" style="width:100%"><option value="">Load cloud backup choices</option></select></label>
 <label style="min-width:0">Computer backup<select id="syncDeviceASelect" style="width:100%"><option value="">Load cloud backup choices</option></select></label>
 <label style="min-width:0">Phone backup<select id="syncDeviceBSelect" style="width:100%"><option value="">Load cloud backup choices</option></select></label>
 </div>
-<div class="buttons"><button type="button" class="secondary" id="syncThreeWayRun">Preview safe changes and conflicts</button><button type="button" class="secondary" id="syncThreeWaySelfTest">Run fictional safety checks</button></div>
+<div class="buttons"><button type="button" class="secondary" id="syncThreeWayRun">Review three-way merge</button><button type="button" class="secondary" id="syncThreeWaySelfTest">Run fictional safety checks</button></div>
 <div class="hint" id="syncThreeWayOutput" role="status">No three-way comparison run. No files will be modified.</div>
+<div id="threeMergePanel" style="display:none;margin-top:14px;border:1px solid #afcdb7;border-radius:12px;padding:12px;min-width:0">
+<h4 style="margin:0 0 8px">Create a three-way merged TEST backup</h4>
+<p class="hint">Safe one-sided edits are selected automatically. Review only genuine conflicts; the computer and phone values are never silently chosen over each other. This creates a <strong>downloadable JSON file only</strong> and does not restore, upload, or alter any Fieldbook database.</p>
+<div id="threeMergeSummary" class="hint" role="status"></div>
+<div id="threeMergeConflicts"></div>
+<div class="buttons"><button type="button" id="threeMergeDownload" disabled>Download merged TEST backup</button></div>
+<p id="threeMergeStatus" class="hint" role="status">Compare three backups to start.</p>
+</div>
 </div>
 <div id="syncStagePanel" class="home-panel" style="display:none;margin-top:14px;border:1px solid #b6d8c6" aria-live="polite">
 <h4 style="margin:0 0 6px">Prepare a one-way recovery backup (TEST only)</h4>
@@ -2536,6 +2544,147 @@ function showSyncResult(r,fa,fb,docA,docB){
  if(r.examples.length){const details=document.createElement('details');details.style.marginTop='8px';const summ=document.createElement('summary');summ.textContent='View sample differences ('+r.examples.length+')';details.append(summ);for(const e of r.examples){const d=document.createElement('div');d.style.cssText='padding:5px 0;border-bottom:1px solid #ddd;overflow-wrap:anywhere';d.textContent=e.name+' — '+e.change;details.append(d)}syncResult.append(details)}
  const caution=document.createElement('p');caution.style.marginTop='12px';caution.textContent='Important: IDs may differ after GEDCOM re-exports, and a same ID does not prove the same person. This comparison is a planning tool, NOT a safe merge. It cannot yet reconcile offline edits or photos.';syncResult.append(caution);
 }
+// Three-way merged BACKUP generation. No live/local/cloud mutation.
+// Stage immutable parsed backups; merge against the common baseline only.
+const threeMergePanel=el('threeMergePanel'),threeMergeSummary=el('threeMergeSummary'),threeMergeConflicts=el('threeMergeConflicts'),threeMergeDownload=el('threeMergeDownload'),threeMergeStatus=el('threeMergeStatus');
+let threeMergeSession=null;
+const syncMissing=Symbol('field not present');
+function sameSync(x,y){return x===syncMissing?y===syncMissing:y!==syncMissing&&canonicalValue(x)===canonicalValue(y)}
+function valOf(obj,field){return obj!==syncMissing&&Object.hasOwn(obj,field)?obj[field]:syncMissing}
+function previewValue(v){if(v===syncMissing)return '(not present)';return formatSyncDiffValue(v)}
+function labelForSyncRecord(id,...maps){for(const map of maps){const r=map.get(id);if(r&&r.name)return r.name;}return id}
+function sync3RecordMap(doc){const idx=indexById([...doc.seed,...doc.extras]);if(idx.duplicates.size)throw Error('Duplicate burial IDs in a backup');const map=new Map();for(const [id,r] of idx.result)map.set(id,effectiveRecord(r,doc));return map}
+function sync3PhotoMap(doc){const idx=indexById(doc.photos.filter(p=>p&&typeof p.id==='string'));if(idx.duplicates.size||idx.result.size!==doc.photos.length)throw Error('Duplicate or invalid photo IDs');return idx.result}
+function buildThreePlan(base,computer,phone){
+ const baseRec=sync3RecordMap(base),computerRec=sync3RecordMap(computer),phoneRec=sync3RecordMap(phone);
+ const basePhoto=sync3PhotoMap(base),computerPhoto=sync3PhotoMap(computer),phonePhoto=sync3PhotoMap(phone);
+ const conflicts=[],safe=[],same=[],blocks=[],mergeRecords=new Map(),mergePhotos=new Map();
+ const choose=(kind,id,field,v0,v1,v2,recName)=>{
+  const left=!sameSync(v0,v1),right=!sameSync(v0,v2);
+  if(!left&&!right)return {choice:v0,kind:'unchanged'};
+  if(left&&right){if(sameSync(v1,v2)){same.push({kind,id,field});return {choice:v1,kind:'same'}};
+   const key=kind+'|'+id+'|'+field;conflicts.push({key,kind,id,field,recName,base:v0,computer:v1,phone:v2});return {choice:v1,kind:'conflict',key};}
+  safe.push({kind,id,field,side:left?'computer':'phone',recName});return {choice:left?v1:v2,kind:'safe'};
+ };
+ // Reject deletions even when both branches agree: they must be reviewed separately.
+ const ids=new Set([...baseRec.keys(),...computerRec.keys(),...phoneRec.keys()]);
+ for(const id of ids){
+  const v0=baseRec.has(id)?baseRec.get(id):syncMissing;
+  const v1=computerRec.has(id)?computerRec.get(id):syncMissing;
+  const v2=phoneRec.has(id)?phoneRec.get(id):syncMissing;
+  const name=labelForSyncRecord(id,computerRec,phoneRec,baseRec);
+  if(v0!==syncMissing&&(v1===syncMissing||v2===syncMissing)){blocks.push('Burial deletion: '+name);continue;}
+  if(v0===syncMissing){
+   if(v1!==syncMissing&&v2!==syncMissing&&!sameSync(v1,v2)){blocks.push('Both devices added different records with same ID: '+name);continue;}
+   const res=choose('Burial',id,'new record',v0,v1,v2,name);
+   if(res.choice!==syncMissing)mergeRecords.set(id,structuredClone(res.choice));continue;
+  }
+  const fields=new Set([...Object.keys(v0),...Object.keys(v1),...Object.keys(v2)]);
+  const merged={};
+  for(const field of fields){
+   if(field==='id'){merged.id=id;continue;}
+   const res=choose('Burial',id,field,valOf(v0,field),valOf(v1,field),valOf(v2,field),name);
+   if(res.choice!==syncMissing)merged[field]=structuredClone(res.choice);
+  }
+  mergeRecords.set(id,merged);
+ }
+ const photoIds=new Set([...basePhoto.keys(),...computerPhoto.keys(),...phonePhoto.keys()]);
+ for(const id of photoIds){
+  const v0=basePhoto.has(id)?basePhoto.get(id):syncMissing;
+  const v1=computerPhoto.has(id)?computerPhoto.get(id):syncMissing;
+  const v2=phonePhoto.has(id)?phonePhoto.get(id):syncMissing;
+  if(v0!==syncMissing&&(v1===syncMissing||v2===syncMissing)){blocks.push('Photo deleted from one device: '+id);continue;}
+  // Don't silently replace photographs (binary contents or ownership), even if only one side changed.
+  if(v0!==syncMissing&&(!sameSync(v0,v1)||!sameSync(v0,v2))){blocks.push('Existing photograph altered: '+id);continue;}
+  if(v0===syncMissing&&v1!==syncMissing&&v2!==syncMissing&&!sameSync(v1,v2)){blocks.push('Conflicting new photograph IDs: '+id);continue;}
+  const result=choose('Photo',id,'new photo',v0,v1,v2,id);
+  if(result.choice!==syncMissing)mergePhotos.set(id,structuredClone(result.choice));
+ }
+ // A sync snapshot cannot silently replace pedigree or separate cemetery-coordinate edits.
+ for(const [label,field] of [['GEDCOM people directory','gedcomPeople'],['Home person','homePersonId'],['Cemetery coordinate edits','geoEdits']]){
+  if(!sameSync(base[field]??null,computer[field]??null)||!sameSync(base[field]??null,phone[field]??null))blocks.push(label+' differs between the three backups');
+ }
+ // Only version 5 full backups are supported for this prototype.
+ if([base,computer,phone].some(d=>d.version!==5))blocks.push('A backup is not full version 5');
+ // Activity history: append uniquely identified events, reject ID collisions.
+ const events=new Map();for(const [side,doc] of [['baseline',base],['computer',computer],['phone',phone]]){
+  for(const event of doc.changeLog||[]){if(!event||typeof event.id!=='string'||!event.id){blocks.push('History event lacks a stable ID in '+side);continue}
+   const prior=events.get(event.id);if(prior&&!sameSync(prior,event))blocks.push('Activity event ID collision: '+event.id);else events.set(event.id,event);
+  }
+ }
+ for(const [id,p] of mergePhotos)if(!mergeRecords.has(p.person))blocks.push('Photo refers to missing burial record: '+id);
+ return {base,computer,phone,baseRec,computerRec,phoneRec,mergeRecords,mergePhotos,conflicts,safe,same,blocks,events};
+}
+function resetThreeMerge(){threeMergeSession=null;threeMergePanel.style.display='none';threeMergeConflicts.replaceChildren();threeMergeDownload.disabled=true;}
+function renderThreeMerge(plan,files){
+ resetThreeMerge();threeMergeSession={plan,ids:files.map(f=>f.id),names:files.map(f=>f.name)};threeMergePanel.style.display='block';
+ threeMergeSummary.textContent=plan.safe.length+' one-sided safe change(s) · '+plan.same.length+' identical change(s) · '+plan.conflicts.length+' conflicting field(s) · '+plan.blocks.length+' blocking safety issue(s).';
+ if(plan.blocks.length){
+  const warning=document.createElement('div');warning.style.cssText='padding:9px;border:1px solid #d7acaa;border-radius:8px;margin:8px 0;overflow-wrap:anywhere';warning.textContent='Export blocked until these structural issues are resolved: '+plan.blocks.join(' | ');threeMergeConflicts.append(warning);
+ }
+ if(plan.conflicts.length){
+  const intro=document.createElement('p');intro.textContent='For each conflict, choose the computer or phone value. No choice is preselected.';threeMergeConflicts.append(intro);
+ }
+ for(const c of plan.conflicts){
+  const group=document.createElement('div');group.style.cssText='padding:10px 0;border-top:1px solid #dce6dc;overflow-wrap:anywhere';
+  const head=document.createElement('strong');head.textContent=c.recName+' — '+c.field;group.append(head);
+  for(const [name,value] of [['Baseline',c.base],['Computer',c.computer],['Phone',c.phone]]){
+   const row=document.createElement('div');row.style.cssText='font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere;margin:5px 0';row.textContent=name+': '+previewValue(value);group.append(row);
+  }
+  const select=document.createElement('select');select.dataset.conflictKey=c.key;select.style.cssText='width:100%;max-width:340px;margin:6px 0';
+  for(const [value,label] of [['','Choose which value to keep'],['computer','Use computer value'],['phone','Use phone value']]){const op=document.createElement('option');op.value=value;op.textContent=label;select.append(op)}
+  select.onchange=refreshThreeMergeReady;group.append(select);threeMergeConflicts.append(group);
+ }
+ refreshThreeMergeReady();
+}
+function refreshThreeMergeReady(){
+ const p=threeMergeSession?.plan;if(!p)return;
+ const chosen=[...threeMergeConflicts.querySelectorAll('select[data-conflict-key]')].filter(s=>!!s.value).length;
+ threeMergeDownload.disabled=!!p.blocks.length||chosen!==p.conflicts.length;
+ threeMergeStatus.textContent=p.blocks.length?'Download disabled: structural safety checks failed.':p.conflicts.length?chosen+' of '+p.conflicts.length+' conflict(s) resolved. '+(chosen===p.conflicts.length?'Ready to create a TEST file.':'Select a value for each conflict.'):'No conflicts. Safe changes are ready to be included in a TEST file.';
+}
+function materializeThreeMerge(session){
+ const p=session.plan;if(p.blocks.length)throw Error('Structural safety issues block a merge');
+ const choices=new Map([...threeMergeConflicts.querySelectorAll('select[data-conflict-key]')].map(s=>[s.dataset.conflictKey,s.value]));
+ if(p.conflicts.some(c=>!choices.get(c.key)))throw Error('Resolve all conflicts first');
+ // The plan is generated entirely in memory from the chosen cloud files.
+ const recordMap=new Map([...p.mergeRecords].map(([id,r])=>[id,structuredClone(r)]));
+ for(const c of p.conflicts){const value=c[choices.get(c.key)];if(c.kind!=='Burial')throw Error('Unsupported conflict type: '+c.kind);
+  const r=recordMap.get(c.id);if(!r)throw Error('Missing conflict person: '+c.id);
+  if(value===syncMissing)delete r[c.field];else r[c.field]=structuredClone(value);
+ }
+ const out=structuredClone(p.computer);
+ // Preserve original imported seed and put additional field edits into `updates`.
+ const seedIDs=new Set(out.seed.map(r=>r.id));const allIDs=new Set([...out.seed,...out.extras].map(r=>r.id));
+ for(const [id,row] of recordMap){
+  if(!allIDs.has(id)){out.extras.push(structuredClone(row));allIDs.add(id);}
+  else {const original=out.seed.find(r=>r.id===id)||out.extras.find(r=>r.id===id);
+   const patch={};for(const k of new Set([...Object.keys(original),...Object.keys(row)])){
+    if(k==='id')continue;
+    if(!Object.hasOwn(row,k)){if(Object.hasOwn(original,k))throw Error('Removing a stored field is not supported in this TEST merge: '+id+' '+k);continue;}
+    if(!Object.hasOwn(original,k)||!sameSync(original[k],row[k]))patch[k]=row[k];
+   }
+   if(Object.keys(patch).length)out.updates[id]=patch;else delete out.updates[id];
+  }
+ }
+ out.photos=[...p.mergePhotos.values()];
+ out.changeLog=[...p.events.values()].sort((a,b)=>String(a.date||a.at||a.timestamp||'').localeCompare(String(b.date||b.at||b.timestamp||'')));
+ out.exported=new Date().toISOString();
+ out.stagedSync={mode:'three-way TEST backup only',baseline:session.names[0],computer:session.names[1],phone:session.names[2],safe:p.safe.length,conflictsResolved:p.conflicts.length,photos:out.photos.length,burials:out.seed.length+out.extras.length,created:out.exported};
+ if(out.seed.length+out.extras.length!==recordMap.size)throw Error('Burial record count mismatch');
+ return out;
+}
+threeMergeDownload.onclick=()=>{
+ try{
+  const session=threeMergeSession;if(!session)throw Error('Compare three backups first');
+  if([threeBase.value,threeA.value,threeB.value].some((id,i)=>id!==session.ids[i]))throw Error('Backup selections changed. Compare again.');
+  const data=materializeThreeMerge(session);
+  if(!confirm('Download a NEW three-way TEST backup containing '+(data.seed.length+data.extras.length).toLocaleString()+' burials and '+data.photos.length+' photo(s)? This DOES NOT modify any browser or OneDrive records. Restore only in an isolated Incognito TEST session.'))return;
+  download(new Blob([JSON.stringify(data)],{type:'application/json'}),'fieldbook-TEST-three-way-merged-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json');
+  threeMergeStatus.textContent='Merged backup downloaded. Nothing was changed in Fieldbook or OneDrive. Test restoration only in an isolated Incognito TEST session.';
+ }catch(e){threeMergeStatus.textContent='Could not produce merged backup: '+e.message}
+};
+
 // Three-way baseline classification. This NEVER applies a merge or deletes records.
 const threeBase=el('syncBaselineSelect'),threeA=el('syncDeviceASelect'),threeB=el('syncDeviceBSelect'),threeOutput=el('syncThreeWayOutput');
 function threeMessage(message){threeOutput.replaceChildren();const p=document.createElement('p');p.textContent=message;threeOutput.append(p)}
@@ -2590,13 +2739,14 @@ function renderThreeResult(r,labels){
 }
 function refreshThreeChoices(){for(const select of [threeBase,threeA,threeB]){const previous=select.value;select.replaceChildren();const blank=document.createElement('option');blank.value='';blank.textContent='Choose backup';select.append(blank);for(const f of syncCompareEntries){const op=document.createElement('option');op.value=f.id;op.textContent=f.name+' · '+new Date(f.createdDateTime).toLocaleString();select.append(op)}if(syncCompareEntries.some(f=>f.id===previous))select.value=previous}}
 el('syncThreeWayRun').onclick=async()=>{
+ resetThreeMerge();
  const vals=[threeBase.value,threeA.value,threeB.value];if(vals.some(v=>!v)||new Set(vals).size!==3){threeMessage('Choose three DIFFERENT backups: last common backup, computer after, and phone after.');return}
  if(busy)return;setBusy(true);
- try{threeMessage('Reading three backups without modifying them…');const files=vals.map(id=>syncCompareEntries.find(f=>f.id===id));if(files.some(f=>!f))throw Error('Refresh backup choices and retry.');const docs=await Promise.all(files.map(getSyncBackup));renderThreeResult(threeClassify(...docs),files.map(f=>f.name));}
+ try{threeMessage('Reading three backups without modifying them…');const files=vals.map(id=>syncCompareEntries.find(f=>f.id===id));if(files.some(f=>!f))throw Error('Refresh backup choices and retry.');const docs=await Promise.all(files.map(getSyncBackup));renderThreeResult(threeClassify(...docs),files.map(f=>f.name));renderThreeMerge(buildThreePlan(...docs),files);}
  catch(e){threeMessage('Could not compare three backups: '+e.message+'. Nothing was changed.')}
  finally{setBusy(false)}
 };
-el('syncThreeWaySelfTest').onclick=()=>{
+el('syncThreeWaySelfTest').onclick=()=>{resetThreeMerge();
  const make=(records,photos=[])=>({seed:records,extras:[],updates:{},photos,changeLog:[],gedcomPeople:[]});
  const c=make([{id:'person1',notes:'Original'},{id:'person2',town:'Old Town'},{id:'person3',notes:'Base'}]);
  const left=make([{id:'person1',notes:'Computer edit'},{id:'person2',town:'Computer town'},{id:'person3',notes:'Base'},{id:'computerAdded',name:'Added on computer'}]);

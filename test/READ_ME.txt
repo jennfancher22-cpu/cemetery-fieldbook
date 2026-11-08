@@ -1,0 +1,1 @@
+TEST only. Upload index.html into GitHub test/ folder. Use existing three backup selections. Three-way merge creates JSON download; never changes local or cloud records. Restore only in a separate Incognito TEST session. Existing history, photo and pedigree conflicts can block export.
