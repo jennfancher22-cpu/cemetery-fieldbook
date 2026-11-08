@@ -281,6 +281,17 @@
 </div>
 <div class="buttons"><button type="button" id="syncCompareRefresh" class="secondary">Load backup choices</button><button type="button" id="syncCompareRun">Compare selected backups</button></div>
 <div id="syncCompareResult" class="hint" role="status">No comparison run. Read-only; no records will be changed.</div>
+<div class="home-panel" style="margin:14px 0;padding:12px;border:1px solid #a8c9bc;border-radius:12px">
+<h4 style="margin:0 0 7px">Three-way sync safety preview — TEST, read only</h4>
+<p class="tiny">Select the <strong>last shared backup</strong> (the baseline), then the computer and phone backups made after it. This classifies one-sided edits as candidates for automatic syncing and different edits to the same field as conflicts. It does <strong>not</strong> save or transfer changes.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
+<label style="min-width:0">Last common backup<select id="syncBaselineSelect" style="width:100%"><option value="">Load cloud backup choices</option></select></label>
+<label style="min-width:0">Computer backup<select id="syncDeviceASelect" style="width:100%"><option value="">Load cloud backup choices</option></select></label>
+<label style="min-width:0">Phone backup<select id="syncDeviceBSelect" style="width:100%"><option value="">Load cloud backup choices</option></select></label>
+</div>
+<div class="buttons"><button type="button" class="secondary" id="syncThreeWayRun">Preview safe changes and conflicts</button><button type="button" class="secondary" id="syncThreeWaySelfTest">Run fictional safety checks</button></div>
+<div class="hint" id="syncThreeWayOutput" role="status">No three-way comparison run. No files will be modified.</div>
+</div>
 <div id="syncStagePanel" class="home-panel" style="display:none;margin-top:14px;border:1px solid #b6d8c6" aria-live="polite">
 <h4 style="margin:0 0 6px">Prepare a one-way recovery backup (TEST only)</h4>
 <p class="hint">Choose records found <strong>only in Backup B</strong> (phone). Their attached photographs and applicable activity entries come along. Original Backup A records and existing values remain unchanged. <strong>This generates a downloadable backup file only; it never edits either device or any OneDrive backup.</strong></p>
@@ -2370,6 +2381,7 @@ async function loadSyncChoices(){
     for(const f of files){const opt=document.createElement('option');opt.value=f.id;opt.textContent=f.name+' · '+new Date(f.createdDateTime).toLocaleString();select.append(opt)}
     if(files.some(f=>f.id===prior))select.value=prior;
   }
+  refreshThreeChoices();
   syncSay(files.length+' cloud backups available. Choose the computer and phone backups to compare. No data changed.');
 }
 async function getSyncBackup(f){
@@ -2524,6 +2536,76 @@ function showSyncResult(r,fa,fb,docA,docB){
  if(r.examples.length){const details=document.createElement('details');details.style.marginTop='8px';const summ=document.createElement('summary');summ.textContent='View sample differences ('+r.examples.length+')';details.append(summ);for(const e of r.examples){const d=document.createElement('div');d.style.cssText='padding:5px 0;border-bottom:1px solid #ddd;overflow-wrap:anywhere';d.textContent=e.name+' — '+e.change;details.append(d)}syncResult.append(details)}
  const caution=document.createElement('p');caution.style.marginTop='12px';caution.textContent='Important: IDs may differ after GEDCOM re-exports, and a same ID does not prove the same person. This comparison is a planning tool, NOT a safe merge. It cannot yet reconcile offline edits or photos.';syncResult.append(caution);
 }
+// Three-way baseline classification. This NEVER applies a merge or deletes records.
+const threeBase=el('syncBaselineSelect'),threeA=el('syncDeviceASelect'),threeB=el('syncDeviceBSelect'),threeOutput=el('syncThreeWayOutput');
+function threeMessage(message){threeOutput.replaceChildren();const p=document.createElement('p');p.textContent=message;threeOutput.append(p)}
+function threeClassify(base,a,b){
+ const absent=Symbol('missing');
+ const equal=(x,y)=>x===absent?y===absent:y!==absent&&canonicalValue(x)===canonicalValue(y);
+ let safe=0,alreadySame=0,conflicts=0,unchanged=0,additions=0,photoCandidates=0,deletions=0;
+ const samples=[];
+ function evaluate(category,key,field,v0,v1,v2){
+  const ca=!equal(v0,v1),cb=!equal(v0,v2);
+  if(!ca&&!cb){unchanged++;return}
+  const identity=[category,key,field].filter(Boolean).join(' · ');
+  if(v0!==absent&&(v1===absent||v2===absent)){
+    // Deletions require review even when both devices agree: never silently discard genealogy.
+    deletions++;conflicts++;if(samples.length<24)samples.push({kind:'Review deletion',identity});return;
+  }
+  if(ca&&cb){
+   if(equal(v1,v2)){alreadySame++;return}
+   conflicts++;if(samples.length<24)samples.push({kind:'Conflict',identity});return;
+  }
+  safe++;
+  if(v0===absent) {if(category==='Photo')photoCandidates++;else additions++;}
+  if(samples.length<24)samples.push({kind:ca?'Computer-only edit':'Phone-only edit',identity});
+ }
+ function records(doc){const idx=indexById([...doc.seed,...doc.extras]);if(idx.duplicates.size)throw Error('Duplicate burial IDs — review before syncing.');const map=new Map();for(const [id,r] of idx.result)map.set(id,effectiveRecord(r,doc));return map}
+ function mapPhotos(doc){const idx=indexById(doc.photos.filter(p=>p&&typeof p.id==='string'));if(idx.duplicates.size)throw Error('Duplicate photo IDs — review before syncing.');return idx.result}
+ function compareMaps(kind,m0,m1,m2){
+  const ids=new Set([...m0.keys(),...m1.keys(),...m2.keys()]);
+  for(const id of ids){
+   const x=m0.has(id)?m0.get(id):absent,y=m1.has(id)?m1.get(id):absent,z=m2.has(id)?m2.get(id):absent;
+   if(x===absent||y===absent||z===absent){evaluate(kind,id,'whole record',x,y,z);continue}
+   const fields=new Set([...Object.keys(x),...Object.keys(y),...Object.keys(z)]);
+   for(const field of fields){if(field==='id')continue;evaluate(kind,id,field,Object.hasOwn(x,field)?x[field]:absent,Object.hasOwn(y,field)?y[field]:absent,Object.hasOwn(z,field)?z[field]:absent)}
+  }
+ }
+ compareMaps('Burial',records(base),records(a),records(b));
+ compareMaps('Photo',mapPhotos(base),mapPhotos(a),mapPhotos(b));
+ // A differing GEDCOM directory is not automatically mergeable. Count it as a warning.
+ const directoryMatch=equal(base.gedcomPeople||[],a.gedcomPeople||[])&&equal(base.gedcomPeople||[],b.gedcomPeople||[]);
+ const historyCounts=[base.changeLog?.length||0,a.changeLog?.length||0,b.changeLog?.length||0];
+ return {safe,alreadySame,conflicts,unchanged,additions,photoCandidates,deletions,samples,directoryMatch,historyCounts};
+}
+function renderThreeResult(r,labels){
+ threeOutput.replaceChildren();
+ const title=document.createElement('strong');title.textContent='Read-only safety preview — nothing synchronized';threeOutput.append(title);
+ const p=document.createElement('p');p.textContent=labels.join(' | ');p.style.overflowWrap='anywhere';threeOutput.append(p);
+ const grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:13px';
+ const counts=[['One-sided changes (potentially safe)',r.safe],['Both devices made identical changes',r.alreadySame],['Conflicts / deletions needing review',r.conflicts],['Unchanged fields',r.unchanged],['One-sided additions',r.additions],['One-sided photo additions',r.photoCandidates],['Deletions requiring review',r.deletions],['Activity history baseline / computer / phone',r.historyCounts.join(' / ')]];
+ for(const [k,v] of counts){const l=document.createElement('span'),n=document.createElement('strong');l.textContent=k;n.textContent=String(v);grid.append(l,n)}threeOutput.append(grid);
+ const caution=document.createElement('p');caution.textContent=(r.directoryMatch?'GEDCOM directories match the baseline. ':'GEDCOM directory differs from baseline — automatic sync must remain blocked for directory changes. ')+'This is classification only. Actual safe syncing also requires stable record IDs, shared baseline tracking, photo integrity checks, and reversible event/history handling. Do not use these counts to apply a merge.';threeOutput.append(caution);
+ if(r.samples.length){const details=document.createElement('details');details.style.marginTop='8px';const summary=document.createElement('summary');summary.textContent='Inspect example decisions ('+r.samples.length+')';details.append(summary);for(const sample of r.samples){const row=document.createElement('div');row.style.cssText='padding:6px 0;border-bottom:1px solid #e0e9e1;overflow-wrap:anywhere';row.textContent=sample.kind+' — '+sample.identity;details.append(row)}threeOutput.append(details)}
+}
+function refreshThreeChoices(){for(const select of [threeBase,threeA,threeB]){const previous=select.value;select.replaceChildren();const blank=document.createElement('option');blank.value='';blank.textContent='Choose backup';select.append(blank);for(const f of syncCompareEntries){const op=document.createElement('option');op.value=f.id;op.textContent=f.name+' · '+new Date(f.createdDateTime).toLocaleString();select.append(op)}if(syncCompareEntries.some(f=>f.id===previous))select.value=previous}}
+el('syncThreeWayRun').onclick=async()=>{
+ const vals=[threeBase.value,threeA.value,threeB.value];if(vals.some(v=>!v)||new Set(vals).size!==3){threeMessage('Choose three DIFFERENT backups: last common backup, computer after, and phone after.');return}
+ if(busy)return;setBusy(true);
+ try{threeMessage('Reading three backups without modifying them…');const files=vals.map(id=>syncCompareEntries.find(f=>f.id===id));if(files.some(f=>!f))throw Error('Refresh backup choices and retry.');const docs=await Promise.all(files.map(getSyncBackup));renderThreeResult(threeClassify(...docs),files.map(f=>f.name));}
+ catch(e){threeMessage('Could not compare three backups: '+e.message+'. Nothing was changed.')}
+ finally{setBusy(false)}
+};
+el('syncThreeWaySelfTest').onclick=()=>{
+ const make=(records,photos=[])=>({seed:records,extras:[],updates:{},photos,changeLog:[],gedcomPeople:[]});
+ const c=make([{id:'person1',notes:'Original'},{id:'person2',town:'Old Town'},{id:'person3',notes:'Base'}]);
+ const left=make([{id:'person1',notes:'Computer edit'},{id:'person2',town:'Computer town'},{id:'person3',notes:'Base'},{id:'computerAdded',name:'Added on computer'}]);
+ const right=make([{id:'person1',notes:'Original'},{id:'person2',town:'Phone town'},{id:'person3',notes:'Base'}],[{id:'photoNew',person:'person3',data:'photoData'}]);
+ const r=threeClassify(c,left,right);
+ const checks=[['One-sided edit recognized',r.safe>=1],['Conflicting town edits blocked',r.conflicts===1],['New person recognized',r.additions===1],['New photo recognized',r.photoCandidates===1],['No deletions invented',r.deletions===0]];
+ renderThreeResult(r,['Fictional common backup','Fictional computer','Fictional phone']);const p=document.createElement('p');p.textContent=checks.map(([t,pass])=>(pass?'PASS':'FAIL')+' — '+t).join(' | ');threeOutput.prepend(p);
+};
+
 el('syncCompareRefresh').onclick=async()=>{if(busy)return;setBusy(true);try{await loadSyncChoices()}catch(e){syncSay('Could not load cloud backups: '+e.message)}finally{setBusy(false)}};
 el('syncCompareRun').onclick=async()=>{
  if(busy)return;
