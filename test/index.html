@@ -311,7 +311,7 @@
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7 TEST · Read-only cloud backup comparison · Optional automatic OneDrive backup + direct restore + verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 TEST · Complete-record backup comparison (seed + additions) · Optional automatic OneDrive backup + direct restore + verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -2054,7 +2054,7 @@ async function makePayload(){
 function fmt(n){return Number(n).toLocaleString()}
 async function preview(){
  const payload=await makePayload();const json=JSON.stringify(payload);const bytes=new Blob([json]).size;
- detail.textContent=`Ready: ${fmt(payload.seed.length)} burials · ${fmt(payload.photos.length)} attached photo records · ${fmt(payload.changeLog.length)} history entries · ${fmt(payload.gedcomPeople.length)} people in directory · ${(bytes/1024/1024).toFixed(2)} MB backup.`;
+ detail.textContent=`Ready: ${fmt(payload.seed.length+payload.extras.length)} burials (${fmt(payload.seed.length)} original + ${fmt(payload.extras.length)} added) · ${fmt(payload.photos.length)} attached photo records · ${fmt(payload.changeLog.length)} history entries · ${fmt(payload.gedcomPeople.length)} people in directory · ${(bytes/1024/1024).toFixed(2)} MB backup.`;
  return {json,bytes,payload};
 }
 el('cloudPreview').onclick=async()=>{try{await preview()}catch(e){note('Cannot prepare backup: '+e.message,true)}};
@@ -2360,8 +2360,8 @@ async function getSyncBackup(f){
  const bytes=await response.arrayBuffer();
  if(bytes.byteLength!==f.size)throw Error('File size does not match OneDrive metadata: '+f.name);
  const doc=JSON.parse(new TextDecoder().decode(bytes));
- if(doc.format!=='CemeteryFieldbookBackup'||doc.version!==5||!Array.isArray(doc.seed)||!Array.isArray(doc.photos))throw Error('Unsupported or incomplete Fieldbook backup: '+f.name);
- if(!doc.seed.every(r=>r&&typeof r.id==='string'))throw Error('Invalid burial records in '+f.name);
+ if(doc.format!=='CemeteryFieldbookBackup'||doc.version!==5||!Array.isArray(doc.seed)||!Array.isArray(doc.extras)||!Array.isArray(doc.photos)||!doc.updates||typeof doc.updates!=='object')throw Error('Unsupported or incomplete Fieldbook backup: '+f.name);
+ if(![...doc.seed,...doc.extras].every(r=>r&&typeof r.id==='string'))throw Error('Invalid burial records in '+f.name);
  return doc;
 }
 function canonicalValue(v){
@@ -2372,8 +2372,11 @@ function canonicalValue(v){
 function effectiveRecord(r,doc){return {...r,...(doc.updates?.[r.id]||{})}}
 function indexById(records){const result=new Map(),duplicates=new Set();for(const r of records){if(result.has(r.id))duplicates.add(r.id);else result.set(r.id,r)}return {result,duplicates}}
 function compareSyncDocuments(a,b){
- const A=indexById(a.seed),B=indexById(b.seed);
- if(A.duplicates.size||B.duplicates.size)throw Error('Duplicate burial IDs found. No comparison available until IDs are reviewed.');
+ // The actual Fieldbook list is the imported GEDCOM seed PLUS new discoveries/merges
+ // held in `extras`. Check both before attempting any future synchronization.
+ const combinedA=[...a.seed,...a.extras],combinedB=[...b.seed,...b.extras];
+ const A=indexById(combinedA),B=indexById(combinedB);
+ if(A.duplicates.size||B.duplicates.size)throw Error('Duplicate burial IDs found between original and added records. No comparison available until IDs are reviewed.');
  let onlyA=0,onlyB=0,changed=0,unchanged=0;
  const examples=[],changedFields={};
  for(const [id,ra] of A.result){
@@ -2391,14 +2394,14 @@ function compareSyncDocuments(a,b){
  let pOnlyA=0,pOnlyB=0,pChanged=0;
  for(const [id,pa] of photoA.result){if(!photoB.result.has(id))pOnlyA++;else if(canonicalValue(pa)!==canonicalValue(photoB.result.get(id)))pChanged++}
  for(const id of photoB.result.keys())if(!photoA.result.has(id))pOnlyB++;
- return {a:a.seed.length,b:b.seed.length,onlyA,onlyB,changed,unchanged,photosA:a.photos.length,photosB:b.photos.length,pOnlyA,pOnlyB,pChanged,historyA:a.changeLog?.length||0,historyB:b.changeLog?.length||0,peopleA:a.gedcomPeople?.length||0,peopleB:b.gedcomPeople?.length||0,changedFields,examples,duplicatePhotos:photoA.duplicates.size+photoB.duplicates.size};
+ return {a:combinedA.length,b:combinedB.length,seedA:a.seed.length,seedB:b.seed.length,extrasA:a.extras.length,extrasB:b.extras.length,onlyA,onlyB,changed,unchanged,photosA:a.photos.length,photosB:b.photos.length,pOnlyA,pOnlyB,pChanged,historyA:a.changeLog?.length||0,historyB:b.changeLog?.length||0,peopleA:a.gedcomPeople?.length||0,peopleB:b.gedcomPeople?.length||0,changedFields,examples,duplicatePhotos:photoA.duplicates.size+photoB.duplicates.size};
 }
 function showSyncResult(r,fa,fb){
  syncResult.replaceChildren();
  const title=document.createElement('strong');title.textContent='Read-only comparison complete — no records modified';syncResult.append(title);
  const p=document.createElement('p');p.textContent='Backup A: '+fa.name+' | Backup B: '+fb.name;syncResult.append(p);
  const table=document.createElement('div');table.style.cssText='display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;font-size:13px';
- const rows=[['Burials A / B',r.a.toLocaleString()+' / '+r.b.toLocaleString()],['Only in A',r.onlyA],['Only in B',r.onlyB],['Same ID, different fields',r.changed],['Same ID, same fields',r.unchanged],['Photos A / B',r.photosA+' / '+r.photosB],['Photo entries only A / only B',r.pOnlyA+' / '+r.pOnlyB],['Same photo ID, different content',r.pChanged],['History entries A / B',r.historyA+' / '+r.historyB],['GEDCOM people A / B',r.peopleA+' / '+r.peopleB]];
+ const rows=[['Total burials A / B',r.a.toLocaleString()+' / '+r.b.toLocaleString()],['Original GEDCOM burials A / B',r.seedA.toLocaleString()+' / '+r.seedB.toLocaleString()],['Added burials / discoveries A / B',r.extrasA.toLocaleString()+' / '+r.extrasB.toLocaleString()],['Only in A',r.onlyA],['Only in B',r.onlyB],['Same ID, different fields',r.changed],['Same ID, same fields',r.unchanged],['Photos A / B',r.photosA+' / '+r.photosB],['Photo entries only A / only B',r.pOnlyA+' / '+r.pOnlyB],['Same photo ID, different content',r.pChanged],['History entries A / B',r.historyA+' / '+r.historyB],['GEDCOM people A / B',r.peopleA+' / '+r.peopleB]];
  for(const [label,value] of rows){const l=document.createElement('span'),v=document.createElement('strong');l.textContent=label;v.textContent=String(value);table.append(l,v)}syncResult.append(table);
  if(r.duplicatePhotos){const warning=document.createElement('p');warning.textContent='Warning: duplicate photo IDs found ('+r.duplicatePhotos+'); photo comparison is incomplete.';syncResult.append(warning)}
  if(Object.keys(r.changedFields).length){const p2=document.createElement('p');p2.textContent='Fields differing most often: '+Object.entries(r.changedFields).sort((x,y)=>y[1]-x[1]).slice(0,10).map(([k,n])=>k+' ('+n+')').join(', ');syncResult.append(p2)}
