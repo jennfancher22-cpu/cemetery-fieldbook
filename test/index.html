@@ -264,7 +264,8 @@
 <h4 style="margin:0 0 8px">🗂️ Smart backup retention (TEST)</h4>
 <p class="tiny">Keep the newest 10 app-created backups, plus recovery points from each of the last 4 weeks and 6 months. Manually uploaded files and backups marked Protected are never deleted by retention. Backups may continue to occupy OneDrive recycle bin storage after deletion.</p>
 <p class="tiny"><strong>Cleanup is OFF by default.</strong> Preview the exact files first. If you opt in, cleanup runs only after a new upload has been verified. Deleted backups cannot be recovered through Fieldbook.</p>
-<div class="buttons"><button id="cloudRetentionPreview" type="button" class="secondary">Preview backup cleanup</button></div>
+<div class="buttons"><button id="cloudRetentionPreview" type="button" class="secondary">Preview actual OneDrive backups</button><button id="cloudRetentionSimulation" type="button" class="secondary">Run safe retention simulation (fictional files)</button></div>
+<div id="cloudRetentionSimulationResults" class="hint" role="status">Simulation uses fictional dates and files; it never contacts or changes OneDrive.</div>
 <div id="cloudRetentionResults" class="hint" role="status">No cleanup preview yet.</div>
 <label style="display:flex;align-items:flex-start;gap:9px;line-height:1.4;margin-top:8px"><input type="checkbox" id="cloudRetentionEnabled" style="flex:0 0 19px;width:19px;height:19px;min-height:19px;margin-top:2px"><span><strong>Enable automatic retention cleanup</strong><br><span class="tiny">Only after a verified NEW backup, and only for backups made directly by Fieldbook. First review a current cleanup preview.</span></span></label>
 </div>
@@ -2177,10 +2178,10 @@ async function allCloudFiles(){
  }
  return all;
 }
-function planRetention(files){
+function planRetention(files,asOf=new Date()){
  const managed=files.filter(isManagedBackup).sort((a,b)=>Date.parse(b.createdDateTime)-Date.parse(a.createdDateTime));
  const keep=new Set(managed.slice(0,10).map(x=>x.id));
- const now=new Date();
+ const now=asOf;
  // Choose one additional backup from each of four recent seven-day windows.
  for(let w=0;w<4;w++){
   const end=now.getTime()-w*7*86400000,start=end-7*86400000;
@@ -2210,6 +2211,44 @@ function renderRetention(plan){
 async function previewRetention(){
  const files=await allCloudFiles();const plan=planRetention(files);retentionPreview={at:Date.now(),plan};renderRetention(plan);return plan;
 }
+// Fictional scenario: no Graph requests, no uploads, no deletions, no changes to saved settings.
+function makeRetentionSimulation(){
+ const now=new Date('2026-11-08T12:00:00Z');
+ const files=[];
+ // Four files per month over nine months; guarantees both short-term and old candidates.
+ for(let month=0;month<9;month++)for(let day=0;day<4;day++){
+  const stamp=new Date(Date.UTC(2026,10-month,7-day*6,10,0,0));
+  const id='fictional-'+month+'-'+day;
+  files.push({id,name:'fieldbook-'+stamp.toISOString().replace('.000Z','Z')+'-'+id+'.json',createdDateTime:stamp.toISOString(),size:3_932_160,file:{mimeType:'application/json'}});
+ }
+ // These must always remain excluded from automatic pruning regardless of their ages.
+ files.push({id:'fictional-protected',name:'fieldbook-protected-2025-01-01T00-00-00Z.json',createdDateTime:'2025-01-01T00:00:00Z',size:4_000_000,file:{mimeType:'application/json'}});
+ files.push({id:'fictional-manual',name:'cemetery-fieldbook-backup-2025-01-01.json',createdDateTime:'2025-01-01T00:00:00Z',size:4_000_000,file:{mimeType:'application/json'}});
+ return {now,files};
+}
+function runRetentionSimulation(){
+ const {now,files}=makeRetentionSimulation(),plan=planRetention(files,now);
+ const allIds=new Set(files.map(x=>x.id)),keptIds=new Set(plan.retained.map(x=>x.id)),deletedIds=new Set(plan.deletable.map(x=>x.id));
+ const checks=[
+ ['No fictional backups were lost from the calculation',files.length===allIds.size],
+ ['Newest backup always kept',keptIds.has('fictional-0-0')],
+ ['At least ten recent backups kept',plan.retained.length>=10],
+ ['Protected backup never deleted',!deletedIds.has('fictional-protected')],
+ ['Manually uploaded backup never deleted',!deletedIds.has('fictional-manual')],
+ ['Old fictional backups identified for cleanup',plan.deletable.length>0],
+ ['No retained backup also marked for deletion',plan.retained.every(x=>!deletedIds.has(x.id))],
+ ['All 36 app-created backups accounted for',plan.managed.length===36 && plan.retained.length+plan.deletable.length===36]
+ ];
+ const target=el('cloudRetentionSimulationResults');target.replaceChildren();
+ const summary=document.createElement('p');summary.textContent=`Simulation only: ${plan.managed.length} fictional Fieldbook backups, ${plan.retained.length} retained, ${plan.deletable.length} eligible for cleanup (${(plan.size/1024/1024).toFixed(1)} MB), ${plan.excluded.length} protected/manual excluded. No actual OneDrive files accessed.`;target.append(summary);
+ const list=document.createElement('ul');
+ for(const [label,pass] of checks){const li=document.createElement('li');li.textContent=(pass?'PASS — ':'FAIL — ')+label;list.append(li)}target.append(list);
+ const details=document.createElement('details'),heading=document.createElement('summary');heading.textContent='Inspect fictional backups selected for cleanup';details.append(heading);
+ const ul=document.createElement('ul');for(const f of plan.deletable){const li=document.createElement('li');li.textContent=f.name;ul.append(li)}details.append(ul);target.append(details);
+ const allPassed=checks.every(([,pass])=>pass);const verdict=document.createElement('strong');verdict.textContent=allPassed?'Simulation passed. Automatic cleanup remains unchanged.':'Simulation failed. Do not enable cleanup.';target.append(verdict);
+ return allPassed;
+}
+el('cloudRetentionSimulation').onclick=()=>runRetentionSimulation();
 el('cloudRetentionPreview').onclick=async()=>{
  if(busy)return;setBusy(true);
  try{note('Checking all backups in OneDrive (no deletion)…');await previewRetention();note('Retention preview ready. No files deleted.');}
