@@ -1939,8 +1939,21 @@ el('cloudDisconnect').onclick=()=>{token=null;expiresAt=0;sessionStorage.removeI
 async function graph(path,options={}){
  if(!activeToken())throw Error('Please connect to OneDrive again; the sign-in session has expired.');
  const res=await fetch(GRAPH+path,{...options,headers:{Authorization:'Bearer '+activeToken(),...(options.headers||{})}});
- if(!res.ok){let explanation='HTTP '+res.status;try{const j=await res.json();explanation=j.error?.message||explanation}catch{}throw Error(explanation)}
+ if(!res.ok){let explanation='HTTP '+res.status;try{const j=await res.json();const code=j.error?.code||'unknown';const message=j.error?.message||'Unknown Microsoft Graph error';explanation=`HTTP ${res.status} (${code}): ${message}`}catch{}throw Error(explanation)}
  return res;
+}
+
+// Microsoft Graph app folders must exist before using a child path. A GET to
+// the special folder creates it the first time for delegated AppFolder users.
+async function ensureAppFolder(){
+ try{
+  const response=await graph('/me/drive/special/approot');
+  const folder=await response.json();
+  if(!folder.id||!folder.folder)throw Error('Microsoft did not return an application folder.');
+  return folder;
+ }catch(e){
+  throw Error('Could not open the OneDrive application folder. '+e.message+'. Do not grant broader permissions to work around this error.');
+ }
 }
 async function makePayload(){
  await largeDataReady;
@@ -1964,7 +1977,7 @@ el('cloudUpload').onclick=async()=>{
  note('Preparing complete backup, including photographs…');let {json,bytes,payload}=await preview();
  if(bytes>240*1024*1024)throw Error('Backup is larger than this first-version upload limit. Download the regular full backup instead.');
  if(!confirm(`Upload a NEW, date-stamped backup of ${fmt(payload.seed.length)} burial records and ${fmt(payload.photos.length)} photo records (${(bytes/1024/1024).toFixed(2)} MB) to your OneDrive app folder?\n\nThis backup is not encrypted by Fieldbook. Existing cloud backups will not be overwritten.`)){note('Cloud backup cancelled; nothing uploaded.');return;}
- const file=uniqueName();note('Uploading a new backup to OneDrive…');
+ const file=uniqueName();note('Preparing private OneDrive app folder…');await ensureAppFolder();note('Uploading a new backup to OneDrive…');
  // Each backup gets a distinct timestamp + random filename; never replace existing backups.
  const response=await graph('/me/drive/special/approot:/'+encodeURIComponent(file)+':/content',{method:'PUT',headers:{'Content-Type':'application/json','If-None-Match':'*'},body:json});
  const metadata=await response.json();if(metadata.size!==bytes)throw Error('Upload returned unexpected file size. Do not rely on this backup until checked.');
@@ -1973,6 +1986,7 @@ el('cloudUpload').onclick=async()=>{
  }catch(e){note('Cloud backup failed: '+e.message,true)}finally{setBusy(false)}
 };
 async function listCloud(){
+ await ensureAppFolder();
  const response=await graph('/me/drive/special/approot/children?$top=100&$select=id,name,size,createdDateTime,file');
  const data=await response.json();const entries=(data.value||[]).filter(x=>/^fieldbook-.*\.json$/i.test(x.name)&&x.file).sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
  results.replaceChildren();results.hidden=false;

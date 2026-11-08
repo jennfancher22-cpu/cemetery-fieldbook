@@ -1,16 +1,10 @@
-Cemetery Fieldbook v7 — OneDrive Backup Phase 1 (TEST only)
+Cemetery Fieldbook v7 — TEST OneDrive app-folder initialization fix
 
-This experimental build is isolated from LIVE browser data. It provides:
-- Preview of complete v5 backup contents including photo record count and file size
-- Microsoft personal OneDrive sign-in using authorization code + PKCE
-- Timestamped backups in the OneDrive application folder
-- List and download existing cloud backups for manual restore
+Upload index.html ONLY to the repository /test/ folder. Do not replace LIVE.
 
-Cloud sign-in is NOT ready until the developer creates a Microsoft application registration and supplies its client ID.
-Use an application registration supporting PERSONAL MICROSOFT ACCOUNTS, with a Single-page application redirect URI of:
-https://jennfancher22-cpu.github.io/cemetery-fieldbook/test/
-Microsoft Graph delegated permission: Files.ReadWrite.AppFolder. No client secret.
+Change: initialize Microsoft Graph /me/drive/special/approot before uploading or listing backups.
+Error messages now include HTTP status and Microsoft Graph error code.
 
-The experimental app does not encrypt cloud backups, synchronize devices, or automatically restore data.
-Avoid uploading private real-person genealogy data until the access and recovery controls have been tested.
-Use the separate TEST website only; NEVER overwrite LIVE with this file.
+Test: refresh the TEST site, reconnect to personal OneDrive if needed, and try a backup with non-sensitive TEST records. Do not change OneDrive permissions to broader scopes in response to a failed test.
+
+Cloud upload and restore remain experimental and unverified. No changes to LIVE browser data.
