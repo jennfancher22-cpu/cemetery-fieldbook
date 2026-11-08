@@ -260,6 +260,14 @@
 <p id="cloudAutoStatus" class="hint" role="status" style="margin:10px 0 3px">Automatic cloud backup is off.</p>
 <p class="tiny" style="margin:0">Not two-way sync. Backups cannot run while Fieldbook is closed; unsaved or unsynchronized changes may be lost if site data is cleared. Cloud files are readable JSON; keep independent backups.</p>
 </div>
+<div class="home-panel" style="margin:12px 0;padding:12px;border:1px solid #c4d1dc;border-radius:12px">
+<h4 style="margin:0 0 8px">🗂️ Smart backup retention (TEST)</h4>
+<p class="tiny">Keep the newest 10 app-created backups, plus recovery points from each of the last 4 weeks and 6 months. Manually uploaded files and backups marked Protected are never deleted by retention. Backups may continue to occupy OneDrive recycle bin storage after deletion.</p>
+<p class="tiny"><strong>Cleanup is OFF by default.</strong> Preview the exact files first. If you opt in, cleanup runs only after a new upload has been verified. Deleted backups cannot be recovered through Fieldbook.</p>
+<div class="buttons"><button id="cloudRetentionPreview" type="button" class="secondary">Preview backup cleanup</button></div>
+<div id="cloudRetentionResults" class="hint" role="status">No cleanup preview yet.</div>
+<label style="display:flex;align-items:flex-start;gap:9px;line-height:1.4;margin-top:8px"><input type="checkbox" id="cloudRetentionEnabled" style="flex:0 0 19px;width:19px;height:19px;min-height:19px;margin-top:2px"><span><strong>Enable automatic retention cleanup</strong><br><span class="tiny">Only after a verified NEW backup, and only for backups made directly by Fieldbook. First review a current cleanup preview.</span></span></label>
+</div>
 <div class="buttons"><button type="button" id="cloudPreview" class="secondary">Check backup contents</button><button type="button" id="cloudUpload">Back up to OneDrive now</button><button type="button" id="cloudList" class="secondary">View cloud backups</button></div>
 <p id="cloudDetails" class="hint" role="status"></p>
 <div id="cloudBackups" class="home-panel" hidden></div>
@@ -2089,6 +2097,7 @@ async function uploadVerifiedBackup({automatic=false}={}){
   note(`Backup VERIFIED (file and contents): ${file} (${(bytes/1024/1024).toFixed(2)} MB).`);
   updateAutoStatus(automatic?'Automatic backup verified.':null);
   try{await listCloud()}catch(listError){note(`Backup VERIFIED: ${file}. Backup list could not refresh: ${listError.message}.`,false)}
+  if(retainCheckbox.checked)await cleanAfterVerifiedUpload(file);
   return true;
  }catch(e){
   note((uploaded?'OneDrive received the backup, but verification was not completed: ':'Cloud backup not confirmed: ')+e.message,true);
@@ -2141,12 +2150,107 @@ async function recoverCloudBackup(item){
  if(success)note(`RESTORE COMPLETE: ${data.seed.length.toLocaleString()} burials and ${data.photos.length.toLocaleString()} photo records recovered from OneDrive. Refresh the page to verify persistence.`);
  return success;
 }
+// Retention is opt-in, and never touches manually uploaded backups or protected filenames.
+const RETKEY='fieldbook_cloud_test_retention_enabled_v1';
+const retainCheckbox=el('cloudRetentionEnabled'),retResults=el('cloudRetentionResults');
+let retentionPreview=null,retentionRunning=false;
+const cloudGenerated=/^fieldbook-\d{4}-\d{2}-\d{2}T[^/]*\.json$/i;
+const protectedCloud=/^fieldbook-protected-/i;
+function isManagedBackup(f){return cloudGenerated.test(f.name)&&!!f.file;}
+function isProtectedBackup(f){return protectedCloud.test(f.name);}
+async function allCloudFiles(){
+ await ensureAppFolder();
+ let path='/me/drive/special/approot/children?$top=100&$select=id,name,size,createdDateTime,file';
+ const all=[],seen=new Set();
+ while(path){
+  if(seen.has(path)||seen.size>100)throw Error('Could not completely enumerate OneDrive backups. Cleanup cancelled.');
+  seen.add(path);
+  let response;
+  if(path.startsWith('https://graph.microsoft.com/v1.0/')){
+   response=await graph(path.slice(GRAPH.length));
+  }else if(path.startsWith('/'))response=await graph(path);
+  else throw Error('Unexpected OneDrive pagination link. No cleanup performed.');
+  const data=await response.json();
+  if(!Array.isArray(data.value))throw Error('OneDrive returned an incomplete file list. No cleanup performed.');
+  all.push(...data.value);
+  path=data['@odata.nextLink']||null;
+ }
+ return all;
+}
+function planRetention(files){
+ const managed=files.filter(isManagedBackup).sort((a,b)=>Date.parse(b.createdDateTime)-Date.parse(a.createdDateTime));
+ const keep=new Set(managed.slice(0,10).map(x=>x.id));
+ const now=new Date();
+ // Choose one additional backup from each of four recent seven-day windows.
+ for(let w=0;w<4;w++){
+  const end=now.getTime()-w*7*86400000,start=end-7*86400000;
+  const hit=managed.find(x=>{const t=Date.parse(x.createdDateTime);return t>=start&&t<end;});
+  if(hit)keep.add(hit.id);
+ }
+ // Preserve one recovery point from each of the six current/previous UTC calendar months.
+ for(let m=0;m<6;m++){
+  const month=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()-m,1));
+  const year=month.getUTCFullYear(),mo=month.getUTCMonth();
+  const hit=managed.find(x=>{const t=new Date(x.createdDateTime);return t.getUTCFullYear()===year&&t.getUTCMonth()===mo;});
+  if(hit)keep.add(hit.id);
+ }
+ // Do not prune unless at least two managed backups would remain available.
+ const deletable=managed.length>=2?managed.filter(x=>!keep.has(x.id)):[];
+ const retained=managed.filter(x=>keep.has(x.id));
+ return {managed,retained,deletable,excluded:files.filter(x=>x.file&&!isManagedBackup(x)),size:deletable.reduce((sum,x)=>sum+(x.size||0),0)};
+}
+function renderRetention(plan){
+ retResults.replaceChildren();
+ const p=document.createElement('p');p.textContent=`Fieldbook-created backups: ${plan.managed.length} · Retained: ${plan.retained.length} · Eligible for cleanup: ${plan.deletable.length} (${(plan.size/1024/1024).toFixed(2)} MB). Other / manually uploaded / protected files excluded: ${plan.excluded.length}.`;retResults.append(p);
+ if(plan.deletable.length){
+  const box=document.createElement('details');const head=document.createElement('summary');head.textContent='See exact backup files eligible for deletion';box.append(head);
+  const ul=document.createElement('ul');for(const f of plan.deletable){const li=document.createElement('li');li.textContent=f.name+' · '+new Date(f.createdDateTime).toLocaleString();ul.append(li);}box.append(ul);retResults.append(box);
+ }else{const p=document.createElement('p');p.textContent='Nothing would be deleted right now.';retResults.append(p)}
+}
+async function previewRetention(){
+ const files=await allCloudFiles();const plan=planRetention(files);retentionPreview={at:Date.now(),plan};renderRetention(plan);return plan;
+}
+el('cloudRetentionPreview').onclick=async()=>{
+ if(busy)return;setBusy(true);
+ try{note('Checking all backups in OneDrive (no deletion)…');await previewRetention();note('Retention preview ready. No files deleted.');}
+ catch(e){retentionPreview=null;retResults.textContent='Could not preview cleanup: '+e.message;note('Retention preview failed: '+e.message,true)}
+ finally{setBusy(false)}
+};
+retainCheckbox.checked=localStorage.getItem(RETKEY)==='yes';
+retainCheckbox.onchange=async()=>{
+ if(!retainCheckbox.checked){localStorage.removeItem(RETKEY);retResults.textContent='Automatic retention cleanup is OFF. Cloud backups remain untouched.';return;}
+ retainCheckbox.checked=false;
+ if(!retentionPreview||Date.now()-retentionPreview.at>5*60*1000){
+  retResults.textContent='First click Preview backup cleanup and review the list, then enable retention within 5 minutes.';return;
+ }
+ const n=retentionPreview.plan.deletable.length;
+ if(!confirm(`Enable automatic cloud backup cleanup for this TEST browser?\n\nCurrent preview: ${n} Fieldbook-created backups would be eligible for deletion.\n\nAfter each verified NEW backup, Fieldbook will retain its newest 10 plus weekly and monthly recovery points. Manually uploaded or Protected backups are excluded.\n\nThis does not immediately delete anything. Continue?`))return;
+ retainCheckbox.checked=true;localStorage.setItem(RETKEY,'yes');retResults.textContent='Retention enabled. Cleanup will run after the next verified upload; preview available anytime.';
+};
+async function cleanAfterVerifiedUpload(uploadedName){
+ if(!retainCheckbox.checked||retentionRunning)return;
+ retentionRunning=true;
+ try{
+  // A fresh, verified upload must still be present, and the entire folder listing complete.
+  const files=await allCloudFiles();
+  if(!files.some(f=>f.name===uploadedName&&isManagedBackup(f)))throw Error('The newly verified backup is not listed. No deletion performed.');
+  const plan=planRetention(files);
+  if(!plan.deletable.length){retResults.textContent='Automatic retention: no old backups to remove.';return;}
+  const errors=[];let count=0;
+  for(const item of plan.deletable){
+   if(!isManagedBackup(item)||item.name===uploadedName||isProtectedBackup(item))continue;
+   try{await graph('/me/drive/items/'+encodeURIComponent(item.id),{method:'DELETE'});count++}
+   catch(e){errors.push(item.name+': '+e.message)}
+  }
+  retResults.textContent=`Automatic cleanup: ${count} older app-created backups moved to OneDrive recycle bin.`+(errors.length?' Errors: '+errors.join('; '):'');
+ }catch(e){retResults.textContent='Cleanup skipped safely: '+e.message}
+ finally{retentionRunning=false;retentionPreview=null;}
+}
 async function listCloud(){
  await ensureAppFolder();
- const response=await graph('/me/drive/special/approot/children?$top=100&$select=id,name,size,createdDateTime,file');
- const data=await response.json();const entries=(data.value||[]).filter(x=>/^(?:fieldbook-|cemetery-fieldbook-backup-).*\.json$/i.test(x.name)&&x.file).sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
+ const files=await allCloudFiles();const entries=files.filter(x=>/^(?:fieldbook-|cemetery-fieldbook-backup-).*\.json$/i.test(x.name)&&x.file).sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
  results.replaceChildren();results.hidden=false;
- const h=document.createElement('h4');h.textContent=`OneDrive backups (${entries.length}${data['@odata.nextLink']?' shown; more may exist':''})`;results.append(h); const help=document.createElement('p');help.className='tiny';help.textContent='Includes cloud-created backups and full Fieldbook backups manually placed in this app folder. Restores validate the file before replacing local data.';results.append(help);
+ const h=document.createElement('h4');h.textContent=`OneDrive backups (${entries.length})`;results.append(h); const help=document.createElement('p');help.className='tiny';help.textContent='Includes cloud-created backups and full Fieldbook backups manually placed in this app folder. Restores validate the file before replacing local data.';results.append(help);
  if(!entries.length){const p=document.createElement('p');p.textContent='No Fieldbook backup files found in this app folder. The list includes both automatic cloud backups and manually uploaded full Fieldbook backups.';results.append(p)}
  for(const item of entries){
   const row=document.createElement('div');row.style.cssText='border-bottom:1px solid #ddd;padding:10px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center';
@@ -2165,6 +2269,22 @@ async function listCloud(){
   restoreBtn.onclick=async()=>{if(busy)return;setBusy(true);restoreBtn.disabled=true;try{
     note('Checking selected backup in OneDrive…');await recoverCloudBackup(item);
    }catch(e){note('Cloud restore failed: '+e.message,true)}finally{restoreBtn.disabled=false;setBusy(false)}};
+  if(isManagedBackup(item)){
+   const protect=document.createElement('button');protect.type='button';protect.className='secondary';protect.textContent='Protect';
+   protect.title='Mark this backup protected; retention will never delete it.';
+   protect.onclick=async()=>{
+    if(!confirm('Protect this backup from automatic cleanup? It will be renamed in your OneDrive app folder.'))return;
+    protect.disabled=true;
+    try{
+     const newName='fieldbook-protected-'+item.name.slice('fieldbook-'.length);
+     await graph('/me/drive/items/'+encodeURIComponent(item.id),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:newName})});
+     note('Backup marked Protected. Automatic retention will not delete it.');retentionPreview=null;await listCloud();
+    }catch(e){note('Could not protect backup: '+e.message,true);protect.disabled=false}
+   };
+   row.append(protect);
+  }else if(isProtectedBackup(item)){
+   const flag=document.createElement('span');flag.className='tiny';flag.textContent='🔒 Protected — never auto-delete';row.append(flag);
+  }
   row.append(info,btn,restoreBtn);results.append(row);
  }
 }
