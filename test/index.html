@@ -289,7 +289,7 @@
 <label style="min-width:0">Computer backup<select id="syncDeviceASelect" style="width:100%"><option value="">Load cloud backup choices</option></select></label>
 <label style="min-width:0">Phone backup<select id="syncDeviceBSelect" style="width:100%"><option value="">Load cloud backup choices</option></select></label>
 </div>
-<div class="buttons"><button type="button" class="secondary" id="syncThreeWayRun">Review three-way merge</button><button type="button" class="secondary" id="syncThreeWaySelfTest">Run fictional safety checks</button></div>
+<div class="buttons"><button type="button" class="secondary" id="syncThreeWayRun">Review three-way merge</button><button type="button" class="secondary" id="syncThreeWaySelfTest">Run fictional safety checks</button><button type="button" class="secondary" id="syncRepeatAudit">Run repeat-merge and history safety checks</button></div><div id="syncRepeatAuditResult" class="hint" role="status">Safety audit is TEST-only and uses fictional records; no OneDrive files or browser data are changed.</div>
 <div class="hint" id="syncThreeWayOutput" role="status">No three-way comparison run. No files will be modified.</div>
 <div id="threeMergePanel" style="display:none;margin-top:14px;border:1px solid #afcdb7;border-radius:12px;padding:12px;min-width:0">
 <h4 style="margin:0 0 8px">Create a three-way merged TEST backup</h4>
@@ -2686,6 +2686,11 @@ function materializeThreeMerge(session){
  out.changeLog=[...p.events.values()].sort((a,b)=>String(a.date||a.at||a.timestamp||'').localeCompare(String(b.date||b.at||b.timestamp||'')));
  out.exported=new Date().toISOString();
  out.stagedSync={mode:'three-way TEST backup only',baseline:session.names[0],computer:session.names[1],phone:session.names[2],safe:p.safe.length,conflictsResolved:p.conflicts.length,photos:out.photos.length,burials:out.seed.length+out.extras.length,created:out.exported};
+ // A proposed shared checkpoint for later sync development. This DOES NOT mark either device as synced.
+ out.syncCheckpoint={schema:1,kind:'unapplied-three-way-merge',created:out.exported,
+  sourceBackups:{baseline:session.names[0],computer:session.names[1],phone:session.names[2]},
+  burialCount:out.seed.length+out.extras.length,photoCount:out.photos.length,historyCount:out.changeLog.length,
+  warning:'Backup checkpoint only. No device or cloud sync cursor has been advanced.'};
  if(out.seed.length+out.extras.length!==recordMap.size)throw Error('Burial record count mismatch');
  return out;
 }
@@ -2770,6 +2775,50 @@ el('syncThreeWaySelfTest').onclick=()=>{resetThreeMerge();
  const checks=[['One-sided edit recognized',r.safe>=1],['Conflicting town edits blocked',r.conflicts===1],['New person recognized',r.additions===1],['New photo recognized',r.photoCandidates===1],['No deletions invented',r.deletions===0]];
  renderThreeResult(r,['Fictional common backup','Fictional computer','Fictional phone']);const p=document.createElement('p');p.textContent=checks.map(([t,pass])=>(pass?'PASS':'FAIL')+' — '+t).join(' | ');threeOutput.prepend(p);
 };
+
+// Repeat-merge / activity history audit: entirely synthetic; never reads or writes local or cloud data.
+function runSyncRepeatAudit(){
+ const elOut=el('syncRepeatAuditResult');elOut.replaceChildren();
+ const make=(seed,extras,photos,changeLog,updates={})=>({format:'CemeteryFieldbookBackup',version:5,
+  seed:structuredClone(seed),extras:structuredClone(extras),photos:structuredClone(photos),changeLog:structuredClone(changeLog),
+  updates:structuredClone(updates),gedcomPeople:[],homePersonId:null,geoEdits:{}});
+ const baseline=make([{id:'ged-1',name:'Sample Ancestor',town:'Old Town',notes:'Original'}],
+  [{id:'new-1',name:'Fictional Person',notes:'Original',plot:'Row A'}],
+  [{id:'photo-0',person:'new-1',data:'image0'}],
+  [{id:'event-0',date:'2026-01-01',detail:'Initial test'}]);
+ const computer=structuredClone(baseline);computer.extras[0].plot='Row B';
+ computer.photos.push({id:'photo-computer',person:'new-1',data:'image1'});
+ computer.changeLog.push({id:'event-computer',date:'2026-01-02',detail:'Added photo on computer'});
+ const phone=structuredClone(baseline);phone.extras[0].notes='Phone note';
+ phone.photos.push({id:'photo-phone',person:'new-1',data:'image2'});
+ phone.changeLog.push({id:'event-phone',date:'2026-01-03',detail:'Added photo on phone'});
+ const results=[];const check=(label,ok)=>results.push([label,!!ok]);
+ try{
+  const plan=buildThreePlan(baseline,computer,phone);
+  check('No conflicts or structural blockers',!plan.conflicts.length&&!plan.blocks.length);
+  const merged=materializeThreeMerge({plan,names:['Fictional baseline','Fictional computer','Fictional phone']});
+  const rec=merged.extras.find(x=>x.id==='new-1');
+  check('Independent field edits preserved',rec?.plot==='Row B'&&rec?.notes==='Phone note');
+  check('Both new photographs retained once',merged.photos.length===3&&new Set(merged.photos.map(x=>x.id)).size===3);
+  check('Activity events retained once',merged.changeLog.length===3&&new Set(merged.changeLog.map(x=>x.id)).size===3);
+  check('New backup contains an unapplied checkpoint',merged.syncCheckpoint?.kind==='unapplied-three-way-merge'&&merged.syncCheckpoint.historyCount===3);
+  const repeatPlan=buildThreePlan(merged,merged,merged);
+  check('Second pass sees zero safe edits or conflicts',!repeatPlan.safe.length&&!repeatPlan.conflicts.length&&!repeatPlan.blocks.length);
+  const repeated=materializeThreeMerge({plan:repeatPlan,names:['Fictional merged checkpoint','Fictional computer unchanged','Fictional phone unchanged']});
+  check('Second pass does not duplicate history or photos',repeated.changeLog.length===3&&repeated.photos.length===3);
+  check('Second pass does not alter existing data',canonicalValue(sync3RecordMap(repeated).get('new-1'))===canonicalValue(rec));
+  // A duplicate history ID with different contents must be blocked, not silently overwritten.
+  const collision=structuredClone(phone);collision.changeLog.push({id:'event-computer',date:'2026-01-04',detail:'Different event reusing the same ID'});
+  check('Conflicting activity-event IDs block merge',buildThreePlan(baseline,computer,collision).blocks.some(v=>v.includes('Activity event ID collision')));
+  const missing=structuredClone(phone);missing.changeLog.push({date:'2026-01-05',detail:'No stable ID'});
+  check('History without event IDs blocks merge',buildThreePlan(baseline,computer,missing).blocks.some(v=>v.includes('lacks a stable ID')));
+ }catch(err){results.push(['Audit code completed without an exception: '+err.message,false]);}
+ const heading=document.createElement('strong');heading.textContent='Fictional repeat-merge audit: '+results.filter(x=>x[1]).length+' of '+results.length+' checks passed';elOut.append(heading);
+ const list=document.createElement('ul');list.style.cssText='padding-left:20px;margin:6px 0';
+ for(const [label,ok] of results){const li=document.createElement('li');li.textContent=(ok?'PASS — ':'FAIL — ')+label;list.append(li)}elOut.append(list);
+ const caution=document.createElement('p');caution.textContent='No backups, photos, activity history, local data, or OneDrive files were modified. This audit tests the merge engine in memory; it does not yet establish automatic two-way synchronization or a persistent shared baseline.';elOut.append(caution);
+}
+el('syncRepeatAudit').onclick=runSyncRepeatAudit;
 
 el('syncCompareRefresh').onclick=async()=>{if(busy)return;setBusy(true);try{await loadSyncChoices()}catch(e){syncSay('Could not load cloud backups: '+e.message)}finally{setBusy(false)}};
 el('syncCompareRun').onclick=async()=>{
