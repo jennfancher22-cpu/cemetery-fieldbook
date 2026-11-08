@@ -294,6 +294,13 @@
 <label style="display:flex;gap:8px;align-items:flex-start;margin:10px 0"><input type="checkbox" style="flex:0 0 19px;width:19px;height:19px;min-height:19px" id="deviceAdoptVerify"><span>I understand this only records that this browser matches the baseline; automatic synchronization stays off.</span></label>
 <div class="buttons"><button type="button" id="deviceAdoptCheckpoint" disabled>Record verified baseline checkpoint</button></div>
 <div id="deviceCheckpointStatus" class="hint" role="status">Not checked.</div>
+<div class="home-panel" style="margin:12px 0 0;padding:12px;border:1px solid #b1cdb8;border-radius:10px">
+<h4 style="margin:0 0 7px">Automatic baseline change detection — TEST (read only)</h4>
+<p class="tiny">No manual backup selection. Fieldbook verifies the newest shared baseline in OneDrive, then compares its records with this browser's current data. This is a difference report, <strong>not</strong> proof that this device previously synced. Missing baseline records are not automatically deletions.</p>
+<div class="buttons"><button type="button" class="secondary" id="baselineDetectChanges">Detect this browser's differences</button></div>
+<div id="baselineChangesStatus" class="hint" role="status">No changes checked. Automatic synchronization is OFF.</div>
+<div id="baselineChangesDetail" style="overflow-wrap:anywhere"></div>
+</div>
 </div>
 <details style="margin-top:10px"><summary>Publish a reviewed backup as a baseline candidate (advanced TEST)</summary>
 <p class="hint">Only after independently verifying a merged backup in an isolated TEST restore. No older references or backup files will be overwritten or deleted.</p>
@@ -360,7 +367,7 @@
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7 TEST · Device checkpoint validation (no sync) · Existing-record comparison and accurate restore totals (TEST only) · Optional automatic OneDrive backup + direct restore + verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 TEST · Read-only automatic baseline difference detection (no sync) · Existing-record comparison and accurate restore totals (TEST only) · Optional automatic OneDrive backup + direct restore + verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -3013,6 +3020,93 @@ deviceAdopt.onclick=async()=>{
  }catch(e){deviceStatus.textContent='Checkpoint not confirmed: '+e.message+'. No burial records changed.'}
  finally{setBusy(false)}
 };
+// Read-only, checkpoint-aware change detection. The cloud marker and referenced backup
+// are verified on every request; no writes, checkpoint advances, or local mutations.
+const baselineChangesStatus=el('baselineChangesStatus'),baselineChangesDetail=el('baselineChangesDetail');
+function appendDiffRow(parent,label,value){
+ const row=document.createElement('div');row.style.cssText='display:flex;gap:10px;justify-content:space-between;border-bottom:1px solid #e2e9e4;padding:6px 0;font-size:13px';
+ const l=document.createElement('span');l.textContent=label;
+ const v=document.createElement('strong');v.style.textAlign='right';v.textContent=String(value);row.append(l,v);parent.append(row);
+}
+function renderDetectedDifferences(base,current,marker){
+ baselineChangesDetail.replaceChildren();
+ const r=compareSyncDocuments(base,current);
+ const histA=indexById((base.changeLog||[]).filter(e=>e&&typeof e.id==='string'&&e.id));
+ const histB=indexById((current.changeLog||[]).filter(e=>e&&typeof e.id==='string'&&e.id));
+ const photosA=indexById(base.photos.filter(p=>p&&typeof p.id==='string'&&p.id));
+ const photosB=indexById(current.photos.filter(p=>p&&typeof p.id==='string'&&p.id));
+ const malformedHistory=(base.changeLog||[]).length!==histA.result.size||(current.changeLog||[]).length!==histB.result.size;
+ const malformedPhotos=base.photos.length!==photosA.result.size||current.photos.length!==photosB.result.size;
+ let addedHistory=0,missingHistory=0,changedHistory=0;
+ for(const [id,event] of histB.result){if(!histA.result.has(id))addedHistory++;else if(canonicalValue(event)!==canonicalValue(histA.result.get(id)))changedHistory++;}
+ for(const id of histA.result.keys())if(!histB.result.has(id))missingHistory++;
+ const categories=[['Burials in baseline / this browser',fmt(r.a)+' / '+fmt(r.b)],
+  ['Burial IDs only on this browser',fmt(r.onlyB)],
+  ['Baseline burial IDs absent locally',fmt(r.onlyA)],
+  ['Existing burial IDs with changed fields',fmt(r.changed)],
+  ['Photos in baseline / this browser',fmt(r.photosA)+' / '+fmt(r.photosB)],
+  ['Photos only on this browser',fmt(r.pOnlyB)],['Baseline photos absent locally',fmt(r.pOnlyA)],
+  ['Same photo ID with different contents',fmt(r.pChanged)],
+  ['New history event IDs here',fmt(addedHistory)],
+  ['Baseline history events absent locally',fmt(missingHistory)],
+  ['Same history ID with different contents',fmt(changedHistory)]];
+ const table=document.createElement('div');table.style.cssText='margin:10px 0';
+ for(const [key,val] of categories)appendDiffRow(table,key,val);
+ baselineChangesDetail.append(table);
+ const lineage=safeJSON(localStorage.getItem(DEVICECHECKKEY)||'null');
+ const hasLocalCheckpoint=!!(lineage&&lineage.deviceId===getDeviceId()&&lineage.markerId===marker.markerId&&lineage.hash===marker.hash);
+ let extraMismatch=[];
+ for(const field of ['gedcomPeople','homePersonId','geoEdits'])if(canonicalValue(base[field])!==canonicalValue(current[field]))extraMismatch.push(field);
+ const changed=r.onlyA+r.onlyB+r.changed+r.pOnlyA+r.pOnlyB+r.pChanged+addedHistory+missingHistory+changedHistory+extraMismatch.length;
+ const warning=document.createElement('p');warning.className='tiny';
+ warning.textContent=(hasLocalCheckpoint?'This browser has a historical checkpoint matching the current reference. It may have changed since that verification; this check did not advance it. ':'This browser has no matching verified local checkpoint for this reference. Differences are NOT automatically new changes since synchronization. ')+
+  (r.onlyA||r.pOnlyA||missingHistory?'Items absent from this browser may reflect an older dataset or independent branch, NOT intentional deletions. ':'')+
+  (extraMismatch.length?'Additional protected data differs: '+extraMismatch.join(', ')+'. ':'')+
+  (malformedHistory||malformedPhotos?'WARNING: missing or duplicate photo/history IDs make this comparison incomplete. ':'')+
+  'No data was changed or uploaded.';
+ baselineChangesDetail.append(warning);
+ if(r.changed){
+  const people=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Inspect changed burial fields (first 35 people)';people.append(summary);
+  const bmap=sync3RecordMap(base),cmap=sync3RecordMap(current);let shown=0;
+  for(const [id,row] of cmap){const old=bmap.get(id);if(!old)continue;
+   const keys=[...new Set([...Object.keys(old),...Object.keys(row)])].filter(k=>k!=='id'&&canonicalValue(old[k])!==canonicalValue(row[k]));
+   if(!keys.length)continue;if(shown++>=35)break;
+   const item=document.createElement('details');item.style.cssText='padding:7px;border:1px solid #dce5df;border-radius:8px;margin:7px 0';
+   const h=document.createElement('summary');h.textContent=(row.name||old.name||id)+' · '+keys.length+' differing field(s)';item.append(h);
+   for(const k of keys){const p=document.createElement('p');p.className='tiny';p.textContent=k+' — Baseline: '+formatSyncDiffValue(old[k])+' | This browser: '+formatSyncDiffValue(row[k]);item.append(p)}people.append(item);
+  }baselineChangesDetail.append(people);
+ }
+ const additions=sync3RecordMap(current),known=sync3RecordMap(base),examples=[];
+ for(const [id,row] of additions)if(!known.has(id)){examples.push(row.name||id);if(examples.length>=12)break;}
+ if(examples.length){const p=document.createElement('p');p.className='tiny';p.textContent='Local-only burial examples: '+examples.join(' · ')+(r.onlyB>examples.length?' · …':'');baselineChangesDetail.append(p)}
+ return {changed,hasLocalCheckpoint,malformedHistory,malformedPhotos,extraMismatch,r};
+}
+async function readVerifiedBaselineForDiff(){
+ const markers=await readCheckpointFiles();
+ if(!markers.length)throw Error('No shared reference found.');
+ const markerId=markers[0].id;
+ const markerResp=await graph('/me/drive/items/'+encodeURIComponent(markerId)+'/content');const marker=await markerResp.json();
+ if(marker?.format!=='CemeteryFieldbookSyncReference'||marker.schema!==1||marker.status!=='candidate'||!marker.backup?.id||!marker.backup?.sha256)throw Error('Latest shared reference is invalid.');
+ const resp=await graph('/me/drive/items/'+encodeURIComponent(marker.backup.id)+'?$select=id,name,size,file');const meta=await resp.json();
+ if(meta.name!==marker.backup.filename||meta.size!==marker.backup.bytes)throw Error('Referenced backup name or size changed.');
+ const bytes=await fetchCloudBackupBytes(meta);
+ if(await digestBytes(bytes)!==marker.backup.sha256)throw Error('Referenced backup failed SHA-256 verification.');
+ const doc=JSON.parse(new TextDecoder().decode(bytes));
+ if(doc.format!=='CemeteryFieldbookBackup'||doc.version!==5||!Array.isArray(doc.seed)||!Array.isArray(doc.extras)||!Array.isArray(doc.photos)||!Array.isArray(doc.changeLog)||!Array.isArray(doc.gedcomPeople)||!doc.updates||typeof doc.updates!=='object')throw Error('Shared baseline is not a complete v5 backup.');
+ return {doc,marker:{...marker,markerId,hash:await syncContentHash(doc)}};
+}
+el('baselineDetectChanges').onclick=async()=>{
+ if(busy)return;setBusy(true);baselineChangesDetail.replaceChildren();baselineChangesStatus.textContent='Verifying cloud baseline and comparing with this browser…';
+ try{
+  const {doc,marker}=await readVerifiedBaselineForDiff();
+  const local=await makePayload();const out=renderDetectedDifferences(doc,local,marker);
+  const exact=await syncContentHash(doc)===await syncContentHash(local);
+  baselineChangesStatus.textContent=(exact?'MATCH — no database differences. ':out.changed?'DIFFERENCES DETECTED — read-only report below. ':'Data differences or ordering detected — review below. ')+
+   'Baseline: '+marker.backup.filename+'. Local checkpoint: '+(out.hasLocalCheckpoint?'historically verified':'not established for this baseline')+'. No syncing or checkpoint changes.';
+ }catch(err){baselineChangesStatus.textContent='Unable to compare: '+err.message+'. No data changed.'}
+ finally{setBusy(false)}
+};
+
 el('deviceCheckpointList').onclick=async()=>{
  if(busy)return;setBusy(true);deviceStatus.textContent='Reading TEST device checkpoints from OneDrive…';
  try{
