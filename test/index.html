@@ -2069,10 +2069,10 @@ async function recoverCloudBackup(item){
 async function listCloud(){
  await ensureAppFolder();
  const response=await graph('/me/drive/special/approot/children?$top=100&$select=id,name,size,createdDateTime,file');
- const data=await response.json();const entries=(data.value||[]).filter(x=>/^fieldbook-.*\.json$/i.test(x.name)&&x.file).sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
+ const data=await response.json();const entries=(data.value||[]).filter(x=>/^(?:fieldbook-|cemetery-fieldbook-backup-).*\.json$/i.test(x.name)&&x.file).sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
  results.replaceChildren();results.hidden=false;
- const h=document.createElement('h4');h.textContent=`OneDrive backups (${entries.length}${data['@odata.nextLink']?' shown; more may exist':''})`;results.append(h);
- if(!entries.length){const p=document.createElement('p');p.textContent='No Fieldbook backup files found in this app folder.';results.append(p)}
+ const h=document.createElement('h4');h.textContent=`OneDrive backups (${entries.length}${data['@odata.nextLink']?' shown; more may exist':''})`;results.append(h); const help=document.createElement('p');help.className='tiny';help.textContent='Includes cloud-created backups and full Fieldbook backups manually placed in this app folder. Restores validate the file before replacing local data.';results.append(help);
+ if(!entries.length){const p=document.createElement('p');p.textContent='No Fieldbook backup files found in this app folder. The list includes both automatic cloud backups and manually uploaded full Fieldbook backups.';results.append(p)}
  for(const item of entries){
   const row=document.createElement('div');row.style.cssText='border-bottom:1px solid #ddd;padding:10px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center';
   const info=document.createElement('div');info.style.cssText='flex:1 1 180px;min-width:0;overflow-wrap:anywhere;font-size:13px';
