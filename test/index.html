@@ -286,6 +286,15 @@
 <p class="hint">A <strong>baseline reference</strong> lets a computer and phone recognize the same reviewed backup in OneDrive. It does not restore data, mark any device as synchronized, or enable automatic changes. Choose a merged TEST backup you have already restored and checked. Keep the underlying backup in OneDrive.</p>
 <div class="buttons"><button type="button" class="secondary" id="checkpointLoad">Find shared reference</button></div>
 <div id="checkpointCurrent" class="hint" role="status">No cloud reference checked yet.</div>
+<div class="home-panel" style="padding:12px;margin-top:10px;border:1px solid #d2dbdf;border-radius:10px">
+<h4 style="margin:0 0 7px">This browser's baseline checkpoint — TEST</h4>
+<p class="tiny">The browser gets a private installation ID. Verify that its <strong>entire local database</strong> matches the cloud baseline before recording a checkpoint. Merely finding a candidate is not synchronization. No burial records or photos are changed.</p>
+<div id="deviceCheckpointInfo" class="hint" role="status">No device checkpoint checked.</div>
+<div class="buttons"><button type="button" class="secondary" id="deviceCheckMatch">Compare this browser with shared baseline</button><button type="button" class="secondary" id="deviceCheckpointList">Find device checkpoints</button></div>
+<label style="display:flex;gap:8px;align-items:flex-start;margin:10px 0"><input type="checkbox" style="flex:0 0 19px;width:19px;height:19px;min-height:19px" id="deviceAdoptVerify"><span>I understand this only records that this browser matches the baseline; automatic synchronization stays off.</span></label>
+<div class="buttons"><button type="button" id="deviceAdoptCheckpoint" disabled>Record verified baseline checkpoint</button></div>
+<div id="deviceCheckpointStatus" class="hint" role="status">Not checked.</div>
+</div>
 <details style="margin-top:10px"><summary>Publish a reviewed backup as a baseline candidate (advanced TEST)</summary>
 <p class="hint">Only after independently verifying a merged backup in an isolated TEST restore. No older references or backup files will be overwritten or deleted.</p>
 <label style="display:block">Verified merged backup in OneDrive<select id="checkpointSource" style="width:100%;margin-top:5px"><option value="">Load cloud backup choices</option></select></label>
@@ -351,7 +360,7 @@
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7 TEST · Existing-record comparison and accurate restore totals (TEST only) · Optional automatic OneDrive backup + direct restore + verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 TEST · Device checkpoint validation (no sync) · Existing-record comparison and accurate restore totals (TEST only) · Optional automatic OneDrive backup + direct restore + verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -2915,6 +2924,107 @@ el('checkpointPublish').onclick=async()=>{
   el('checkpointVerified').checked=false;
   await inspectCheckpoint();
  }catch(e){checkpointPublishStatus.textContent='Candidate not confirmed: '+e.message+' (no device data changed).'}finally{setBusy(false)}
+};
+
+
+// Per-installation baseline adoption, verified against the entire local backup.
+// No write to any burial records, photos, source backups, or sync cursors.
+const DEVICEKEY='fieldbook_test_sync_device_id_v1';
+const DEVICECHECKKEY='fieldbook_test_sync_verified_checkpoint_v1';
+const DEVICEFILE=/^fieldbook-sync-device-[\w-]+\.checkpoint\.json$/i;
+const deviceInfo=el('deviceCheckpointInfo'),deviceStatus=el('deviceCheckpointStatus');
+const deviceCheck=el('deviceCheckMatch'),deviceAdopt=el('deviceAdoptCheckpoint'),deviceVerify=el('deviceAdoptVerify');
+let pendingAdoption=null;
+function getDeviceId(){
+ let id=localStorage.getItem(DEVICEKEY);
+ if(!id||!/^device-[A-Za-z0-9_-]{12,}$/.test(id)){
+  id='device-'+b64url(randomBytes(18));localStorage.setItem(DEVICEKEY,id);
+ }
+ return id;
+}
+function syncContentView(doc){
+ // Ignore exported timestamp and non-database metadata; preserve all actual user data.
+ // Never ignore record, photo, or history differences.
+ return {seed:doc.seed,updates:doc.updates,extras:doc.extras,photos:doc.photos,
+  geoEdits:doc.geoEdits,changeLog:doc.changeLog,gedcomPeople:doc.gedcomPeople,homePersonId:doc.homePersonId};
+}
+async function syncContentHash(doc){return digestBytes(new TextEncoder().encode(canonicalValue(syncContentView(doc))))}
+async function newestVerifiedCandidate(){
+ const markers=await readCheckpointFiles();
+ if(!markers.length)throw Error('No shared baseline published. Publish and verify a baseline first.');
+ const markerResp=await graph('/me/drive/items/'+encodeURIComponent(markers[0].id)+'/content');
+ const marker=await markerResp.json();
+ if(marker.format!=='CemeteryFieldbookSyncReference'||marker.schema!==1||marker.status!=='candidate'||!marker.backup?.id||!marker.backup?.sha256)throw Error('Shared reference is malformed.');
+ const metaResp=await graph('/me/drive/items/'+encodeURIComponent(marker.backup.id)+'?$select=id,name,size,file');
+ const meta=await metaResp.json();
+ if(meta.name!==marker.backup.filename||meta.size!==marker.backup.bytes)throw Error('Referenced backup changed or cannot be found.');
+ const bytes=await fetchCloudBackupBytes(meta);
+ if(await digestBytes(bytes)!==marker.backup.sha256)throw Error('Shared baseline SHA-256 verification failed.');
+ const doc=JSON.parse(new TextDecoder().decode(bytes));
+ if(doc.format!=='CemeteryFieldbookBackup'||doc.version!==5||!Array.isArray(doc.seed)||!Array.isArray(doc.extras)||!Array.isArray(doc.photos)||!Array.isArray(doc.changeLog)||!Array.isArray(doc.gedcomPeople))throw Error('Shared baseline is not a complete v5 backup.');
+ return {marker,markerId:markers[0].id,contentHash:await syncContentHash(doc)};
+}
+function formatDeviceStatus(){
+ const previous=safeJSON(localStorage.getItem(DEVICECHECKKEY)||'null');
+ deviceInfo.textContent='This TEST installation: '+getDeviceId().slice(0,20)+'…'+(previous?' · Last verified baseline: '+previous.filename+' (local record only; needs revalidation)':' · No verified checkpoint on this browser.');
+}
+formatDeviceStatus();
+async function verifyLocalCandidate(){
+ pendingAdoption=null;deviceAdopt.disabled=true;
+ const candidate=await newestVerifiedCandidate();
+ const snapshot=await makePayload();
+ const localHash=await syncContentHash(snapshot);
+ const same=localHash===candidate.contentHash;
+ deviceStatus.textContent=same
+  ?'MATCH: '+(snapshot.seed.length+snapshot.extras.length).toLocaleString()+' burial records, '+snapshot.photos.length+' photos, '+snapshot.changeLog.length+' history events. All protected database sections match the cloud baseline. You may record this browser checkpoint.'
+  :'NOT ALIGNED: this browser differs from the verified shared baseline. No checkpoint can be recorded. Its '+(snapshot.seed.length+snapshot.extras.length).toLocaleString()+' burials / '+snapshot.photos.length+' photos / '+snapshot.changeLog.length+' history events may differ from the shared baseline. Do not reset or restore solely to pass this test.';
+ if(same){pendingAdoption={...candidate,localHash,deviceId:getDeviceId()};deviceAdopt.disabled=false;}
+ return same;
+}
+deviceCheck.onclick=async()=>{
+ if(busy)return;setBusy(true);deviceStatus.textContent='Checking OneDrive baseline and local data (read only)…';
+ try{await verifyLocalCandidate()}catch(e){pendingAdoption=null;deviceAdopt.disabled=true;deviceStatus.textContent='Cannot verify: '+e.message+'. No changes made.'}finally{setBusy(false)}
+};
+deviceVerify.onchange=()=>{if(!deviceVerify.checked){pendingAdoption=null;deviceAdopt.disabled=true;deviceStatus.textContent='Acknowledgment cleared. Compare again before recording.'}};
+deviceAdopt.onclick=async()=>{
+ if(busy||!pendingAdoption||!deviceVerify.checked){deviceStatus.textContent='Compare local data and check the acknowledgment first.';return;}
+ if(!confirm('Record a TEST baseline checkpoint for this browser? This does NOT synchronize any devices or records.'))return;
+ setBusy(true);
+ try{
+  const originallyChecked=pendingAdoption;
+  // Re-fetch cloud and local values immediately before writing.
+  const same=await verifyLocalCandidate();
+  if(!same||!pendingAdoption||pendingAdoption.markerId!==originallyChecked.markerId||pendingAdoption.localHash!==originallyChecked.localHash)throw Error('The baseline or local data changed. Recheck before publishing.');
+  const payload={format:'CemeteryFieldbookDeviceCheckpoint',schema:1,status:'baseline-aligned-not-synced',
+   deviceId:getDeviceId(),baselineMarkerId:pendingAdoption.markerId,baselineBackupId:pendingAdoption.marker.backup.id,
+   baselineSHA256:pendingAdoption.marker.backup.sha256,contentSHA256:pendingAdoption.localHash,
+   filename:pendingAdoption.marker.backup.filename,created:new Date().toISOString(),
+   warning:'Device content verified at this instant only. Not a sync cursor; no automatic sync authorized.'};
+  await ensureAppFolder();
+  const filename='fieldbook-sync-device-'+getDeviceId()+'-'+new Date().toISOString().replace(/[:.]/g,'-')+'.checkpoint.json';
+  const posted=await graph('/me/drive/special/approot:/'+encodeURIComponent(filename)+':/content',
+    {method:'PUT',headers:{'Content-Type':'application/json','If-None-Match':'*'},body:JSON.stringify(payload)});
+  const created=await posted.json();if(!created.id)throw Error('Microsoft did not return a checkpoint ID');
+  const downloaded=await graph('/me/drive/items/'+encodeURIComponent(created.id)+'/content');
+  const copy=await downloaded.json();if(canonicalValue(copy)!==canonicalValue(payload))throw Error('Cloud checkpoint read-back did not match');
+  localStorage.setItem(DEVICECHECKKEY,JSON.stringify({filename:payload.filename,deviceId:payload.deviceId,markerId:payload.baselineMarkerId,hash:payload.contentSHA256,created:payload.created}));
+  deviceStatus.textContent='Verified device checkpoint saved to OneDrive. This browser matches the shared baseline as of '+new Date().toLocaleString()+'. Automatic sync remains OFF.';
+  deviceAdopt.disabled=true;pendingAdoption=null;deviceVerify.checked=false;formatDeviceStatus();
+ }catch(e){deviceStatus.textContent='Checkpoint not confirmed: '+e.message+'. No burial records changed.'}
+ finally{setBusy(false)}
+};
+el('deviceCheckpointList').onclick=async()=>{
+ if(busy)return;setBusy(true);deviceStatus.textContent='Reading TEST device checkpoints from OneDrive…';
+ try{
+  const files=(await allCloudFiles()).filter(f=>f.file&&DEVICEFILE.test(f.name));
+  const latest=new Map();
+  for(const f of files.sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)))){
+   const res=await graph('/me/drive/items/'+encodeURIComponent(f.id)+'/content');const cp=await res.json();
+   if(cp.format!=='CemeteryFieldbookDeviceCheckpoint'||cp.schema!==1||cp.status!=='baseline-aligned-not-synced'||!cp.deviceId)continue;
+   if(!latest.has(cp.deviceId))latest.set(cp.deviceId,cp);
+  }
+  deviceStatus.textContent=latest.size+' TEST browser installation(s) published a verified baseline checkpoint: '+[...latest.values()].map(x=>x.deviceId.slice(0,18)+'… '+x.filename).join(' | ')+'. These are NOT active sync cursors.';
+ }catch(e){deviceStatus.textContent='Could not list checkpoints: '+e.message}finally{setBusy(false)}
 };
 
 el('cloudList').onclick=async()=>{if(busy)return;setBusy(true);try{note('Reading backup list from OneDrive…');await listCloud();note('Cloud backup list updated.')}catch(e){note('Could not list cloud backups: '+e.message,true)}finally{setBusy(false)}};
