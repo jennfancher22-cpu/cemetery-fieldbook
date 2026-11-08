@@ -2553,7 +2553,7 @@ function sameSync(x,y){return x===syncMissing?y===syncMissing:y!==syncMissing&&c
 function valOf(obj,field){return obj!==syncMissing&&Object.hasOwn(obj,field)?obj[field]:syncMissing}
 function previewValue(v){if(v===syncMissing)return '(not present)';return formatSyncDiffValue(v)}
 function labelForSyncRecord(id,...maps){for(const map of maps){const r=map.get(id);if(r&&r.name)return r.name;}return id}
-function sync3RecordMap(doc){const idx=indexById([...doc.seed,...doc.extras]);if(idx.duplicates.size)throw Error('Duplicate burial IDs in a backup');const map=new Map();for(const [id,r] of idx.result)map.set(id,effectiveRecord(r,doc));return map}
+function sync3RecordMap(doc){const idx=indexById([...doc.seed,...doc.extras]);if(idx.duplicates.size)throw Error('Duplicate burial IDs in a backup');const map=new Map();const seedIDs=new Set(doc.seed.map(r=>r.id));for(const [id,r] of idx.result)map.set(id,seedIDs.has(id)?effectiveRecord(r,doc):r);return map}
 function sync3PhotoMap(doc){const idx=indexById(doc.photos.filter(p=>p&&typeof p.id==='string'));if(idx.duplicates.size||idx.result.size!==doc.photos.length)throw Error('Duplicate or invalid photo IDs');return idx.result}
 function buildThreePlan(base,computer,phone){
  const baseRec=sync3RecordMap(base),computerRec=sync3RecordMap(computer),phoneRec=sync3RecordMap(phone);
@@ -2655,17 +2655,32 @@ function materializeThreeMerge(session){
  }
  const out=structuredClone(p.computer);
  // Preserve original imported seed and put additional field edits into `updates`.
- const seedIDs=new Set(out.seed.map(r=>r.id));const allIDs=new Set([...out.seed,...out.extras].map(r=>r.id));
+ const seedIDs=new Set(out.seed.map(r=>r.id));const seedById=new Map(out.seed.map(r=>[r.id,r]));const extraIndex=new Map(out.extras.map((r,i)=>[r.id,i]));
  for(const [id,row] of recordMap){
-  if(!allIDs.has(id)){out.extras.push(structuredClone(row));allIDs.add(id);}
-  else {const original=out.seed.find(r=>r.id===id)||out.extras.find(r=>r.id===id);
+  if(extraIndex.has(id)){
+   // Fieldbook renders extras directly (without consulting updates[id]).
+   // Store ALL chosen fields, including conflict decisions, in the extra itself.
+   out.extras[extraIndex.get(id)]=structuredClone(row);
+   delete out.updates[id];
+  }else if(!seedIDs.has(id)){
+   extraIndex.set(id,out.extras.length);out.extras.push(structuredClone(row));
+   delete out.updates[id];
+  }else{
+   const original=seedById.get(id);
    const patch={};for(const k of new Set([...Object.keys(original),...Object.keys(row)])){
     if(k==='id')continue;
     if(!Object.hasOwn(row,k)){if(Object.hasOwn(original,k))throw Error('Removing a stored field is not supported in this TEST merge: '+id+' '+k);continue;}
-    if(!Object.hasOwn(original,k)||!sameSync(original[k],row[k]))patch[k]=row[k];
+    if(!Object.hasOwn(original,k)||!sameSync(original[k],row[k]))patch[k]=structuredClone(row[k]);
    }
    if(Object.keys(patch).length)out.updates[id]=patch;else delete out.updates[id];
   }
+ }
+ // Validate against the exact read model used by the Fieldbook UI after restore.
+ const savedIds=new Set(out.seed.map(r=>r.id));
+ const restored=new Map([...out.seed.map(r=>[r.id,{...r,...(out.updates[r.id]||{})}]),...out.extras.map(r=>[r.id,r])]);
+ if(restored.size!==recordMap.size)throw Error('Merged backup contains missing or duplicate burial IDs');
+ for(const [id,chosen] of recordMap){
+  if(!restored.has(id)||canonicalValue(restored.get(id))!==canonicalValue(chosen))throw Error('Merged backup did not preserve the selected fields for '+id);
  }
  out.photos=[...p.mergePhotos.values()];
  out.changeLog=[...p.events.values()].sort((a,b)=>String(a.date||a.at||a.timestamp||'').localeCompare(String(b.date||b.at||b.timestamp||'')));
@@ -2681,7 +2696,7 @@ threeMergeDownload.onclick=()=>{
   const data=materializeThreeMerge(session);
   if(!confirm('Download a NEW three-way TEST backup containing '+(data.seed.length+data.extras.length).toLocaleString()+' burials and '+data.photos.length+' photo(s)? This DOES NOT modify any browser or OneDrive records. Restore only in an isolated Incognito TEST session.'))return;
   download(new Blob([JSON.stringify(data)],{type:'application/json'}),'fieldbook-TEST-three-way-merged-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json');
-  threeMergeStatus.textContent='Merged backup downloaded. Nothing was changed in Fieldbook or OneDrive. Test restoration only in an isolated Incognito TEST session.';
+  threeMergeStatus.textContent='Merged backup downloaded and saved-field values checked. Nothing was changed in Fieldbook or OneDrive. Test restoration only in an isolated Incognito TEST session.';
  }catch(e){threeMergeStatus.textContent='Could not produce merged backup: '+e.message}
 };
 
