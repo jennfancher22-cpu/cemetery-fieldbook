@@ -274,7 +274,7 @@
 <div id="cloudBackups" class="home-panel" hidden></div>
 <div class="home-panel" style="margin:14px 0;padding:12px;border:1px solid #c4d1dc;border-radius:12px">
 <h4 style="margin:0 0 6px">🔍 Compare two cloud backups (sync readiness — read only)</h4>
-<p class="tiny">Choose one backup from your computer and one from your phone. Fieldbook compares saved records and photos without importing, restoring, uploading, modifying, or deleting anything. It does <strong>not</strong> synchronize data. Choose versions carefully: a newer GEDCOM import can create thousands of expected differences.</p>
+<p class="tiny">Choose two backups from different devices or test sessions. Fieldbook compares all original and added records, plus changes to existing fields and photos. This is <strong>read-only</strong> and does not synchronize data. For a safe test of an existing-person edit, use two backups containing the same fictional test person, then change a note in a separate TEST browser session.</p>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;max-width:100%">
 <label style="min-width:0">Backup A<select id="syncCompareA" style="width:100%;max-width:100%"><option value="">Load cloud backup list first</option></select></label>
 <label style="min-width:0">Backup B<select id="syncCompareB" style="width:100%;max-width:100%"><option value="">Load cloud backup list first</option></select></label>
@@ -318,7 +318,7 @@
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7 TEST · Selective one-way backup staging (TEST only) · Optional automatic OneDrive backup + direct restore + verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 TEST · Existing-record comparison and accurate restore totals (TEST only) · Optional automatic OneDrive backup + direct restore + verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -821,7 +821,7 @@ $('myLocation').onclick=()=>{if(location.protocol==='file:'){message('GPS is res
 // V2 backup includes geolocations; restores still accept V1 backups (and retain V2 coordinate edits).
 $('backup').onclick=async()=>{try{await largeDataReady;const photos=await getPhotos();const payload={format:'CemeteryFieldbookBackup',version:5,exported:new Date().toISOString(),seed,updates,extras,photos,geoEdits,changeLog,gedcomPeople:allGedcomPeople,homePersonId};download(new Blob([JSON.stringify(payload)],{type:'application/json'}),'cemetery-fieldbook-backup-'+new Date().toISOString().slice(0,10)+'.json');localStorage.setItem(BACKUP_KEY,new Date().toLocaleString());$('lastbackup').textContent='Last backup exported: '+localStorage.getItem(BACKUP_KEY)}catch(e){alert('Backup failed: '+e.message)}};
 async function restoreBackupObject(data){await largeDataReady;if(data.format!=='CemeteryFieldbookBackup'||![1,2,3,4,5].includes(data.version)||!Array.isArray(data.extras)||!Array.isArray(data.photos)||!data.updates||typeof data.updates!=='object')throw Error('Unsupported backup format');if(data.version>=4&&(!Array.isArray(data.seed)||!data.seed.every(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.name==='string')))throw Error('Full backup contains an invalid burial list');
-if(!confirm('Restore this backup? Existing records, history, and photos on this device will be replaced.'))return false;
+if(!confirm('Restore this backup? '+((data.seed?.length||0)+(data.extras?.length||0)).toLocaleString()+' total burial records ('+(data.seed?.length||0).toLocaleString()+' original + '+(data.extras?.length||0).toLocaleString()+' added), '+(data.photos?.length||0).toLocaleString()+' photos. Existing records, history, and photos on this device will be replaced.'))return false;
 // Backups v1-v3 did not contain a burial list. Keep any separately loaded list.
 // Stage and write photos before mutating record edits.
 if(!db)db=await openDB();await new Promise((resolve,reject)=>{const tx=db.transaction('photos','readwrite'),s=tx.objectStore('photos');s.clear();for(const p of data.photos)s.put(p);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
@@ -833,7 +833,7 @@ if(data.version>=4){await saveLargeData(data.seed,data.version===5?data.gedcomPe
  if(homePersonId)localStorage.setItem(HOME_PERSON_KEY,homePersonId);else localStorage.removeItem(HOME_PERSON_KEY);
  refreshHomeDisplay();searchHomePeople();
 }
-refreshOptions();render();renderChangeLog();nearbySearch();$('privateSeedStatus').textContent=seed.length+' private burial records loaded on this device';alert(data.version>=4?'Complete backup restored, including '+seed.length+' original burial records.':'Older backup restored. If original burials are missing, load the private burial list separately.');return true;}
+refreshOptions();render();renderChangeLog();nearbySearch();$('privateSeedStatus').textContent=seed.length+' private burial records loaded on this device';alert(data.version>=4?'Complete backup restored: '+(seed.length+extras.length).toLocaleString()+' total burial records ('+seed.length.toLocaleString()+' original + '+extras.length.toLocaleString()+' added) and '+(data.photos?.length||0).toLocaleString()+' photos.':'Older backup restored. If original burials are missing, load the private burial list separately.');return true;}
 window.fieldbookRestoreFromObject=restoreBackupObject;
 $('restoreFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{await restoreBackupObject(JSON.parse(await f.text()))}catch(err){alert('Restore failed: '+err.message)}finally{e.target.value=''}};
 renderChangeLog();$('nearResults').append(textNode('p','hint','Choose a starting point and tap Find nearby cemeteries to see results.'));
@@ -2161,11 +2161,12 @@ async function recoverCloudBackup(item){
  if(!data.seed.every(x=>x&&typeof x.id==='string'&&typeof x.name==='string'))throw Error('Backup burial list is invalid. No data changed.');
  if(!data.gedcomPeople.every(x=>x&&typeof x.id==='string'&&typeof x.name==='string'))throw Error('Backup people directory is invalid. No data changed.');
  await largeDataReady;
- const current=seed.length;
- if(!confirm(`RESTORE FROM ONEDRIVE (TEST ONLY)\n\nCloud backup: ${item.name}\nBurials: ${data.seed.length.toLocaleString()}\nPhotos: ${data.photos.length.toLocaleString()}\nPeople directory: ${data.gedcomPeople.length.toLocaleString()}\n\nThis will REPLACE all ${current.toLocaleString()} local TEST burial records, your local photos, edits, and history. Your cloud backups are NOT changed.\n\nHave you kept a separate backup of any TEST work you want to preserve?`))return false;
+ const current=seed.length+extras.length;
+ const incomingTotal=data.seed.length+data.extras.length;
+ if(!confirm(`RESTORE FROM ONEDRIVE (TEST ONLY)\n\nCloud backup: ${item.name}\nBurials: ${incomingTotal.toLocaleString()} total (${data.seed.length.toLocaleString()} original + ${data.extras.length.toLocaleString()} added)\nPhotos: ${data.photos.length.toLocaleString()}\nPeople directory: ${data.gedcomPeople.length.toLocaleString()}\n\nThis will REPLACE all ${current.toLocaleString()} local TEST burial records, your local photos, edits, and history. Your cloud backups are NOT changed.\n\nHave you kept a separate backup of any TEST work you want to preserve?`))return false;
  // The shared restore function performs a final confirmation before modifying local data.
  const success=await window.fieldbookRestoreFromObject(data);
- if(success)note(`RESTORE COMPLETE: ${data.seed.length.toLocaleString()} burials and ${data.photos.length.toLocaleString()} photo records recovered from OneDrive. Refresh the page to verify persistence.`);
+ if(success)note(`RESTORE COMPLETE: ${incomingTotal.toLocaleString()} burials and ${data.photos.length.toLocaleString()} photo records recovered from OneDrive. Refresh the page to verify persistence.`);
  return success;
 }
 // Retention is opt-in, and never touches manually uploaded backups or protected filenames.
@@ -2474,7 +2475,12 @@ syncStageDownload.onclick=()=>{
   syncStageStatus.textContent=`Downloaded a staged backup: ${merged.seed.length+merged.extras.length} burials, ${merged.photos.length} photos, ${merged.changeLog.length} history entries. No stored data changed. Test restore in Incognito TEST only.`;
  }catch(error){syncStageStatus.textContent='No file generated: '+error.message;}
 };
-function showSyncResult(r,fa,fb){
+function formatSyncDiffValue(value){
+ if(value===undefined||value===null||value==='')return '(blank)';
+ const text=typeof value==='string'?value:canonicalValue(value);
+ return text.length>350?text.slice(0,350)+'… (truncated for display)':text;
+}
+function showSyncResult(r,fa,fb,docA,docB){
  syncResult.replaceChildren();
  const title=document.createElement('strong');title.textContent='Read-only comparison complete — no records modified';syncResult.append(title);
  const p=document.createElement('p');p.textContent='Backup A: '+fa.name+' | Backup B: '+fb.name;syncResult.append(p);
@@ -2483,6 +2489,33 @@ function showSyncResult(r,fa,fb){
  for(const [label,value] of rows){const l=document.createElement('span'),v=document.createElement('strong');l.textContent=label;v.textContent=String(value);table.append(l,v)}syncResult.append(table);
  if(r.duplicatePhotos){const warning=document.createElement('p');warning.textContent='Warning: duplicate photo IDs found ('+r.duplicatePhotos+'); photo comparison is incomplete.';syncResult.append(warning)}
  if(Object.keys(r.changedFields).length){const p2=document.createElement('p');p2.textContent='Fields differing most often: '+Object.entries(r.changedFields).sort((x,y)=>y[1]-x[1]).slice(0,10).map(([k,n])=>k+' ('+n+')').join(', ');syncResult.append(p2)}
+ if(r.changed){
+  // Show full per-field differences for same-ID individuals; never apply anything here.
+  const details=document.createElement('details');details.style.marginTop='12px';
+  const heading=document.createElement('summary');heading.textContent='Inspect existing-person changes ('+r.changed+' records — read only)';details.append(heading);
+  const rowsA=indexById([...docA.seed,...docA.extras]).result;
+  const rowsB=indexById([...docB.seed,...docB.extras]).result;
+  let shown=0;
+  for(const [id,ra] of rowsA){
+   const rb=rowsB.get(id);if(!rb)continue;
+   const ea=effectiveRecord(ra,docA),eb=effectiveRecord(rb,docB);
+   const diff=[...new Set([...Object.keys(ea),...Object.keys(eb)])].filter(k=>k!=='id'&&canonicalValue(ea[k])!==canonicalValue(eb[k]));
+   if(!diff.length)continue;
+   if(shown++>=60)break;
+   const group=document.createElement('details');group.style.cssText='border:1px solid #d5e2d8;border-radius:8px;margin:8px 0;padding:8px;overflow-wrap:anywhere';
+   const label=document.createElement('summary');label.textContent=(eb.name||ea.name||id)+' ('+id+') · '+diff.length+' field(s)';group.append(label);
+   for(const field of diff){
+    const line=document.createElement('div');line.style.cssText='padding:7px 0;border-bottom:1px solid #e7eeea;';
+    const key=document.createElement('strong');key.textContent=field;line.append(key);
+    const left=document.createElement('div'),right=document.createElement('div');
+    left.textContent='Backup A: '+formatSyncDiffValue(ea[field]);right.textContent='Backup B: '+formatSyncDiffValue(eb[field]);
+    line.append(left,right);group.append(line);
+   }
+   details.append(group);
+  }
+  if(shown>60){const msg=document.createElement('p');msg.textContent='Showing first 60 differing people. No updates were made.';details.append(msg)}
+  syncResult.append(details);
+ }
  if(r.examples.length){const details=document.createElement('details');details.style.marginTop='8px';const summ=document.createElement('summary');summ.textContent='View sample differences ('+r.examples.length+')';details.append(summ);for(const e of r.examples){const d=document.createElement('div');d.style.cssText='padding:5px 0;border-bottom:1px solid #ddd;overflow-wrap:anywhere';d.textContent=e.name+' — '+e.change;details.append(d)}syncResult.append(details)}
  const caution=document.createElement('p');caution.style.marginTop='12px';caution.textContent='Important: IDs may differ after GEDCOM re-exports, and a same ID does not prove the same person. This comparison is a planning tool, NOT a safe merge. It cannot yet reconcile offline edits or photos.';syncResult.append(caution);
 }
@@ -2493,7 +2526,7 @@ el('syncCompareRun').onclick=async()=>{
  if(!fa||!fb){syncSay('Choose both backups first.');return}
  if(fa.id===fb.id){syncSay('Choose two different backups.');return}
  setBusy(true);
- try{syncStageReset();syncSay('Downloading the two backups into memory for read-only comparison…');const a=await getSyncBackup(fa);const b=await getSyncBackup(fb);const comparison=compareSyncDocuments(a,b);showSyncResult(comparison,fa,fb);prepareSyncStage(a,b,comparison,fa,fb)}
+ try{syncStageReset();syncSay('Downloading the two backups into memory for read-only comparison…');const a=await getSyncBackup(fa);const b=await getSyncBackup(fb);const comparison=compareSyncDocuments(a,b);showSyncResult(comparison,fa,fb,a,b);prepareSyncStage(a,b,comparison,fa,fb)}
  catch(e){syncSay('Comparison could not finish: '+e.message+'. No data changed.')}finally{setBusy(false)}
 };
 
