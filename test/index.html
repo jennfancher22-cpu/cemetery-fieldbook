@@ -247,7 +247,7 @@
 </div></details>
 <details class="data-subfold" id="dataBackupsFold"><summary>3 · Backup and restore <span class="tool-subnote">Protect and transfer your data</span></summary><div class="data-subbody">
 <h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your v6.1 backup safe. This TEST version uses separate storage from your LIVE Fieldbook. Do not restore a backup unless recovery is needed; restoring replaces current data.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The new full backup includes the original burial list, photos, notes, and change history. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This app stores records privately on this device and is not synced. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div>
-<details class="data-subfold" id="cloudBackupLab" style="margin-top:18px"><summary>☁️ OneDrive cloud backup (experimental) <span class="tool-subnote">TEST only · direct recovery and verified backups</span></summary>
+<details class="data-subfold" id="cloudBackupLab" style="margin-top:18px"><summary>☁️ OneDrive cloud backup (experimental) <span class="tool-subnote">TEST only · optional automatic backup and direct recovery</span></summary>
 <div class="data-subbody">
 <p class="hint"><strong>Private beta experiment:</strong> Each user signs in to their own personal OneDrive. This browser may remember the authorization; clearing site data, sign-out, or Microsoft session expiry can require a new sign-in. A dedicated app folder is used for date-stamped backup copies. This is <strong>not</strong> two-way synchronization. Uploaded backups are readable JSON; do not upload sensitive records until you are comfortable with that.</p>
 <p class="hint"><strong>Connect your personal OneDrive:</strong> Cemetery Fieldbook's Microsoft application is preconfigured. Sign in with your own Microsoft account; no application ID or developer setup is needed. Cloud backups stay in the application folder of your own OneDrive.</p>
@@ -255,6 +255,11 @@
 <p class="tiny" id="cloudRedirectHelp"></p>
 <div class="buttons"><button id="cloudConnect" type="button">Connect personal OneDrive</button><button id="cloudDisconnect" type="button" class="secondary">Disconnect</button></div>
 <p id="cloudState" class="hint" role="status">Not connected. No data has been uploaded.</p><p class="tiny">Experimental remembered sign-in stores a Microsoft refresh token in this browser’s local storage. Only use on a trusted device. Disconnect removes it; clearing site data removes it too. Microsoft may require sign-in again periodically.</p>
+<div class="home-panel" style="margin:12px 0;padding:12px;border:1px solid #bbd6cc;border-radius:12px">
+<label style="display:flex;align-items:flex-start;gap:10px;line-height:1.5"><input type="checkbox" id="cloudAutoEnabled" style="flex:0 0 19px;width:19px;height:19px;min-height:19px;margin-top:3px"><span><strong>Automatically back up changes to OneDrive (TEST)</strong><br><span class="tiny">With your permission, Fieldbook will back up saved changes after a quiet period while this page is open and online. New backups are date-stamped and never replace previous backups. For this TEST version, uploads are limited to approximately once every 2 minutes.</span></span></label>
+<p id="cloudAutoStatus" class="hint" role="status" style="margin:10px 0 3px">Automatic cloud backup is off.</p>
+<p class="tiny" style="margin:0">Not two-way sync. Backups cannot run while Fieldbook is closed; unsaved or unsynchronized changes may be lost if site data is cleared. Cloud files are readable JSON; keep independent backups.</p>
+</div>
 <div class="buttons"><button type="button" id="cloudPreview" class="secondary">Check backup contents</button><button type="button" id="cloudUpload">Back up to OneDrive now</button><button type="button" id="cloudList" class="secondary">View cloud backups</button></div>
 <p id="cloudDetails" class="hint" role="status"></p>
 <div id="cloudBackups" class="home-panel" hidden></div>
@@ -287,7 +292,7 @@
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7 TEST · OneDrive direct restore + remembered sign-in and verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7 TEST · Optional automatic OneDrive backup + direct restore + verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -301,7 +306,7 @@ let largeDataHydrated=false; // Prevent stale localStorage counts before Indexed
 const LARGE_DB_NAME='cemeteryFieldbook_V7_TEST_LargeData_v7';
 function openLargeDB(){return new Promise((resolve,reject)=>{const q=indexedDB.open(LARGE_DB_NAME,1);q.onupgradeneeded=()=>{if(!q.result.objectStoreNames.contains('datasets'))q.result.createObjectStore('datasets')};q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error||Error('Cannot open Fieldbook large-data storage'))})}
 async function readLargeData(){const db=await openLargeDB();return new Promise((resolve,reject)=>{const tx=db.transaction('datasets','readonly');const a=tx.objectStore('datasets').get('burials'),b=tx.objectStore('datasets').get('people');tx.oncomplete=()=>{db.close();resolve({burials:a.result,people:b.result})};tx.onerror=()=>{db.close();reject(tx.error)};tx.onabort=()=>{db.close();reject(tx.error)}})}
-async function saveLargeData(burials,people){const db=await openLargeDB();return new Promise((resolve,reject)=>{const tx=db.transaction('datasets','readwrite'),st=tx.objectStore('datasets');st.put(burials,'burials');st.put(people,'people');tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{db.close();reject(tx.error||Error('Large-data save failed'))};tx.onabort=()=>{db.close();reject(tx.error||Error('Large-data save aborted'))}})}
+async function saveLargeData(burials,people){const db=await openLargeDB();return new Promise((resolve,reject)=>{const tx=db.transaction('datasets','readwrite'),st=tx.objectStore('datasets');st.put(burials,'burials');st.put(people,'people');tx.oncomplete=()=>{db.close();window.fieldbookCloudMarkDirty?.('burial directory');resolve()};tx.onerror=()=>{db.close();reject(tx.error||Error('Large-data save failed'))};tx.onabort=()=>{db.close();reject(tx.error||Error('Large-data save aborted'))}})}
 async function clearLargeData(){const db=await openLargeDB();return new Promise((resolve,reject)=>{const tx=db.transaction('datasets','readwrite');tx.objectStore('datasets').clear();tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{db.close();reject(tx.error)}})}
 
 let seed=[];
@@ -333,7 +338,7 @@ function requiresTree(x){
  if(x.type==='Photo attached'&&!x.treeChoiceExplicit)return true;
  return typeof x.needsTree==='boolean'?x.needsTree:defaultNeedsTree(x);
 }
-function saveLog(){try{localStorage.setItem(CHANGE_KEY,JSON.stringify(changeLog))}catch(err){alert('Could not save the change log. Export a full backup: '+err.message)}}
+function saveLog(){try{localStorage.setItem(CHANGE_KEY,JSON.stringify(changeLog));window.fieldbookCloudMarkDirty?.('history')}catch(err){alert('Could not save the change log. Export a full backup: '+err.message)}}
 function addChange(type,person,personId,detail,needsTree){
  const entry={id:'evt-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),at:new Date().toISOString(),type,person,personId,detail,enteredFTM:false,needsTree:typeof needsTree==='boolean'?needsTree:!ROUTINE_TYPES.has(type)};
  changeLog.unshift(entry);saveLog();renderChangeLog();
@@ -615,7 +620,7 @@ const all=()=>[...seed.map(r=>({...r,...(updates[r.id]||{})})),...extras].map(r=
  const suggestion=window.fieldbookDerivedRelationship?.(r);
  return suggestion?{...r,relation:r.relation||suggestion.relation,side:r.side||suggestion.side,line:r.line||suggestion.line}:r;
 });
-function persist(){try{localStorage.setItem(KEY,JSON.stringify({updates,extras}))}catch(e){alert('Unable to save edits. Export a backup now. '+e.message)}}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify({updates,extras}));window.fieldbookCloudMarkDirty?.('records')}catch(e){alert('Unable to save edits. Export a backup now. '+e.message)}}
 function unique(key){return [...new Set(all().map(x=>x[key]).filter(Boolean))].sort((a,b)=>a.localeCompare(b))}
 function options(id,arr,placeholder){let s=$(id),old=s.value;s.replaceChildren(new Option(placeholder,''));arr.forEach(x=>s.add(new Option(x,x)));s.value=arr.includes(old)?old:''}
 function refreshOptions(){
@@ -860,7 +865,7 @@ function searchHomePeople(){
  if(!term){out.hidden=true;return;}
  const matches=allGedcomPeople.filter(p=>p.name.toLowerCase().includes(term)||p.id.toLowerCase().includes(term)).slice(0,40);
  if(!matches.length)out.append(textNode('p','hint',allGedcomPeople.length?'No matching person. Try part of a name or GEDCOM ID.':'Choose your GEDCOM file first to load the people directory.'));
- for(const p of matches){const b=textNode('button','home-option');b.type='button';b.append(textNode('div','home-identity',p.name),textNode('div','home-secondary',p.id+(p.birth?' · b. '+p.birth:'')+(p.death?' · d. '+p.death:'')));b.onclick=()=>{homePersonId=p.id;localStorage.setItem(HOME_PERSON_KEY,homePersonId);$('homeSearch').value='';out.hidden=true;refreshHomeDisplay();if(pendingGedcom){$('gedcomStatus').textContent='Home Person selected: '+p.name+'. Review the preview, then click Import burial entries. No need to choose your GEDCOM again.';}};out.append(b)}
+ for(const p of matches){const b=textNode('button','home-option');b.type='button';b.append(textNode('div','home-identity',p.name),textNode('div','home-secondary',p.id+(p.birth?' · b. '+p.birth:'')+(p.death?' · d. '+p.death:'')));b.onclick=()=>{homePersonId=p.id;localStorage.setItem(HOME_PERSON_KEY,homePersonId);window.fieldbookCloudMarkDirty?.('home person');$('homeSearch').value='';out.hidden=true;refreshHomeDisplay();if(pendingGedcom){$('gedcomStatus').textContent='Home Person selected: '+p.name+'. Review the preview, then click Import burial entries. No need to choose your GEDCOM again.';}};out.append(b)}
  out.hidden=false;
 }
 $('refreshRelDirectory').onclick=()=>$('refreshRelFile').click();
@@ -876,7 +881,7 @@ $('refreshRelFile').onchange=async e=>{
  finally{e.target.value='';}
 };
 $('homeSearch').addEventListener('input',searchHomePeople);
-$('clearHome').onclick=()=>{if(!homePersonId)return;homePersonId='';localStorage.removeItem(HOME_PERSON_KEY);refreshHomeDisplay();searchHomePeople()};
+$('clearHome').onclick=()=>{if(!homePersonId)return;homePersonId='';localStorage.removeItem(HOME_PERSON_KEY);window.fieldbookCloudMarkDirty?.('home person');refreshHomeDisplay();searchHomePeople()};
 refreshHomeDisplay();
 const US_STATES = new Set(('Alabama|Alaska|Arizona|Arkansas|California|Colorado|Connecticut|Delaware|Florida|Georgia|Hawaii|Idaho|Illinois|Indiana|Iowa|Kansas|Kentucky|Louisiana|Maine|Maryland|Massachusetts|Michigan|Minnesota|Mississippi|Missouri|Montana|Nebraska|Nevada|New Hampshire|New Jersey|New Mexico|New York|North Carolina|North Dakota|Ohio|Oklahoma|Oregon|Pennsylvania|Rhode Island|South Carolina|South Dakota|Tennessee|Texas|Utah|Vermont|Virginia|Washington|West Virginia|Wisconsin|Wyoming|District of Columbia').split('|'));
 function gedYear(s) { const m = String(s||'').match(/(?:^|\D)(1[5-9]\d{2}|20\d{2})(?:\D|$)/); return m?m[1]:''; }
@@ -1880,7 +1885,7 @@ const largeDataReady=(async()=>{
 </script>
 
 <script>
-/* TEST Cloud Backup Phase 2. Cloud requests only occur for user-initiated actions.
+/* TEST Cloud Backup Phase 3. User-initiated cloud requests and explicitly opt-in automatic backups while app is open.
    OAuth: Microsoft personal accounts, auth code + PKCE, opt-in remembered authorization.
    Graph app-folder permission; no broad drive access. Requires app registration.
    Access token is not put in downloadable backup; the experimental refresh token is stored in localStorage. */
@@ -1896,6 +1901,13 @@ const TXKEY='fieldbook_cloud_test_oauth_transaction';
 const AUTHKEY='fieldbook_cloud_test_access_token';
 const REFRESHKEY='fieldbook_cloud_test_refresh_token_v2';
 const LASTKEY='fieldbook_cloud_test_last_verified_v2';
+const AUTOKEY='fieldbook_cloud_test_auto_enabled_v1';
+const DIRTYKEY='fieldbook_cloud_test_auto_dirty_v1';
+const AUTOQUIET_MS=30_000;
+const AUTOMIN_MS=2*60_000;
+let autoTimer=null, autoQueued=false, autoInFlight=false, autoStatusMessage='';
+const autoCheckbox=el('cloudAutoEnabled'),autoStatus=el('cloudAutoStatus');
+
 const REDIRECT=new URL('./',location.href).href;
 let token=null;
 let expiresAt=0;
@@ -1905,6 +1917,29 @@ clientEl.value='648dce44-a29d-4be8-83f4-603e9edafcb6';
 el('cloudRedirectHelp').textContent='Required SPA redirect URI: '+REDIRECT;
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 function note(msg,isError=false){state.textContent=msg;state.style.color=isError?'#9f2f2f':'';}
+function getDirty(){return safeJSON(localStorage.getItem(DIRTYKEY)||'null');}
+function lastVerified(){return safeJSON(localStorage.getItem(LASTKEY)||'null');}
+function changedSinceBackup(){const d=getDirty(),last=lastVerified();return !last || !!(d && d.at > (last.snapshotMutation ?? new Date(last.date).getTime()));}
+function updateAutoStatus(message){
+ if(!autoStatus)return;
+ const last=lastVerified(),active=autoCheckbox.checked;
+ const stamp=last?.date?` Last verified cloud backup: ${new Date(last.date).toLocaleString()}.`:'';
+ autoStatus.textContent=(message||(active?(changedSinceBackup()?'Changes are awaiting a verified cloud backup.':'Your latest tracked changes have a verified cloud backup.'):'Automatic cloud backup is off.'))+stamp;
+}
+function queueAuto(delay=AUTOQUIET_MS){
+ if(autoTimer)clearTimeout(autoTimer);
+ if(!autoCheckbox.checked)return;
+ if(!navigator.onLine){updateAutoStatus('Offline: changes waiting to back up when Fieldbook is open and online.');return;}
+ const last=lastVerified();const earliest=last?.date?new Date(last.date).getTime()+AUTOMIN_MS:0;
+ const wait=Math.max(delay,earliest-Date.now(),1000);
+ updateAutoStatus(wait>delay+1000?'Changes pending. Waiting for the backup interval.':'Changes pending. Backup will start shortly while Fieldbook is open.');
+ autoTimer=setTimeout(()=>{autoTimer=null;runAutomaticBackup();},wait);
+}
+window.fieldbookCloudMarkDirty=(reason)=>{
+ try{localStorage.setItem(DIRTYKEY,JSON.stringify({at:Math.max(Date.now(),(getDirty()?.at||0)+1),reason:String(reason||'change')}));}
+ catch(e){updateAutoStatus('Unable to track unsynced changes; export a manual backup.');return;}
+ queueAuto();
+};
 function b64url(bytes){return btoa(String.fromCharCode(...bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 function randomBytes(n){return crypto.getRandomValues(new Uint8Array(n));}
 async function challenge(verifier){let hash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier));return b64url(new Uint8Array(hash));}
@@ -1971,7 +2006,7 @@ else if(localStorage.getItem(REFRESHKEY)){
 const last=safeJSON(localStorage.getItem(LASTKEY)||'null');
 if(last&&last.name){const p=document.createElement('p');p.className='tiny';p.textContent='Last verified cloud backup on this browser: '+new Date(last.date).toLocaleString()+' · '+last.name;el('cloudDetails').before(p);}
 
-el('cloudDisconnect').onclick=()=>{token=null;expiresAt=0;sessionStorage.removeItem(AUTHKEY);localStorage.removeItem(REFRESHKEY);note('Disconnected and forgotten on this browser. Cloud backups were not deleted.');results.hidden=true;};
+el('cloudDisconnect').onclick=()=>{token=null;expiresAt=0;sessionStorage.removeItem(AUTHKEY);localStorage.removeItem(REFRESHKEY);note('Disconnected and forgotten on this browser. Cloud backups were not deleted.');if(autoCheckbox.checked){autoCheckbox.checked=false;localStorage.removeItem(AUTOKEY);if(autoTimer)clearTimeout(autoTimer);autoTimer=null;updateAutoStatus('Automatic backup turned off because OneDrive was disconnected.');}results.hidden=true;};
 async function graph(path,options={}){
  const authorization=await freshToken();
  const res=await fetch(GRAPH+path,{...options,headers:{Authorization:'Bearer '+authorization,...(options.headers||{})}});
@@ -2020,35 +2055,75 @@ async function verifyUploadedFile(file,expectedSize,expectedHash){
  return meta;
 }
 
-el('cloudUpload').onclick=async()=>{
- if(busy)return;setBusy(true);
+async function uploadVerifiedBackup({automatic=false}={}){
+ if(busy){if(automatic)queueAuto(60_000);return false;}
+ busy=true;autoInFlight=automatic;setBusy(true);
  let file=null,uploaded=false;
  try{
- await freshToken();
- note('Preparing complete backup, including photographs…');let {json,bytes,payload}=await preview();
- if(bytes>240*1024*1024)throw Error('Backup is larger than this first-version upload limit. Download the regular full backup instead.');
- if(!confirm(`Upload a NEW, date-stamped backup of ${fmt(payload.seed.length)} burial records and ${fmt(payload.photos.length)} photo records (${(bytes/1024/1024).toFixed(2)} MB) to your OneDrive app folder?\n\nThis backup is not encrypted by Fieldbook. Existing cloud backups will not be overwritten.`)){note('Cloud backup cancelled; nothing uploaded.');return;}
- file=uniqueName();note('Preparing private OneDrive app folder…');await ensureAppFolder();
- const sourceHash=await sha256(new TextEncoder().encode(json));
- note('Uploading a new backup to OneDrive…');
- try{
-  const response=await graph('/me/drive/special/approot:/'+encodeURIComponent(file)+':/content',{method:'PUT',headers:{'Content-Type':'application/json','If-None-Match':'*'},body:json});
-  const metadata=await response.json();uploaded=true;
-  if(metadata.size!==bytes)note('Upload response received; independently verifying saved contents…');
- }catch(uploadError){
-  // A successful upload can be followed by an interrupted response. Check the
-  // exact filename before reporting failure or creating another backup.
-  note('Upload response uncertain. Checking for the saved file…');
-  try{await verifyUploadedFile(file,bytes,sourceHash);uploaded=true;}
-  catch(verificationError){throw Error('Upload could not be confirmed. '+uploadError.message+' Verification: '+verificationError.message+' Do not retry until you check the cloud file list.');}
+  if(!navigator.onLine)throw Error('Offline. Changes will remain pending until connectivity returns.');
+  await freshToken();
+  note(automatic?'Automatic backup: preparing changes and photographs…':'Preparing complete backup, including photographs…');
+  let {json,bytes,payload}=await preview();
+  if(!payload.seed.length&&!payload.extras.length)throw Error('Empty Fieldbook: automatic backup blocked. Keep existing cloud backups safe.');
+  if(bytes>240*1024*1024)throw Error('Backup is larger than this version upload limit. Download the regular full backup instead.');
+  if(!automatic&&!confirm(`Upload a NEW, date-stamped backup of ${fmt(payload.seed.length)} burial records and ${fmt(payload.photos.length)} photo records (${(bytes/1024/1024).toFixed(2)} MB) to your OneDrive app folder?\n\nThis backup is not encrypted by Fieldbook. Existing cloud backups will not be overwritten.`)){note('Cloud backup cancelled; nothing uploaded.');return false;}
+  // Remember the last mutation at the start. Further edits during upload stay pending.
+  const backedUpMutation=getDirty()?.at||0;
+  file=uniqueName();note('Preparing private OneDrive app folder…');await ensureAppFolder();
+  const sourceHash=await sha256(new TextEncoder().encode(json));
+  note(automatic?'Automatic cloud backup uploading…':'Uploading a new backup to OneDrive…');
+  try{
+   const response=await graph('/me/drive/special/approot:/'+encodeURIComponent(file)+':/content',{method:'PUT',headers:{'Content-Type':'application/json','If-None-Match':'*'},body:json});
+   const metadata=await response.json();uploaded=true;
+   if(metadata.size!==bytes)note('Upload response received; independently verifying saved contents…');
+  }catch(uploadError){
+   note('Upload response uncertain. Checking for the saved file…');
+   try{await verifyUploadedFile(file,bytes,sourceHash);uploaded=true;}
+   catch(verificationError){throw Error('Upload could not be confirmed. '+uploadError.message+' Verification: '+verificationError.message+' Check the cloud file list before retrying.');}
+  }
+  note('Downloading verification copy from OneDrive…');
+  await verifyUploadedFile(file,bytes,sourceHash);
+  // Last verification is anchored to the data snapshot time, not the end of the upload.
+  const date=new Date().toISOString();
+  localStorage.setItem(LASTKEY,JSON.stringify({name:file,date,bytes,snapshotMutation:backedUpMutation}));
+  note(`Backup VERIFIED (file and contents): ${file} (${(bytes/1024/1024).toFixed(2)} MB).`);
+  updateAutoStatus(automatic?'Automatic backup verified.':null);
+  try{await listCloud()}catch(listError){note(`Backup VERIFIED: ${file}. Backup list could not refresh: ${listError.message}.`,false)}
+  return true;
+ }catch(e){
+  note((uploaded?'OneDrive received the backup, but verification was not completed: ':'Cloud backup not confirmed: ')+e.message,true);
+  if(automatic)updateAutoStatus('Automatic backup not verified: '+e.message+' Changes are still pending.');
+  return false;
+ }finally{
+  autoInFlight=false;busy=false;setBusy(false);
+  if(autoCheckbox.checked&&changedSinceBackup())queueAuto(automatic?5*60_000:AUTOQUIET_MS);
  }
- note('Uploading finished. Downloading verification copy from OneDrive…');
- await verifyUploadedFile(file,bytes,sourceHash);
- localStorage.setItem(LASTKEY,JSON.stringify({name:file,date:new Date().toISOString(),bytes}));
- note(`Backup VERIFIED (file and contents): ${file} (${(bytes/1024/1024).toFixed(2)} MB). Restore is still untested.`);
- try{await listCloud()}catch(listError){note(`Backup VERIFIED: ${file}. Backup list could not refresh: ${listError.message}. The upload was successful.`,false)}
- }catch(e){note((uploaded?'OneDrive received the backup, but verification was not completed: ':'Cloud backup not confirmed: ')+e.message,true)}finally{setBusy(false)}
-};
+}
+el('cloudUpload').onclick=()=>uploadVerifiedBackup({automatic:false});
+async function runAutomaticBackup(){
+ if(!autoCheckbox.checked||!changedSinceBackup())return;
+ if(busy){queueAuto(60_000);return;}
+ if(!navigator.onLine){updateAutoStatus('Offline: changes pending.');return;}
+ if(document.visibilityState==='hidden'){updateAutoStatus('Fieldbook is in the background; backup will resume when reopened.');return;}
+ await uploadVerifiedBackup({automatic:true});
+}
+autoCheckbox.checked=localStorage.getItem(AUTOKEY)==='yes';
+autoCheckbox.addEventListener('change',()=>{
+ if(autoCheckbox.checked){
+  if(!confirm('Enable automatic OneDrive cloud backups on this TEST browser?\n\nFieldbook will upload complete, unencrypted backups (including GEDCOM and photos) to your own OneDrive after saved changes while the app is open and online. Multiple date-stamped versions may consume OneDrive space. This is NOT synchronization.')){
+   autoCheckbox.checked=false;return;
+  }
+  localStorage.setItem(AUTOKEY,'yes');
+  window.fieldbookCloudMarkDirty('automatic backup enabled');
+ }else{
+  localStorage.removeItem(AUTOKEY);
+  if(autoTimer)clearTimeout(autoTimer);autoTimer=null;
+  updateAutoStatus('Automatic cloud backup turned off. Existing cloud backups were not deleted.');
+ }
+});
+window.addEventListener('online',()=>{if(autoCheckbox.checked&&changedSinceBackup())queueAuto(3000)});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&autoCheckbox.checked&&changedSinceBackup())queueAuto(4000)});
+if(autoCheckbox.checked){updateAutoStatus();if(changedSinceBackup())queueAuto(5000);}else updateAutoStatus();
 
 async function recoverCloudBackup(item){
  const r=await graph('/me/drive/items/'+encodeURIComponent(item.id)+'/content');
