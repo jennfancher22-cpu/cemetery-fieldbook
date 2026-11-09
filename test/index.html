@@ -303,10 +303,11 @@
 </div>
 <div class="home-panel" style="margin:12px 0 0;padding:12px;border:1px solid #b1cdb8;border-radius:10px">
 <h4 style="margin:0 0 7px">Device change packages — TEST (preview only)</h4>
-<p class="tiny">Verify this browser's historical baseline checkpoint, then inspect a small package of additions and edits since that baseline. Publish only with your approval. Other browsers can discover and preview the package; no package is automatically applied, and automatic sync remains OFF.</p>
+<p class="tiny">Verify this browser's historical baseline checkpoint, then inspect a small package of additions and edits since that baseline. Publish only with your approval. Other browsers can discover packages and preview how each change compares with their local data. Nothing is automatically applied, and automatic sync remains OFF.</p>
 <div class="buttons"><button type="button" class="secondary" id="changePackagePreview">Preview this device's package</button><button type="button" class="secondary" id="changePackageFind">Find device packages in OneDrive</button></div>
 <div id="changePackageStatus" class="hint" role="status">No change package checked.</div>
 <div id="changePackageDetails" style="overflow-wrap:anywhere"></div>
+<div id="crossDevicePreview" style="overflow-wrap:anywhere"></div>
 <label style="display:flex;align-items:flex-start;gap:8px;margin:10px 0"><input type="checkbox" id="changePackageConsent" style="flex:none;width:19px;height:19px;min-height:19px"><span>I reviewed this exact preview and want to publish this TEST change package to my OneDrive app folder. It does not merge or apply changes.</span></label>
 <div class="buttons"><button type="button" id="changePackagePublish" disabled>Publish reviewed TEST package</button></div>
 </div>
@@ -3192,20 +3193,84 @@ packagePublish.onclick=async()=>{
  }catch(e){packageStatus.textContent='Package publication not confirmed: '+e.message+'. No local records changed.'}finally{setBusy(false)}
 };
 el('changePackageFind').onclick=async()=>{
- if(busy)return;setBusy(true);packageDetails.replaceChildren();packageStatus.textContent='Finding read-only device packages in OneDrive…';
- try{const {marker}=await readVerifiedBaselineForDiff();const files=(await allCloudFiles()).filter(f=>f.file&&PACKAGE_FILE.test(f.name));
+ if(busy)return;setBusy(true);packageDetails.replaceChildren();crossDevicePreview.replaceChildren();packageStatus.textContent='Verifying shared baseline, reading local data and examining cloud packages…';
+ try{const {doc,marker}=await readVerifiedBaselineForDiff();const local=await makePayload();
+  const files=(await allCloudFiles()).filter(f=>f.file&&PACKAGE_FILE.test(f.name));
   files.sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
-  let shown=0,invalid=0;
+  let shown=0,invalid=0,conflicts=0,unverified=0;
   for(const f of files.slice(0,15)){
    try{const response=await graph('/me/drive/items/'+encodeURIComponent(f.id)+'/content');const p=await response.json();
-    if(p.format!=='CemeteryFieldbookDeviceChangePackage'||p.schema!==1||p.mode!=='preview-only'||p.baselineMarkerId!==marker.markerId||p.baselineSHA256!==marker.backup.sha256||!p.counts||!Array.isArray(p.fieldEdits)||!Array.isArray(p.photos)||!Array.isArray(p.history)||!Array.isArray(p.additions))throw Error('Not a valid package for current baseline');
-    packageDetails.append(summarizePackage(p,(p.deviceId||'Unknown device')+' · '+f.name));shown++;
+    checkedDevicePackage(p,doc,marker);
+    packageDetails.append(summarizePackage(p,(p.deviceId||'Unknown device')+' · '+f.name));
+    const result=showCrossDevicePreview(p,doc,local,marker,f.name);
+    conflicts+=result.totals.conflict+result.totals.missing;unverified+=Number(result.unverified);shown++;
    }catch(e){invalid++}
   }
-  packageStatus.textContent=shown+' compatible TEST package(s) discovered and previewed; '+invalid+' unrecognized/incompatible among first '+Math.min(15,files.length)+' checked. No files applied or checkpoint advanced.';
- }catch(e){packageStatus.textContent='Unable to discover packages: '+e.message+' No data changed.'}finally{setBusy(false)}
-};
-
+  packageStatus.textContent=shown+' compatible TEST package(s) inspected; '+conflicts+' conflicts/missing-record cases; '+unverified+' previews without local checkpoint; '+invalid+' incompatible/invalid packages among first '+Math.min(15,files.length)+'. READ ONLY — nothing applied or advanced.';
+ }catch(e){packageStatus.textContent='Unable to compare device packages: '+e.message+'. No data changed.'}finally{setBusy(false)}
+};// Cross-device package preview: validation + three-way classification, NO writes.
+const crossDevicePreview=el('crossDevicePreview');
+function checkedDevicePackage(pkg,base,marker){
+ if(pkg?.format!=='CemeteryFieldbookDeviceChangePackage'||pkg.schema!==1||pkg.mode!=='preview-only'||
+  pkg.baselineMarkerId!==marker.markerId||pkg.baselineSHA256!==marker.backup.sha256||
+  pkg.baselineContentSHA256!==marker.hash||!/^device-[A-Za-z0-9_-]{12,}$/.test(pkg.deviceId||''))throw Error('Package does not match this verified baseline');
+ for(const key of ['additions','fieldEdits','photos','history'])if(!Array.isArray(pkg[key]))throw Error('Incomplete '+key+' data');
+ if(!pkg.counts||pkg.counts.newBurials!==pkg.additions.length||pkg.counts.editedFields!==pkg.fieldEdits.length||pkg.counts.newPhotos!==pkg.photos.length||pkg.counts.newHistory!==pkg.history.length)throw Error('Package counts do not match payload');
+ const records=sync3RecordMap(base),bp=strictIdMap(base.photos,'baseline photos'),bh=strictIdMap(base.changeLog,'baseline history');
+ const seen=new Set();
+ for(const r of pkg.additions){if(!r||typeof r.id!=='string'||!r.id||seen.has('r:'+r.id)||records.has(r.id))throw Error('Duplicate or baseline burial in package');seen.add('r:'+r.id)}
+ for(const e of pkg.fieldEdits){
+  if(!e||typeof e.id!=='string'||typeof e.field!=='string'||!e.field||e.field==='id'||!records.has(e.id)||seen.has('f:'+e.id+':'+e.field))throw Error('Malformed or duplicate field edit');
+  seen.add('f:'+e.id+':'+e.field);const row=records.get(e.id);const present=Object.hasOwn(row,e.field);
+  if(present!==e.beforePresent||canonicalValue(present?row[e.field]:null)!==canonicalValue(e.before)||canonicalValue(e.before)===canonicalValue(e.after)&&e.beforePresent===e.afterPresent)throw Error('Field edit is not consistent with shared baseline');
+ }
+ for(const [key,items,map] of [['photo',pkg.photos,bp],['history',pkg.history,bh]]){
+  for(const x of items){if(!x||typeof x.id!=='string'||!x.id||seen.has(key+':'+x.id)||map.has(x.id))throw Error('Invalid or duplicate '+key+' addition');seen.add(key+':'+x.id)}
+ }
+ return true;
+}
+function compareRemotePackage(pkg,base,local,marker){
+ checkedDevicePackage(pkg,base,marker);
+ const baserecs=sync3RecordMap(base),locrecs=sync3RecordMap(local);
+ const localPhotos=strictIdMap(local.photos,'local photos'),localHist=strictIdMap(local.changeLog,'local history');
+ const checkpoint=safeJSON(localStorage.getItem(DEVICECHECKKEY)||'null');
+ const established=!!(checkpoint&&checkpoint.deviceId===getDeviceId()&&checkpoint.markerId===marker.markerId&&checkpoint.hash===marker.hash);
+ const totals={safe:0,already:0,conflict:0,missing:0};const lines=[];
+ function add(type,description){totals[type]++;if(lines.length<40)lines.push({type,description})}
+ for(const row of pkg.additions){const localRow=locrecs.get(row.id);
+  add(!localRow?'safe':canonicalValue(localRow)===canonicalValue(row)?'already':'conflict',
+   (row.name||row.id)+' — new burial'+(localRow?' (ID already present)':''));}
+ for(const e of pkg.fieldEdits){const localRow=locrecs.get(e.id);
+  if(!localRow){add('missing',(e.name||e.id)+' — '+e.field+' (burial absent locally)');continue}
+  const localPresent=Object.hasOwn(localRow,e.field),localVal=localPresent?localRow[e.field]:null;
+  const currentMatchesAfter=localPresent===e.afterPresent&&canonicalValue(localVal)===canonicalValue(e.after);
+  const currentMatchesBefore=localPresent===e.beforePresent&&canonicalValue(localVal)===canonicalValue(e.before);
+  const label=(e.name||e.id)+' — '+e.field+' | baseline: '+formatSyncDiffValue(e.before)+' | other device: '+formatSyncDiffValue(e.after)+' | here: '+formatSyncDiffValue(localVal);
+  add(currentMatchesAfter?'already':currentMatchesBefore?'safe':'conflict',label);
+ }
+ for(const [label,items,lookup] of [['photo',pkg.photos,localPhotos],['history event',pkg.history,localHist]]){
+  for(const value of items){const current=lookup.get(value.id);add(!current?'safe':canonicalValue(current)===canonicalValue(value)?'already':'conflict',label+' '+value.id)}
+ }
+ // A local checkpoint establishes historical lineage, not automatically safe application.
+ const mismatch=[];for(const k of ['gedcomPeople','homePersonId','geoEdits'])if(canonicalValue(base[k])!==canonicalValue(local[k]))mismatch.push(k);
+ return {totals,lines,established,mismatch,unverified:!established};
+}
+function showCrossDevicePreview(pkg,base,local,marker,filename){
+ const report=compareRemotePackage(pkg,base,local,marker);
+ const panel=document.createElement('div');panel.style.cssText='border:2px solid #b1cdb8;border-radius:10px;padding:11px;margin:12px 0';
+ const title=document.createElement('h4');title.textContent='Read-only cross-device merge preview';title.style.margin='0 0 8px';panel.append(title);
+ const meta=document.createElement('p');meta.className='tiny';meta.textContent='Cloud package: '+filename+' · Source: '+pkg.deviceId+' · This browser: '+getDeviceId();panel.append(meta);
+ for(const [label,val] of [['Changes eligible if lineage and data are verified',report.totals.safe],['Changes already present',report.totals.already],['Conflicting changes / ID collisions',report.totals.conflict],['Edits whose burial is missing locally',report.totals.missing]])appendDiffRow(panel,label,val);
+ const caution=document.createElement('p');caution.className='tiny';
+ caution.textContent=(report.unverified?'UNVERIFIED LOCAL LINEAGE: this browser has no checkpoint for the published baseline. These classifications are descriptive only; do not treat apparent safe edits as approved to merge. ':'A historical checkpoint exists for this browser; this is still a preview only, not permission to merge. ')+
+  (report.mismatch.length?'Protected local data also differs: '+report.mismatch.join(', ')+'. ':'')+
+  'No records, photographs, history, backups, or sync checkpoints were changed.';
+ panel.append(caution);
+ if(report.lines.length){const d=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Inspect classified changes ('+report.lines.length+(report.totals.safe+report.totals.already+report.totals.conflict+report.totals.missing>report.lines.length?'+':'')+')';d.append(summary);
+  for(const item of report.lines){const p=document.createElement('p');p.className='tiny';p.textContent=item.type.toUpperCase()+' — '+item.description;d.append(p)}panel.append(d)}
+ crossDevicePreview.append(panel);
+ return report;
+}
 el('deviceCheckpointList').onclick=async()=>{
  if(busy)return;setBusy(true);deviceStatus.textContent='Reading TEST device checkpoints from OneDrive…';
  try{
