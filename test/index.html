@@ -302,8 +302,8 @@
 <div id="baselineChangesDetail" style="overflow-wrap:anywhere"></div>
 </div>
 <div class="home-panel" style="margin:12px 0 0;padding:12px;border:1px solid #b1cdb8;border-radius:10px">
-<h4 style="margin:0 0 7px">Device change packages — TEST (preview only)</h4>
-<p class="tiny">Verify this browser's historical baseline checkpoint, then inspect a small package of additions and edits since that baseline. Publish only with your approval. Other browsers can discover packages and preview how each change compares with their local data. Nothing is automatically applied, and automatic sync remains OFF.</p>
+<h4 style="margin:0 0 7px">Device change packages — TEST (safe review and isolated export)</h4>
+<p class="tiny">Verify this browser's historical baseline checkpoint, then inspect a small package of additions and edits since that baseline. Publish only with your approval. Other browsers can discover packages and preview how each change compares with their local data. A verified receiving browser may download an isolated proposed merged backup; no local records are directly modified, and automatic sync remains OFF.</p>
 <div class="buttons"><button type="button" class="secondary" id="changePackagePreview">Preview this device's package</button><button type="button" class="secondary" id="changePackageFind">Find device packages in OneDrive</button></div>
 <div id="changePackageStatus" class="hint" role="status">No change package checked.</div>
 <div id="changePackageDetails" style="overflow-wrap:anywhere"></div>
@@ -3209,6 +3209,91 @@ el('changePackageFind').onclick=async()=>{
   packageStatus.textContent=shown+' compatible TEST package(s) inspected; '+conflicts+' conflicts/missing-record cases; '+unverified+' previews without local checkpoint; '+invalid+' incompatible/invalid packages among first '+Math.min(15,files.length)+'. READ ONLY — nothing applied or advanced.';
  }catch(e){packageStatus.textContent='Unable to compare device packages: '+e.message+'. No data changed.'}finally{setBusy(false)}
 };// Cross-device package preview: validation + three-way classification, NO writes.
+// Isolated package merge export. No local or OneDrive writes. Protect recovery and baseline lineage.
+function isolatedPackageMerge(base,local,pkg,marker){
+ const report=compareRemotePackage(pkg,base,local,marker);
+ if(!report.established)throw Error('This receiving browser has no historical verified checkpoint for the shared baseline.');
+ if(report.mismatch.length)throw Error('Protected data differs: '+report.mismatch.join(', '));
+ if(report.totals.conflict||report.totals.missing)throw Error('Conflicts or missing records block an isolated merge export.');
+ const baseRecords=sync3RecordMap(base), localRecords=sync3RecordMap(local);
+ const baselinePhotos=strictIdMap(base.photos,'baseline photos'), localPhotos=strictIdMap(local.photos,'current photos');
+ const baselineHistory=strictIdMap(base.changeLog,'baseline history'), localHistory=strictIdMap(local.changeLog,'current history');
+ // A historical checkpoint alone does not prove records were preserved after adoption.
+ for(const [id,rec] of baseRecords)if(!localRecords.has(id))throw Error('Receiving browser lacks baseline burial '+id+'.');
+ for(const [id,value] of baselinePhotos)if(!localPhotos.has(id)||canonicalValue(localPhotos.get(id))!==canonicalValue(value))throw Error('Receiving browser modified or removed baseline photo '+id+'.');
+ for(const [id,value] of baselineHistory)if(!localHistory.has(id)||canonicalValue(localHistory.get(id))!==canonicalValue(value))throw Error('Receiving browser modified or removed baseline history '+id+'.');
+ const merged=new Map([...localRecords].map(([id,rec])=>[id,structuredClone(rec)]));
+ for(const r of pkg.additions){const existing=merged.get(r.id);if(!existing)merged.set(r.id,structuredClone(r));else if(canonicalValue(existing)!==canonicalValue(r))throw Error('Burial ID conflict '+r.id);}
+ for(const e of pkg.fieldEdits){const row=merged.get(e.id);if(!row)throw Error('Missing burial '+e.id);
+  const exists=Object.hasOwn(row,e.field),value=exists?row[e.field]:null;
+  const matchesBefore=exists===e.beforePresent&&canonicalValue(value)===canonicalValue(e.before);
+  const matchesAfter=exists===e.afterPresent&&canonicalValue(value)===canonicalValue(e.after);
+  if(!matchesBefore&&!matchesAfter)throw Error('Conflict on '+e.id+' '+e.field);
+  if(matchesBefore){if(!e.afterPresent)throw Error('Field removals require a separate review, not supported by this TEST export: '+e.field);
+   row[e.field]=structuredClone(e.after);}
+ }
+ const out=structuredClone(local),extraIndex=new Map(out.extras.map((r,i)=>[r.id,i]));
+ const seedIDs=new Set(out.seed.map(r=>r.id)),seedRows=new Map(out.seed.map(r=>[r.id,r]));
+ for(const [id,rec] of merged){
+  if(extraIndex.has(id)){out.extras[extraIndex.get(id)]=structuredClone(rec);delete out.updates[id];}
+  else if(!seedIDs.has(id)){out.extras.push(structuredClone(rec));delete out.updates[id];}
+  else{
+   const original=seedRows.get(id),patch={};
+   for(const key of new Set([...Object.keys(original),...Object.keys(rec)])){
+    if(key==='id')continue;
+    if(!Object.hasOwn(rec,key))throw Error('Cannot represent removal of seed field '+key+' for '+id);
+    if(!Object.hasOwn(original,key)||canonicalValue(original[key])!==canonicalValue(rec[key]))patch[key]=structuredClone(rec[key]);
+   }
+   if(Object.keys(patch).length)out.updates[id]=patch;else delete out.updates[id];
+  }
+ }
+ const pMap=strictIdMap(out.photos,'outgoing photos'),hMap=strictIdMap(out.changeLog,'outgoing history');
+ for(const photo of pkg.photos){const existing=pMap.get(photo.id);if(!existing){out.photos.push(structuredClone(photo));pMap.set(photo.id,photo);}else if(canonicalValue(existing)!==canonicalValue(photo))throw Error('Photo collision '+photo.id);}
+ for(const event of pkg.history){const existing=hMap.get(event.id);if(!existing){out.changeLog.push(structuredClone(event));hMap.set(event.id,event);}else if(canonicalValue(existing)!==canonicalValue(event))throw Error('History collision '+event.id);}
+ const restored=sync3RecordMap(out);
+ if(restored.size!==merged.size)throw Error('Merged backup record count mismatch');
+ for(const [id,row] of merged)if(canonicalValue(restored.get(id))!==canonicalValue(row))throw Error('Merged record check failed for '+id);
+ if(out.photos.length!==pMap.size||out.changeLog.length!==hMap.size)throw Error('Duplicate photo/history IDs in output');
+ const before=report.totals.safe,afterReport=compareRemotePackage(pkg,base,out,marker);
+ if(afterReport.totals.safe||afterReport.totals.conflict||afterReport.totals.missing)throw Error('Merged package did not reach an already-present state');
+ out.exported=new Date().toISOString();
+ out.stagedSync={mode:'isolated-package-merge-test-only',created:out.exported,sourceDevice:pkg.deviceId,baseline:marker.backup.filename,changesCandidate:before,
+   warning:'Proposed restore file only. No device was synchronized. No checkpoint was advanced.'};
+ // Preserve local checkpoint state in the app; do not write one into the backup as a claim of synchronization.
+ return {backup:out,report,afterReport};
+}
+function appendIsolatedExport(panel,pkg,base,local,marker,filename,report){
+ if(!report.established)return;
+ const info=document.createElement('div');info.style.cssText='border-top:1px solid #b1cdb8;margin-top:12px;padding-top:10px';
+ const heading=document.createElement('strong');heading.textContent='Isolated proposed merge — TEST only';info.append(heading);
+ const note=document.createElement('p');note.className='tiny';note.textContent='Two explicit downloads: first save an untouched recovery backup of this browser; then download the proposed merged file. Restore the proposal only in a different, empty private browser session. This never writes to your current records or OneDrive.';info.append(note);
+ const backupButton=document.createElement('button');backupButton.className='secondary';backupButton.type='button';backupButton.textContent='1 · Download recovery backup';
+ const mergeButton=document.createElement('button');mergeButton.className='secondary';mergeButton.type='button';mergeButton.disabled=true;mergeButton.textContent='2 · Download proposed merged TEST backup';
+ const status=document.createElement('p');status.className='tiny';status.textContent='Not prepared. Both files will be local downloads only.';
+ const consent=document.createElement('label');consent.style.cssText='display:flex;gap:8px;align-items:flex-start;margin:10px 0';
+ const consentBox=document.createElement('input');consentBox.type='checkbox';consentBox.style.cssText='flex:none;width:19px;height:19px;min-height:19px';
+ const wording=document.createElement('span');wording.textContent='I will restore the proposed backup only in an isolated TEST browser, never in LIVE or over my working phone data.';consent.append(consentBox,wording);
+ let snapshotHash=null;
+ backupButton.onclick=async()=>{try{
+  const live=await makePayload(),hash=await syncContentHash(live);
+  if(canonicalValue(syncContentView(live))!==canonicalValue(syncContentView(local)))throw Error('Data changed since package review. Find packages again.');
+  const stamp=new Date().toISOString().replace(/[:.]/g,'-');
+  download(new Blob([JSON.stringify(live)],{type:'application/json'}),'fieldbook-TEST-recovery-before-package-'+stamp+'.json');
+  snapshotHash=hash;mergeButton.disabled=false;status.textContent='Recovery backup downloaded. Save it safely before creating the proposed merged backup.';
+ }catch(e){status.textContent='Recovery download blocked: '+e.message;mergeButton.disabled=true}};
+ mergeButton.onclick=async()=>{try{
+  if(!consentBox.checked)throw Error('Review and check the isolated-restore acknowledgement.');
+  const current=await makePayload();if(await syncContentHash(current)!==snapshotHash)throw Error('Local database changed after recovery download. Review again.');
+  const {doc:newBase,marker:newMarker}=await readVerifiedBaselineForDiff();
+  if(newMarker.markerId!==marker.markerId||newMarker.hash!==marker.hash)throw Error('Shared baseline has changed; start a fresh review.');
+  const result=isolatedPackageMerge(newBase,current,pkg,newMarker);
+  if(!confirm('Download the proposed merged TEST backup? This will NOT restore, merge into, or change this browser. Test the resulting file only in a separate, isolated TEST session.'))return;
+  download(new Blob([JSON.stringify(result.backup)],{type:'application/json'}),'fieldbook-TEST-isolated-package-merge-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json');
+  status.textContent='Proposed merged backup downloaded. Current browser unchanged. No synchronization/checkpoint advanced.';
+ }catch(e){status.textContent='Proposed merge blocked: '+e.message}};
+ info.append(backupButton,consent,mergeButton,status);panel.append(info);
+}
+
 const crossDevicePreview=el('crossDevicePreview');
 function checkedDevicePackage(pkg,base,marker){
  if(pkg?.format!=='CemeteryFieldbookDeviceChangePackage'||pkg.schema!==1||pkg.mode!=='preview-only'||
@@ -3268,6 +3353,7 @@ function showCrossDevicePreview(pkg,base,local,marker,filename){
  panel.append(caution);
  if(report.lines.length){const d=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Inspect classified changes ('+report.lines.length+(report.totals.safe+report.totals.already+report.totals.conflict+report.totals.missing>report.lines.length?'+':'')+')';d.append(summary);
   for(const item of report.lines){const p=document.createElement('p');p.className='tiny';p.textContent=item.type.toUpperCase()+' — '+item.description;d.append(p)}panel.append(d)}
+ appendIsolatedExport(panel,pkg,base,local,marker,filename,report);
  crossDevicePreview.append(panel);
  return report;
 }
