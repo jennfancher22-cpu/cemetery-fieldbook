@@ -301,6 +301,15 @@
 <div id="baselineChangesStatus" class="hint" role="status">No changes checked. Automatic synchronization is OFF.</div>
 <div id="baselineChangesDetail" style="overflow-wrap:anywhere"></div>
 </div>
+<div class="home-panel" style="margin:12px 0 0;padding:12px;border:1px solid #b1cdb8;border-radius:10px">
+<h4 style="margin:0 0 7px">Device change packages — TEST (preview only)</h4>
+<p class="tiny">Verify this browser's historical baseline checkpoint, then inspect a small package of additions and edits since that baseline. Publish only with your approval. Other browsers can discover and preview the package; no package is automatically applied, and automatic sync remains OFF.</p>
+<div class="buttons"><button type="button" class="secondary" id="changePackagePreview">Preview this device's package</button><button type="button" class="secondary" id="changePackageFind">Find device packages in OneDrive</button></div>
+<div id="changePackageStatus" class="hint" role="status">No change package checked.</div>
+<div id="changePackageDetails" style="overflow-wrap:anywhere"></div>
+<label style="display:flex;align-items:flex-start;gap:8px;margin:10px 0"><input type="checkbox" id="changePackageConsent" style="flex:none;width:19px;height:19px;min-height:19px"><span>I reviewed this exact preview and want to publish this TEST change package to my OneDrive app folder. It does not merge or apply changes.</span></label>
+<div class="buttons"><button type="button" id="changePackagePublish" disabled>Publish reviewed TEST package</button></div>
+</div>
 </div>
 <details style="margin-top:10px"><summary>Publish a reviewed backup as a baseline candidate (advanced TEST)</summary>
 <p class="hint">Only after independently verifying a merged backup in an isolated TEST restore. No older references or backup files will be overwritten or deleted.</p>
@@ -3105,6 +3114,96 @@ el('baselineDetectChanges').onclick=async()=>{
    'Baseline: '+marker.backup.filename+'. Local checkpoint: '+(out.hasLocalCheckpoint?'historically verified':'not established for this baseline')+'. No syncing or checkpoint changes.';
  }catch(err){baselineChangesStatus.textContent='Unable to compare: '+err.message+'. No data changed.'}
  finally{setBusy(false)}
+};
+
+// Device change packages: immutable, user-approved snapshots of differences. Never applied.
+// Require an existing checkpoint for the exact, SHA-verified shared baseline.
+const packageStatus=el('changePackageStatus'),packageDetails=el('changePackageDetails');
+const packagePublish=el('changePackagePublish'),packageConsent=el('changePackageConsent');
+let preparedPackage=null;
+const PACKAGE_FILE=/^fieldbook-sync-changes-device-[\w-]+\.package\.json$/i;
+function strictIdMap(items,label){
+ if(!Array.isArray(items)||items.some(x=>!x||typeof x.id!=='string'||!x.id))throw Error('Malformed '+label+' IDs');
+ const idx=indexById(items);if(idx.duplicates.size)throw Error('Duplicate '+label+' IDs');return idx.result;
+}
+function prepareSafeChangePackage(base,current,marker,localCheckpoint){
+ if(!localCheckpoint||localCheckpoint.deviceId!==getDeviceId()||localCheckpoint.markerId!==marker.markerId||localCheckpoint.hash!==marker.hash)throw Error('No historical verified checkpoint on this browser for this exact baseline. No package can be published.');
+ for(const f of ['gedcomPeople','homePersonId','geoEdits'])if(canonicalValue(base[f])!==canonicalValue(current[f]))throw Error('Protected '+f+' differs. Package publishing blocked.');
+ const A=sync3RecordMap(base),B=sync3RecordMap(current),bp=strictIdMap(base.photos,'baseline photo'),cp=strictIdMap(current.photos,'current photo'),bh=strictIdMap(base.changeLog,'baseline history'),ch=strictIdMap(current.changeLog,'current history');
+ const addedRecords=[],changedFields=[],addedPhotos=[],addedHistory=[];
+ for(const [id,old] of A)if(!B.has(id))throw Error('Baseline burial missing locally ('+id+'). Deletions are not supported.');
+ for(const [id,row] of B){
+  if(!A.has(id)){addedRecords.push(row);continue;}
+  const old=A.get(id),keys=new Set([...Object.keys(old),...Object.keys(row)]);
+  for(const key of keys){if(key==='id')continue;const before=Object.hasOwn(old,key)?old[key]:null,after=Object.hasOwn(row,key)?row[key]:null;
+   if(canonicalValue(before)!==canonicalValue(after))changedFields.push({id,name:row.name||old.name||id,field:key,before:before,after:after,beforePresent:Object.hasOwn(old,key),afterPresent:Object.hasOwn(row,key)});
+  }
+ }
+ for(const [id,p] of bp){if(!cp.has(id)||canonicalValue(p)!==canonicalValue(cp.get(id)))throw Error('Baseline photo missing or changed ('+id+'). Package blocked.');}
+ for(const [id,p] of cp)if(!bp.has(id))addedPhotos.push(p);
+ for(const [id,e] of bh){if(!ch.has(id)||canonicalValue(e)!==canonicalValue(ch.get(id)))throw Error('Baseline history event missing or changed ('+id+'). Package blocked.');}
+ for(const [id,e] of ch)if(!bh.has(id))addedHistory.push(e);
+ if(!addedRecords.length&&!changedFields.length&&!addedPhotos.length&&!addedHistory.length)throw Error('No new changes since the shared baseline. Nothing to publish.');
+ // Retain original before values for future conflict checks; NEVER interpret this as approval to apply.
+ return {format:'CemeteryFieldbookDeviceChangePackage',schema:1,mode:'preview-only',
+  deviceId:getDeviceId(),baselineMarkerId:marker.markerId,baselineSHA256:marker.backup.sha256,
+  baselineContentSHA256:marker.hash,baselineFilename:marker.backup.filename,
+  additions:addedRecords,fieldEdits:changedFields,photos:addedPhotos,history:addedHistory,
+  counts:{newBurials:addedRecords.length,editedFields:changedFields.length,newPhotos:addedPhotos.length,newHistory:addedHistory.length},
+  warning:'Read-only package for comparison. Never automatically apply, overwrite, delete, or advance checkpoints.'};
+}
+function summarizePackage(p,heading){
+ const panel=document.createElement('div');panel.style.cssText='border:1px solid #dbe6df;border-radius:8px;padding:9px;margin:8px 0';
+ const h=document.createElement('strong');h.textContent=heading;panel.append(h);
+ for(const [label,value] of [['New burial records',p.counts.newBurials],['Edited fields',p.counts.editedFields],['New photos',p.counts.newPhotos],['New history events',p.counts.newHistory]])appendDiffRow(panel,label,value);
+ if(p.fieldEdits.length){const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent='Inspect edited fields';details.append(summary);
+  for(const e of p.fieldEdits.slice(0,40)){const para=document.createElement('p');para.className='tiny';para.textContent=(e.name||e.id)+' — '+e.field+': '+formatSyncDiffValue(e.before)+' → '+formatSyncDiffValue(e.after);details.append(para)}panel.append(details);}
+ if(p.additions.length){const para=document.createElement('p');para.className='tiny';para.textContent='New burial examples: '+p.additions.slice(0,8).map(x=>x.name||x.id).join(' · ');panel.append(para)}
+ return panel;
+}
+el('changePackagePreview').onclick=async()=>{
+ if(busy)return;setBusy(true);preparedPackage=null;packagePublish.disabled=true;packageConsent.checked=false;packageDetails.replaceChildren();
+ packageStatus.textContent='Verifying cloud baseline and preparing read-only package…';
+ try{const {doc,marker}=await readVerifiedBaselineForDiff();const local=await makePayload();
+  const checkpoint=safeJSON(localStorage.getItem(DEVICECHECKKEY)||'null');
+  const pkg=prepareSafeChangePackage(doc,local,marker,checkpoint);
+  const hash=await syncContentHash(local);preparedPackage={pkg,localHash:hash,markerId:marker.markerId};
+  packageDetails.append(summarizePackage(pkg,'This browser · unpublished preview'));
+  packageStatus.textContent='Preview ready. No OneDrive file written. Check and publish only if these changes are intentional.';
+  packagePublish.disabled=false;
+ }catch(e){packageStatus.textContent='Not eligible: '+e.message+' No data changed.'}finally{setBusy(false)}
+};
+packagePublish.onclick=async()=>{
+ if(busy)return;if(!packageConsent.checked||!preparedPackage){packageStatus.textContent='Preview and explicitly approve the current package first.';return}
+ if(!confirm('Publish this reviewed TEST-only change package in your OneDrive app folder? It will NOT apply changes or advance synchronization checkpoints.'))return;
+ setBusy(true);
+ try{
+  const {doc,marker}=await readVerifiedBaselineForDiff();const local=await makePayload();const checkpoint=safeJSON(localStorage.getItem(DEVICECHECKKEY)||'null');
+  const fresh=prepareSafeChangePackage(doc,local,marker,checkpoint);
+  if(marker.markerId!==preparedPackage.markerId||await syncContentHash(local)!==preparedPackage.localHash||canonicalValue(fresh)!==canonicalValue(preparedPackage.pkg))throw Error('Data or baseline changed since preview. Review again.');
+  const payload={...fresh,created:new Date().toISOString()};
+  const filename='fieldbook-sync-changes-'+getDeviceId()+'-'+new Date().toISOString().replace(/[:.]/g,'-')+'-'+b64url(randomBytes(5))+'.package.json';
+  await ensureAppFolder();const response=await graph('/me/drive/special/approot:/'+encodeURIComponent(filename)+':/content',{method:'PUT',headers:{'Content-Type':'application/json','If-None-Match':'*'},body:JSON.stringify(payload)});
+  const saved=await response.json();if(!saved.id)throw Error('OneDrive returned no file ID');
+  const got=await graph('/me/drive/items/'+encodeURIComponent(saved.id)+'/content');const copy=await got.json();
+  if(canonicalValue(copy)!==canonicalValue(payload))throw Error('Published file read-back mismatch');
+  packageStatus.textContent='TEST device change package published and verified. No local records, cloud backups, or sync checkpoints changed.';
+  preparedPackage=null;packagePublish.disabled=true;packageConsent.checked=false;
+ }catch(e){packageStatus.textContent='Package publication not confirmed: '+e.message+'. No local records changed.'}finally{setBusy(false)}
+};
+el('changePackageFind').onclick=async()=>{
+ if(busy)return;setBusy(true);packageDetails.replaceChildren();packageStatus.textContent='Finding read-only device packages in OneDrive…';
+ try{const {marker}=await readVerifiedBaselineForDiff();const files=(await allCloudFiles()).filter(f=>f.file&&PACKAGE_FILE.test(f.name));
+  files.sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
+  let shown=0,invalid=0;
+  for(const f of files.slice(0,15)){
+   try{const response=await graph('/me/drive/items/'+encodeURIComponent(f.id)+'/content');const p=await response.json();
+    if(p.format!=='CemeteryFieldbookDeviceChangePackage'||p.schema!==1||p.mode!=='preview-only'||p.baselineMarkerId!==marker.markerId||p.baselineSHA256!==marker.backup.sha256||!p.counts||!Array.isArray(p.fieldEdits)||!Array.isArray(p.photos)||!Array.isArray(p.history)||!Array.isArray(p.additions))throw Error('Not a valid package for current baseline');
+    packageDetails.append(summarizePackage(p,(p.deviceId||'Unknown device')+' · '+f.name));shown++;
+   }catch(e){invalid++}
+  }
+  packageStatus.textContent=shown+' compatible TEST package(s) discovered and previewed; '+invalid+' unrecognized/incompatible among first '+Math.min(15,files.length)+' checked. No files applied or checkpoint advanced.';
+ }catch(e){packageStatus.textContent='Unable to discover packages: '+e.message+' No data changed.'}finally{setBusy(false)}
 };
 
 el('deviceCheckpointList').onclick=async()=>{
