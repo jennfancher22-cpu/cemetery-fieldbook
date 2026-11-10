@@ -302,10 +302,16 @@
 <div id="baselineChangesDetail" style="overflow-wrap:anywhere"></div>
 </div>
 <div class="home-panel" style="margin:12px 0 0;padding:12px;border:1px solid #b1cdb8;border-radius:10px">
-<h4 style="margin:0 0 7px">Device change packages — TEST (safe review and isolated export)</h4>
-<p class="tiny">Verify this browser's historical baseline checkpoint, then inspect a small package of additions and edits since that baseline. Publish only with your approval. Other browsers can discover packages and preview how each change compares with their local data. A verified receiving browser may download an isolated proposed merged backup; no local records are directly modified, and automatic sync remains OFF.</p>
+<h4 style="margin:0 0 7px">Device change packages — TEST (one at a time)</h4>
+<p class="tiny">Verify this browser's historical baseline checkpoint, then inspect a small package of additions and edits since that baseline. Publish only with your approval. Choose one cloud package at a time to see safe changes, conflicts, or changes already present. Older packages stay available when you need them. A verified receiving browser may download an isolated proposed merged backup; no local records are directly modified, and automatic sync remains OFF.</p>
 <div class="buttons"><button type="button" class="secondary" id="changePackagePreview">Preview this device's package</button><button type="button" class="secondary" id="changePackageFind">Find device packages in OneDrive</button></div>
 <div id="changePackageStatus" class="hint" role="status">No change package checked.</div>
+<div id="cloudPackageChooser" hidden style="border:1px solid #b1cdb8;padding:10px;border-radius:10px;margin:12px 0">
+<label for="cloudPackageSelect" style="display:block;font-weight:600;margin-bottom:5px">Select a device package to review</label>
+<select id="cloudPackageSelect" style="display:block;width:100%;max-width:100%;min-width:0;overflow:hidden"><option value="">Find packages in OneDrive first</option></select>
+<label style="display:flex;align-items:center;gap:8px;margin:9px 0 0"><input type="checkbox" id="cloudPackageOlder" style="flex:none;width:19px;height:19px;min-height:19px"><span>Show older packages from each device</span></label>
+<div id="cloudPackageSelectionStatus" class="hint" role="status" style="margin-top:7px">Choose a package to inspect.</div>
+</div>
 <div id="changePackageDetails" style="overflow-wrap:anywhere"></div>
 <div id="crossDevicePreview" style="overflow-wrap:anywhere"></div>
 <label style="display:flex;align-items:flex-start;gap:8px;margin:10px 0"><input type="checkbox" id="changePackageConsent" style="flex:none;width:19px;height:19px;min-height:19px"><span>I reviewed this exact preview and want to publish this TEST change package to my OneDrive app folder. It does not merge or apply changes.</span></label>
@@ -3163,7 +3169,7 @@ function summarizePackage(p,heading){
  return panel;
 }
 el('changePackagePreview').onclick=async()=>{
- if(busy)return;setBusy(true);preparedPackage=null;packagePublish.disabled=true;packageConsent.checked=false;packageDetails.replaceChildren();
+ if(busy)return;setBusy(true);preparedPackage=null;packagePublish.disabled=true;packageConsent.checked=false;packageDetails.replaceChildren();crossDevicePreview.replaceChildren();cloudPackageChooser.hidden=true;
  packageStatus.textContent='Verifying cloud baseline and preparing read-only package…';
  try{const {doc,marker}=await readVerifiedBaselineForDiff();const local=await makePayload();
   const checkpoint=safeJSON(localStorage.getItem(DEVICECHECKKEY)||'null');
@@ -3192,22 +3198,80 @@ packagePublish.onclick=async()=>{
   preparedPackage=null;packagePublish.disabled=true;packageConsent.checked=false;
  }catch(e){packageStatus.textContent='Package publication not confirmed: '+e.message+'. No local records changed.'}finally{setBusy(false)}
 };
+// Compact cloud package browser: latest per device by default, one selected preview.
+// All historic files remain in OneDrive. No file gets deleted or marked synchronized.
+const cloudPackageChooser=el('cloudPackageChooser'),cloudPackageSelect=el('cloudPackageSelect');
+const cloudPackageOlder=el('cloudPackageOlder'),cloudPackageSelectionStatus=el('cloudPackageSelectionStatus');
+let cloudPackages=[],cloudPackageContext=null,cloudPackageErrors=0;
+function shortDeviceName(id){return (id||'Unknown device').replace(/^device-/,'').slice(0,12)}
+function shortChangeDescription(pkg){
+ const items=[];
+ for(const e of pkg.fieldEdits.slice(0,2))items.push((e.name||e.id)+' / '+e.field);
+ if(pkg.fieldEdits.length>2)items.push('+'+(pkg.fieldEdits.length-2)+' fields');
+ if(pkg.additions.length)items.push(pkg.additions.length+' burial(s)');
+ if(pkg.photos.length)items.push(pkg.photos.length+' photo(s)');
+ if(!items.length&&pkg.history.length)items.push(pkg.history.length+' history event(s)');
+ return items.join(', ')||'No field edits';
+}
+function fillPackageChoices(preferred){
+ const options=cloudPackageOlder.checked?cloudPackages:cloudPackages.filter(x=>x.latest);
+ const keep=preferred||cloudPackageSelect.value;
+ cloudPackageSelect.replaceChildren();
+ for(const item of options){
+  const option=document.createElement('option');option.value=item.id;
+  option.textContent=(item.latest?'Latest ':'Older ')+shortDeviceName(item.pkg.deviceId)+' · '+shortChangeDescription(item.pkg)+' · '+(item.pkg.created||item.created||'').slice(0,16).replace('T',' ');
+  cloudPackageSelect.append(option);
+ }
+ if(options.some(x=>x.id===keep))cloudPackageSelect.value=keep;
+ cloudPackageChooser.hidden=!options.length;
+ return options;
+}
+function selectedPackagePreview(){
+ packageDetails.replaceChildren();crossDevicePreview.replaceChildren();
+ const item=cloudPackages.find(x=>x.id===cloudPackageSelect.value);
+ if(!item||!cloudPackageContext){cloudPackageSelectionStatus.textContent='Choose a package to inspect.';return}
+ const {doc,marker,local}=cloudPackageContext;
+ const report=compareRemotePackage(item.pkg,doc,local,marker);
+ const compact=document.createElement('div');compact.style.cssText='border:1px solid #dbe6df;border-radius:8px;padding:10px;margin:10px 0';
+ const label=document.createElement('strong');label.textContent='Selected package · '+shortDeviceName(item.pkg.deviceId)+(item.pkg.deviceId===getDeviceId()?' (this browser)':' (another browser)');compact.append(label);
+ const name=document.createElement('p');name.className='tiny';name.style.overflowWrap='anywhere';name.textContent=item.filename;compact.append(name);
+ const counts=document.createElement('p');counts.className='tiny';counts.textContent='Field edits '+item.pkg.counts.editedFields+' · New burials '+item.pkg.counts.newBurials+' · Photos '+item.pkg.counts.newPhotos+' · History '+item.pkg.counts.newHistory;compact.append(counts);
+ packageDetails.append(compact);
+ showCrossDevicePreview(item.pkg,doc,local,marker,item.filename);
+ const flag=report.totals.conflict||report.totals.missing?'CONFLICT / BLOCKED':report.unverified?'UNVERIFIED CHECKPOINT':report.totals.safe?'SAFE CANDIDATES':'ALREADY PRESENT';
+ cloudPackageSelectionStatus.textContent=flag+' · '+report.totals.safe+' eligible · '+report.totals.already+' already present · '+report.totals.conflict+' conflicts · '+report.totals.missing+' missing. Only this package is displayed. Nothing applied.';
+}
+cloudPackageSelect.onchange=selectedPackagePreview;
+cloudPackageOlder.onchange=()=>{
+ const current=cloudPackageSelect.value;
+ const options=fillPackageChoices();
+ if(!options.some(x=>x.id===current)&&options.length)cloudPackageSelect.value=options[0].id;
+ selectedPackagePreview();
+};
 el('changePackageFind').onclick=async()=>{
- if(busy)return;setBusy(true);packageDetails.replaceChildren();crossDevicePreview.replaceChildren();packageStatus.textContent='Verifying shared baseline, reading local data and examining cloud packages…';
- try{const {doc,marker}=await readVerifiedBaselineForDiff();const local=await makePayload();
+ if(busy)return;setBusy(true);packageDetails.replaceChildren();crossDevicePreview.replaceChildren();cloudPackageChooser.hidden=true;
+ packageStatus.textContent='Verifying baseline and checking packages in OneDrive…';
+ try{
+  const {doc,marker}=await readVerifiedBaselineForDiff(),local=await makePayload();
   const files=(await allCloudFiles()).filter(f=>f.file&&PACKAGE_FILE.test(f.name));
-  files.sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
-  let shown=0,invalid=0,conflicts=0,unverified=0;
-  for(const f of files.slice(0,15)){
-   try{const response=await graph('/me/drive/items/'+encodeURIComponent(f.id)+'/content');const p=await response.json();
-    checkedDevicePackage(p,doc,marker);
-    packageDetails.append(summarizePackage(p,(p.deviceId||'Unknown device')+' · '+f.name));
-    const result=showCrossDevicePreview(p,doc,local,marker,f.name);
-    conflicts+=result.totals.conflict+result.totals.missing;unverified+=Number(result.unverified);shown++;
+  files.sort((a,b)=>String(b.createdDateTime||'').localeCompare(String(a.createdDateTime||'')));
+  const matches=[];let invalid=0;
+  for(const f of files.slice(0,60)){
+   try{
+    const response=await graph('/me/drive/items/'+encodeURIComponent(f.id)+'/content'),pkg=await response.json();
+    checkedDevicePackage(pkg,doc,marker);
+    matches.push({id:f.id,filename:f.name,created:f.createdDateTime||'',pkg,latest:false});
    }catch(e){invalid++}
   }
-  packageStatus.textContent=shown+' compatible TEST package(s) inspected; '+conflicts+' conflicts/missing-record cases; '+unverified+' previews without local checkpoint; '+invalid+' incompatible/invalid packages among first '+Math.min(15,files.length)+'. READ ONLY — nothing applied or advanced.';
- }catch(e){packageStatus.textContent='Unable to compare device packages: '+e.message+'. No data changed.'}finally{setBusy(false)}
+  const seen=new Set();
+  for(const item of matches){if(!seen.has(item.pkg.deviceId)){item.latest=true;seen.add(item.pkg.deviceId)}}
+  cloudPackages=matches;cloudPackageContext={doc,marker,local};cloudPackageErrors=invalid;
+  const options=fillPackageChoices();
+  if(options.length){cloudPackageSelect.value=options[0].id;selectedPackagePreview()}
+  packageStatus.textContent=matches.length+' compatible package(s) across '+seen.size+' device(s). Showing '+options.length+(cloudPackageOlder.checked?' including older packages':' latest package(s)')+'. '+invalid+' other/incompatible files among '+Math.min(60,files.length)+' checked. Select one to review. READ ONLY — nothing applied.';
+  if(!options.length)cloudPackageSelectionStatus.textContent='No compatible TEST packages for this baseline.';
+ }catch(e){cloudPackages=[];cloudPackageContext=null;cloudPackageChooser.hidden=true;packageStatus.textContent='Unable to compare device packages: '+e.message+'. No data changed.'}
+ finally{setBusy(false)}
 };// Cross-device package preview: validation + three-way classification, NO writes.
 // Isolated package merge export. No local or OneDrive writes. Protect recovery and baseline lineage.
 function isolatedPackageMerge(base,local,pkg,marker){
@@ -3345,7 +3409,7 @@ function showCrossDevicePreview(pkg,base,local,marker,filename){
  const panel=document.createElement('div');panel.style.cssText='border:2px solid #b1cdb8;border-radius:10px;padding:11px;margin:12px 0';
  const title=document.createElement('h4');title.textContent='Read-only cross-device merge preview';title.style.margin='0 0 8px';panel.append(title);
  const meta=document.createElement('p');meta.className='tiny';meta.textContent='Cloud package: '+filename+' · Source: '+pkg.deviceId+' · This browser: '+getDeviceId();panel.append(meta);
- for(const [label,val] of [['Changes eligible if lineage and data are verified',report.totals.safe],['Changes already present',report.totals.already],['Conflicting changes / ID collisions',report.totals.conflict],['Edits whose burial is missing locally',report.totals.missing]])appendDiffRow(panel,label,val);
+ for(const [label,val] of [['Safe candidates (checkpoint required)',report.totals.safe],['Already present',report.totals.already],['Conflicts / ID collisions',report.totals.conflict],['Missing records',report.totals.missing]])appendDiffRow(panel,label,val);
  const caution=document.createElement('p');caution.className='tiny';
  caution.textContent=(report.unverified?'UNVERIFIED LOCAL LINEAGE: this browser has no checkpoint for the published baseline. These classifications are descriptive only; do not treat apparent safe edits as approved to merge. ':'A historical checkpoint exists for this browser; this is still a preview only, not permission to merge. ')+
   (report.mismatch.length?'Protected local data also differs: '+report.mismatch.join(', ')+'. ':'')+
