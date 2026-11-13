@@ -929,13 +929,34 @@ $('myLocation').onclick=()=>{if(location.protocol==='file:'){message('GPS is res
 // V2 backup includes geolocations; restores still accept V1 backups (and retain V2 coordinate edits).
 $('backup').onclick=async()=>{try{await largeDataReady;const photos=await getPhotos();const payload={format:'CemeteryFieldbookBackup',version:5,exported:new Date().toISOString(),seed,updates,extras,photos,geoEdits,changeLog,gedcomPeople:allGedcomPeople,homePersonId};download(new Blob([JSON.stringify(payload)],{type:'application/json'}),uniqueBackupFilename());localStorage.setItem(BACKUP_KEY,new Date().toLocaleString());$('lastbackup').textContent='Last backup exported: '+localStorage.getItem(BACKUP_KEY)}catch(e){alert('Backup failed: '+e.message)}};
 async function restoreBackupObject(data,opts={}){await largeDataReady;if(data.format!=='CemeteryFieldbookBackup'||![1,2,3,4,5].includes(data.version)||!Array.isArray(data.extras)||!Array.isArray(data.photos)||!data.updates||typeof data.updates!=='object')throw Error('Unsupported backup format');if(data.version>=4&&(!Array.isArray(data.seed)||!data.seed.every(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.name==='string')))throw Error('Full backup contains an invalid burial list');
+// Restore safety gate (04B): validate the entire v5 backup BEFORE any database writes.
+// Previously an invalid GEDCOM people directory could be discovered after photos,
+// seed records and edits had already been replaced.
+if(data.version===5){
+ if(!Array.isArray(data.gedcomPeople)||!data.gedcomPeople.every(p=>p&&typeof p.id==='string'&&p.id&&typeof p.name==='string'))throw Error('Backup people directory is invalid; no data changed');
+ if(!Array.isArray(data.changeLog)||!data.changeLog.every(x=>x&&typeof x.id==='string'&&x.id))throw Error('Backup change history is invalid; no data changed');
+ if(!data.geoEdits||typeof data.geoEdits!=='object'||Array.isArray(data.geoEdits))throw Error('Backup cemetery coordinates are invalid; no data changed');
+ const ids=new Set();
+ for(const row of [...data.seed,...data.extras]){
+  if(!row||typeof row.id!=='string'||!row.id||typeof row.name!=='string'||ids.has(row.id))throw Error('Missing or duplicate burial ID in backup; no data changed');
+  ids.add(row.id);
+ }
+ const photoIDs=new Set();
+ for(const photo of data.photos){
+  if(!photo||typeof photo.id!=='string'||!photo.id||typeof photo.person!=='string'||typeof photo.data!=='string'||photoIDs.has(photo.id))throw Error('Invalid or duplicate photo in backup; no data changed');
+  photoIDs.add(photo.id);
+ }
+ const eventIDs=new Set();
+ for(const event of data.changeLog){if(eventIDs.has(event.id))throw Error('Duplicate change history ID in backup; no data changed');eventIDs.add(event.id);}
+ const peopleIDs=new Set();
+ for(const person of data.gedcomPeople){if(peopleIDs.has(person.id))throw Error('Duplicate GEDCOM person ID in backup; no data changed');peopleIDs.add(person.id);}
+ if(data.homePersonId && !peopleIDs.has(data.homePersonId))throw Error('Backup Home Person does not exist in the people directory; no data changed');
+}
 if(!opts.skipRestoreConfirm&&!confirm('Restore this backup? '+((data.seed?.length||0)+(data.extras?.length||0)).toLocaleString()+' total burial records ('+(data.seed?.length||0).toLocaleString()+' original + '+(data.extras?.length||0).toLocaleString()+' added), '+(data.photos?.length||0).toLocaleString()+' photos. Existing records, history, and photos on this device will be replaced.'))return false;
 // Backups v1-v3 did not contain a burial list. Keep any separately loaded list.
 // Stage and write photos before mutating record edits.
 if(!db)db=await openDB();await new Promise((resolve,reject)=>{const tx=db.transaction('photos','readwrite'),s=tx.objectStore('photos');s.clear();for(const p of data.photos)s.put(p);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
 if(data.version>=4){await saveLargeData(data.seed,data.version===5?data.gedcomPeople:allGedcomPeople);localStorage.removeItem(SEED_KEY);seed=data.seed;}updates=data.updates;extras=data.extras;persist();if(data.version>=2&&data.geoEdits&&typeof data.geoEdits==='object'){geoEdits=data.geoEdits;localStorage.setItem(GEO_KEY,JSON.stringify(geoEdits))}if(data.version>=3&&Array.isArray(data.changeLog)){changeLog=data.changeLog;localStorage.setItem(CHANGE_KEY,JSON.stringify(changeLog))}else{changeLog=[];localStorage.setItem(CHANGE_KEY,'[]')}if(data.version===5){
- if(!Array.isArray(data.gedcomPeople)||!data.gedcomPeople.every(p=>p&&typeof p.id==='string'&&typeof p.name==='string'))throw Error('Backup people directory is invalid');
- if(data.version<4)await saveLargeData(seed,data.gedcomPeople);
  localStorage.removeItem(GED_PEOPLE_KEY);allGedcomPeople=data.gedcomPeople;
  homePersonId=typeof data.homePersonId==='string'&&allGedcomPeople.some(p=>p.id===data.homePersonId)?data.homePersonId:'';
  if(homePersonId)localStorage.setItem(HOME_PERSON_KEY,homePersonId);else localStorage.removeItem(HOME_PERSON_KEY);
