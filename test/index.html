@@ -290,6 +290,11 @@
 <h4 style="margin:0 0 7px">This browser's baseline checkpoint — TEST</h4>
 <p class="tiny">The browser gets a private installation ID. Verify that its <strong>entire local database</strong> matches the cloud baseline before recording a checkpoint. Merely finding a candidate is not synchronization. No burial records or photos are changed.</p>
 <div id="deviceCheckpointInfo" class="hint" role="status">No device checkpoint checked.</div>
+<div class="home-panel" style="margin:9px 0;padding:9px;border:1px solid #d2dbdf;border-radius:9px">
+<label for="myDeviceLabel" style="font-weight:600">Name this browser (optional)</label>
+<div class="buttons" style="margin-top:5px"><input id="myDeviceLabel" type="text" maxlength="36" placeholder="e.g. My computer / Android" style="flex:1;min-width:130px"><button type="button" class="secondary" id="saveMyDeviceLabel">Save name</button></div>
+<p class="tiny">Friendly names are saved only in this browser. Technical device IDs remain unchanged.</p>
+</div>
 <div class="buttons"><button type="button" class="secondary" id="deviceCheckMatch">Compare this browser with shared baseline</button><button type="button" class="secondary" id="deviceCheckpointList">Find device checkpoints</button></div>
 <label style="display:flex;gap:8px;align-items:flex-start;margin:10px 0"><input type="checkbox" style="flex:0 0 19px;width:19px;height:19px;min-height:19px" id="deviceAdoptVerify"><span>I understand this only records that this browser matches the baseline; automatic synchronization stays off.</span></label>
 <div class="buttons"><button type="button" id="deviceAdoptCheckpoint" disabled>Record verified baseline checkpoint</button></div>
@@ -302,7 +307,7 @@
 <div id="baselineChangesDetail" style="overflow-wrap:anywhere"></div>
 </div>
 <div class="home-panel" style="margin:12px 0 0;padding:12px;border:1px solid #b1cdb8;border-radius:10px">
-<h4 style="margin:0 0 7px">Device change packages — TEST (one at a time)</h4>
+<h4 style="margin:0 0 7px">Device change packages — TEST (simplified review)</h4>
 <p class="tiny">Verify this browser's historical baseline checkpoint, then inspect a small package of additions and edits since that baseline. Publish only with your approval. Choose one cloud package at a time to see safe changes, conflicts, or changes already present. Older packages stay available when you need them. A verified receiving browser may download an isolated proposed merged backup; no local records are directly modified, and automatic sync remains OFF.</p>
 <div class="buttons"><button type="button" class="secondary" id="changePackagePreview">Preview this device's package</button><button type="button" class="secondary" id="changePackageFind">Find device packages in OneDrive</button></div>
 <div id="changePackageStatus" class="hint" role="status">No change package checked.</div>
@@ -310,6 +315,10 @@
 <label for="cloudPackageSelect" style="display:block;font-weight:600;margin-bottom:5px">Select a device package to review</label>
 <select id="cloudPackageSelect" style="display:block;width:100%;max-width:100%;min-width:0;overflow:hidden"><option value="">Find packages in OneDrive first</option></select>
 <label style="display:flex;align-items:center;gap:8px;margin:9px 0 0"><input type="checkbox" id="cloudPackageOlder" style="flex:none;width:19px;height:19px;min-height:19px"><span>Show older packages from each device</span></label>
+<div class="buttons" style="margin-top:8px;align-items:end">
+<label for="selectedDeviceLabel" style="flex:1;min-width:135px;font-weight:600">Name selected device<input id="selectedDeviceLabel" type="text" maxlength="36" placeholder="e.g. Computer B" style="width:100%;margin-top:4px"></label>
+<button type="button" class="secondary" id="saveSelectedDeviceLabel">Save name</button>
+</div>
 <div id="cloudPackageSelectionStatus" class="hint" role="status" style="margin-top:7px">Choose a package to inspect.</div>
 </div>
 <div id="changePackageDetails" style="overflow-wrap:anywhere"></div>
@@ -3203,7 +3212,36 @@ packagePublish.onclick=async()=>{
 const cloudPackageChooser=el('cloudPackageChooser'),cloudPackageSelect=el('cloudPackageSelect');
 const cloudPackageOlder=el('cloudPackageOlder'),cloudPackageSelectionStatus=el('cloudPackageSelectionStatus');
 let cloudPackages=[],cloudPackageContext=null,cloudPackageErrors=0;
-function shortDeviceName(id){return (id||'Unknown device').replace(/^device-/,'').slice(0,12)}
+// Friendly labels are cosmetic, per-browser, and never transmitted to OneDrive.
+const FRIENDLY_DEVICES_KEY='fieldbook_test_friendly_device_labels_v1';
+function readDeviceLabels(){
+ const stored=safeJSON(localStorage.getItem(FRIENDLY_DEVICES_KEY)||'null');
+ return stored&&typeof stored==='object'&&!Array.isArray(stored)?stored:{};
+}
+function deviceLabel(id){
+ const value=readDeviceLabels()[id];
+ return typeof value==='string'&&value.trim()?value.trim():((id||'Unknown device').replace(/^device-/,'').slice(0,12));
+}
+function saveDeviceLabel(id,value){
+ if(!/^device-[A-Za-z0-9_-]{12,}$/.test(id))return;
+ const label=String(value||'').trim().slice(0,36),labels=readDeviceLabels();
+ if(label)labels[id]=label;else delete labels[id];
+ localStorage.setItem(FRIENDLY_DEVICES_KEY,JSON.stringify(labels));
+}
+function shortDeviceName(id){return deviceLabel(id)}
+const myDeviceLabel=el('myDeviceLabel'),selectedDeviceLabel=el('selectedDeviceLabel');
+myDeviceLabel.value=readDeviceLabels()[getDeviceId()]||'';
+el('saveMyDeviceLabel').onclick=()=>{
+ saveDeviceLabel(getDeviceId(),myDeviceLabel.value);
+ if(cloudPackageContext) {fillPackageChoices(cloudPackageSelect.value);selectedPackagePreview()}
+ deviceInfo.textContent='This browser: '+deviceLabel(getDeviceId())+' · Technical ID: '+getDeviceId()+' · Friendly name saved on this browser only.';
+};
+el('saveSelectedDeviceLabel').onclick=()=>{
+ const item=cloudPackages.find(x=>x.id===cloudPackageSelect.value);
+ if(!item)return;
+ saveDeviceLabel(item.pkg.deviceId,selectedDeviceLabel.value);
+ fillPackageChoices(item.id);selectedPackagePreview();
+};
 function shortChangeDescription(pkg){
  const items=[];
  for(const e of pkg.fieldEdits.slice(0,2))items.push((e.name||e.id)+' / '+e.field);
@@ -3231,6 +3269,7 @@ function selectedPackagePreview(){
  const item=cloudPackages.find(x=>x.id===cloudPackageSelect.value);
  if(!item||!cloudPackageContext){cloudPackageSelectionStatus.textContent='Choose a package to inspect.';return}
  const {doc,marker,local}=cloudPackageContext;
+ selectedDeviceLabel.value=readDeviceLabels()[item.pkg.deviceId]||'';
  const report=compareRemotePackage(item.pkg,doc,local,marker);
  const compact=document.createElement('div');compact.style.cssText='border:1px solid #dbe6df;border-radius:8px;padding:10px;margin:10px 0';
  const label=document.createElement('strong');label.textContent='Selected package · '+shortDeviceName(item.pkg.deviceId)+(item.pkg.deviceId===getDeviceId()?' (this browser)':' (another browser)');compact.append(label);
@@ -3238,7 +3277,7 @@ function selectedPackagePreview(){
  const counts=document.createElement('p');counts.className='tiny';counts.textContent='Field edits '+item.pkg.counts.editedFields+' · New burials '+item.pkg.counts.newBurials+' · Photos '+item.pkg.counts.newPhotos+' · History '+item.pkg.counts.newHistory;compact.append(counts);
  packageDetails.append(compact);
  showCrossDevicePreview(item.pkg,doc,local,marker,item.filename);
- const flag=report.totals.conflict||report.totals.missing?'CONFLICT / BLOCKED':report.unverified?'UNVERIFIED CHECKPOINT':report.totals.safe?'SAFE CANDIDATES':'ALREADY PRESENT';
+ const flag=report.totals.conflict?'CONFLICT — competing edits detected':report.totals.missing?'BLOCKED — missing local records':report.mismatch.length?'BLOCKED — protected data differs':report.unverified?'UNVERIFIED — baseline checkpoint needed':report.totals.safe?'POTENTIALLY SAFE — preview only':'ALREADY PRESENT';
  cloudPackageSelectionStatus.textContent=flag+' · '+report.totals.safe+' eligible · '+report.totals.already+' already present · '+report.totals.conflict+' conflicts · '+report.totals.missing+' missing. Only this package is displayed. Nothing applied.';
 }
 cloudPackageSelect.onchange=selectedPackagePreview;
@@ -3408,10 +3447,10 @@ function showCrossDevicePreview(pkg,base,local,marker,filename){
  const report=compareRemotePackage(pkg,base,local,marker);
  const panel=document.createElement('div');panel.style.cssText='border:2px solid #b1cdb8;border-radius:10px;padding:11px;margin:12px 0';
  const title=document.createElement('h4');title.textContent='Read-only cross-device merge preview';title.style.margin='0 0 8px';panel.append(title);
- const meta=document.createElement('p');meta.className='tiny';meta.textContent='Cloud package: '+filename+' · Source: '+pkg.deviceId+' · This browser: '+getDeviceId();panel.append(meta);
- for(const [label,val] of [['Safe candidates (checkpoint required)',report.totals.safe],['Already present',report.totals.already],['Conflicts / ID collisions',report.totals.conflict],['Missing records',report.totals.missing]])appendDiffRow(panel,label,val);
+ const meta=document.createElement('p');meta.className='tiny';meta.textContent='Package: '+filename+' · From: '+deviceLabel(pkg.deviceId)+' · Here: '+deviceLabel(getDeviceId())+' (technical IDs unchanged)';panel.append(meta);
+ for(const [label,val] of [['Potentially safe changes',report.totals.safe],['Already present',report.totals.already],['Actual conflicts / ID collisions',report.totals.conflict],['Missing local records',report.totals.missing]])appendDiffRow(panel,label,val);
  const caution=document.createElement('p');caution.className='tiny';
- caution.textContent=(report.unverified?'UNVERIFIED LOCAL LINEAGE: this browser has no checkpoint for the published baseline. These classifications are descriptive only; do not treat apparent safe edits as approved to merge. ':'A historical checkpoint exists for this browser; this is still a preview only, not permission to merge. ')+
+ caution.textContent=(report.unverified?'UNVERIFIED BASELINE: this browser has no verified checkpoint for the shared baseline. Candidate changes cannot be applied. ':'Baseline checkpoint found. This is still a preview, not permission to merge. ')+
   (report.mismatch.length?'Protected local data also differs: '+report.mismatch.join(', ')+'. ':'')+
   'No records, photographs, history, backups, or sync checkpoints were changed.';
  panel.append(caution);
