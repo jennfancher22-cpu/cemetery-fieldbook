@@ -214,11 +214,40 @@
 .relationship-card .meta-line{font-size:12px;color:#546b60;margin:4px 0}
 .relationship-card .uncertain{font-size:12px;color:#8a6230;background:#fff7e8;border-radius:6px;padding:6px 8px;margin-top:7px}
 .relationship-card .rel-title{font-size:14px;font-weight:700;color:#174e40;margin:7px 0}
-</style></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#fff3cb;color:#765113">V7 TEST · ONEDRIVE BACKUP LAB</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div></div></header><main>
+
+/* Simplified backup/synchronization navigation, TEST only */
+#simpleDataHub {border:2px solid #a9c8bb;background:#f8fbf9}
+#simpleDataHub > h2 {margin:0 0 8px;color:#164f40}
+#simpleDataHub > p {margin:0 0 12px}
+#simpleDataHub details.hub-section {margin:10px 0;border:1px solid #b7d0c5;background:#fff;border-radius:12px;overflow:hidden}
+#simpleDataHub details.hub-section > summary {padding:15px 13px;font-size:17px;font-weight:700;cursor:pointer;color:#134b3b;list-style-position:inside}
+#simpleDataHub details.hub-section > summary::marker {color:#256c56}
+#simpleDataHub .hub-content {padding:4px 14px 15px;min-width:0}
+#simpleDataHub .hub-help {padding:9px 12px;margin:0 0 12px;background:#eef5f1;color:#285548;border-radius:8px;font-size:13px;line-height:1.5}
+#simpleDataHub .home-panel {max-width:100%;min-width:0}
+#simpleDataHub #sharedCheckpointLab {border:none!important;padding:0!important;margin:0!important}
+#simpleDataHub #sharedCheckpointLab > h4 {display:none}
+#simpleDataHub #sharedCheckpointLab > p.hint:first-of-type {display:none}
+#simpleDataHub #sharedCheckpointLab > .home-panel {margin-top:12px}
+#simpleDataHub #advancedToolsContent > .home-panel {margin:12px 0}
+#simpleDataHub #advancedToolsContent > details {margin:12px 0}
+#simpleDataHub #deviceSyncContent .home-panel {overflow-wrap:anywhere}
+#simpleDataHub #dataBackupsFold, #simpleDataHub #cloudBackupLab {display:none}
+#simpleDataHub .hub-warning {font-size:13px;color:#674b23;background:#fff9ed;padding:9px 11px;border-radius:8px;margin-bottom:12px}
+@media(max-width:600px){#simpleDataHub details.hub-section > summary {font-size:16px;padding:13px 10px}#simpleDataHub .hub-content {padding:3px 10px 12px}}
+</style></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#fff3cb;color:#765113">V7 TEST · SIMPLIFIED BACKUP & SYNC</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div></div></header><main>
 <div class="notice" style="border:2px solid #d0a23f;margin:10px 0;padding:12px;border-radius:12px"><strong>TEST ONLY — Cloud backup experiment.</strong> This is separate from LIVE data. Cloud sign-in needs a developer application ID; do not enter passwords here. Backups uploaded to OneDrive are not encrypted by Fieldbook yet.</div><div class="stats"><div class="stat"><div id="sPeople" class="num">—</div><div class="small">Burial entries</div></div><div class="stat"><div id="sCem" class="num">—</div><div class="small">Cemeteries</div></div><div class="stat"><div id="sVisited" class="num">—</div><div class="small">Visited</div></div></div>
 <section class="panel" id="nearbyPanel"><details class="finder-fold" id="nearbyFold"><summary>📍 Find cemeteries nearby <span class="finder-sub">Search by distance</span></summary><div class="finder-body"><p class="hint">Straight-line distance, not driving distance. Works offline with saved cemetery coordinates. Choose a starting town or try your phone location.</p><div class="filters"><div><label for="startPlace">Starting point</label><select id="startPlace"><option value="39.7684,-86.1581">Indianapolis, IN</option><option value="38.9592,-85.8903" selected>Seymour, IN</option><option value="39.6128,-86.3742">Mooresville, IN</option><option value="39.2014,-85.9214">Columbus, IN</option><option value="custom">Custom coordinates</option></select></div><div><label for="radius">Within</label><select id="radius"><option>10</option><option selected>25</option><option>50</option><option>100</option><option>250</option><option>500</option></select></div><div><label for="startLat">Latitude</label><input id="startLat" type="number" step="any" placeholder="39.123"></div><div><label for="startLon">Longitude</label><input id="startLon" type="number" step="any" placeholder="-86.123"></div></div><div class="buttons" style="margin-top:10px"><button id="nearSearch">Find nearby cemeteries</button><button class="secondary" id="myLocation">Use phone GPS</button></div><div id="geoNote" class="hint" role="status"></div><div id="nearResults"></div></div></details></section><section class="panel" id="relativePanel"><details class="finder-fold" id="relativeFold" open><summary>🔎 Find a relative or cemetery <span class="finder-sub">Search names &amp; filters</span></summary><div class="finder-body"><div class="filters"><div class="wide"><input id="q" type="search" placeholder="Search name, cemetery, town, family line…" aria-label="Search"></div><div><label for="stateFilter">State</label><select id="stateFilter"><option value="">All states</option></select></div><div><label for="county">County</label><select id="county"><option value="">All counties</option></select></div><div><label for="cem">Cemetery</label><select id="cem"><option value="">All cemeteries</option></select></div><div><label for="status">Visit filter</label><select id="status"><option value="">All records</option><option value="unvisited">Not visited</option><option value="nophoto">Photo needed</option><option value="nogps">GPS needed</option></select></div></div><div class="buttons" style="margin-top:12px"><button id="add">+ Add discovery</button><button class="secondary" id="clear">Clear filters</button><button class="outline" id="showAll">Show all records</button><button class="secondary" type="button" id="showMatches">Show filtered results</button></div></div></details></section>
 <section class="panel" id="burialPanel"><div class="resulthead"><h2 style="margin:0">Burial records</h2><span class="tiny" id="count"></span></div><div class="burial-list-controls"><span class="hint">Tap a name to view details and edit.</span><div class="inline-controls"><button class="secondary" id="hideResultsTop" type="button">Hide results</button><button class="secondary" id="clearResultsTop" type="button">Clear filters</button></div></div><div id="out"></div><div class="burial-list-controls"><button id="more" class="secondary" hidden>Show more</button><div class="inline-controls"><button class="secondary" id="hideResultsBottom" type="button">Hide results</button><button class="secondary" id="clearResultsBottom" type="button">Clear filters</button></div></div></section>
 <section class="panel" id="changeLogPanel"><div class="resulthead"><h2 style="margin:0">📋 Cemetery change log</h2><span class="tiny" id="changeCount"></span></div><p class="hint">Keep a complete activity history, and review just the discoveries and corrections you still need to enter in your family tree. Tracking starts with edits made in v5. v6 hides reversed and superseded field edits from outstanding tree updates, while preserving their activity history.</p><div class="buttons"><button id="viewTreeChanges">Changes to enter in tree</button><button id="viewHistory" class="secondary">Complete activity history</button></div><div id="changeList" hidden></div><div class="buttons" id="changeTools" hidden style="margin-top:10px"><button id="downloadChangeCsv">Export tree changes (Excel)</button><button class="secondary" id="downloadHistoryCsv">Export full history (Excel)</button><button class="secondary" id="hideChangeLog">Hide reports</button></div></section>
+<section class="panel" id="simpleDataHub" aria-label="Backup and device synchronization">
+<h2>☁️ Backups &amp; device sync — TEST</h2>
+<p class="hint">Your regular TEST and LIVE records stay separate. Choose what you want to do below. <strong>Automatic two-way sync is OFF.</strong></p>
+<details class="hub-section" id="simpleBackupFold"><summary>1 · Backup &amp; Restore <span class="finder-sub">Save or recover my records</span></summary><div class="hub-content" id="simpleBackupContent"><p class="hub-help">Use this for everyday backups or recovery. Restoring replaces this browser's current records; it does not merge devices.</p></div></details>
+<details class="hub-section" id="simpleSyncFold"><summary>2 · Device Sync <span class="finder-sub">Review changes from other devices</span></summary><div class="hub-content" id="deviceSyncContent"><p class="hub-help">TEST preview only. Choose one device's changes to inspect. <strong>Nothing syncs automatically.</strong> Only run apply tests in a disposable private browser with a recovery backup.</p></div></details>
+<details class="hub-section" id="simpleAdvancedFold"><summary>3 · Advanced Testing <span class="finder-sub">Older experiments and troubleshooting</span></summary><div class="hub-content" id="advancedToolsContent"><p class="hub-warning">Technical testing tools. Normally leave these closed. They are not needed for ordinary cemetery visits or backups.</p></div></details>
+<div class="hint" id="simpleHubStatus" role="status">Backups and synchronization controls are grouped above. No data has been changed.</div>
+</section>
 <section class="panel" id="dataProtectionPanel">
 <details class="finder-fold" id="protectionFold"><summary>🔐 Data loading and protection <span class="finder-sub">GEDCOM · data tools · backups</span></summary>
 <div class="finder-body">
@@ -3513,6 +3542,38 @@ el('deviceCheckpointList').onclick=async()=>{
 
 el('cloudList').onclick=async()=>{if(busy)return;setBusy(true);try{note('Reading backup list from OneDrive…');await listCloud();note('Cloud backup list updated.')}catch(e){note('Could not list cloud backups: '+e.message,true)}finally{setBusy(false)}};
 finishRedirect();
+})();
+</script>
+<script>
+/* UI organization only: relocate existing nodes after listeners are installed. No data writes. */
+(function reorganizeBackupSync(){
+ const $=id=>document.getElementById(id);
+ const backup=$('simpleBackupContent'),sync=$('deviceSyncContent'),adv=$('advancedToolsContent');
+ const oldBackup=$('dataBackupsFold'),oldBackupBody=oldBackup&&oldBackup.querySelector(':scope > .data-subbody');
+ const cloudLab=$('cloudBackupLab'),cloudBody=cloudLab&&cloudLab.querySelector(':scope > .data-subbody');
+ if(!backup||!sync||!adv||!oldBackupBody||!cloudBody)return;
+ // Move ordinary local backup controls first, keeping their IDs, listeners, and backing data.
+ for(const node of [...oldBackupBody.children]){
+   if(node===cloudLab||node.id==='resetFieldbookPanel')continue;
+   backup.appendChild(node);
+ }
+ // Move the shared baseline/device-package group before moving its enclosing comparison panel.
+ const checkpoint=$('sharedCheckpointLab');
+ if(checkpoint)sync.appendChild(checkpoint);
+ // The cloud backup controls and OneDrive listing are the beginning of the cloud laboratory.
+ const comparePanel=cloudBody.querySelector('#syncCompareA')?.closest('.home-panel');
+ const cloudChildren=[...cloudBody.children];
+ const retentionPanel=$('cloudRetentionEnabled')?.closest('.home-panel');
+ for(const node of cloudChildren){
+   if(node===comparePanel||node===retentionPanel||node.id==='syncStagePanel'||(node.querySelector&&node.querySelector('#syncThreeWayRun'))){adv.appendChild(node);continue;}
+   if(node.classList?.contains('notice')&&node.textContent.includes('Recovery:')){backup.appendChild(node);continue;}
+   if(node===cloudChildren[0]||node!==cloudLab){backup.appendChild(node)}
+ }
+ const reset=$('resetFieldbookPanel');if(reset)adv.appendChild(reset);
+ const cloudIntro=document.createElement('h3');cloudIntro.textContent='OneDrive backups';cloudIntro.style.marginTop='18px';const cloudConnect=$('cloudConnect');if(cloudConnect){const cloudControls=cloudConnect.closest('.buttons');cloudControls?.before(cloudIntro)}
+ oldBackup.hidden=true;cloudLab.hidden=true;
+ const status=$('simpleHubStatus');if(status)status.textContent='Your data and settings have not changed. Use Backup & Restore for normal backups; Device Sync is still TEST-only.';
+ // Keep all other GEDCOM/advanced family-tree tools in their original Data Loading section.
 })();
 </script>
 </body></html>
