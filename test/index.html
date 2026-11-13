@@ -928,8 +928,8 @@ $('nearSearch').onclick=nearbySearch;
 $('myLocation').onclick=()=>{if(location.protocol==='file:'){message('GPS is restricted when opening the downloaded HTML file. The town-based distance search still works offline. A secure HTTPS installation is required for reliable location permission.');return}if(!window.isSecureContext){message('GPS requires HTTPS (a secure connection). Select a town for offline searching.');return}if(!navigator.geolocation){message('This browser does not support location. Use a listed city or enter coordinates.');return}message('Requesting GPS location…');navigator.geolocation.getCurrentPosition(pos=>{$('startPlace').value='custom';$('startLat').value=pos.coords.latitude.toFixed(6);$('startLon').value=pos.coords.longitude.toFixed(6);message('Phone location received. Approximate GPS accuracy: '+Math.round(pos.coords.accuracy)+' meters.');nearbySearch()},err=>message('Phone GPS unavailable: '+err.message+'. Local HTML files may not receive location permission. You can still select a town.'),{enableHighAccuracy:true,timeout:15000,maximumAge:60000})};
 // V2 backup includes geolocations; restores still accept V1 backups (and retain V2 coordinate edits).
 $('backup').onclick=async()=>{try{await largeDataReady;const photos=await getPhotos();const payload={format:'CemeteryFieldbookBackup',version:5,exported:new Date().toISOString(),seed,updates,extras,photos,geoEdits,changeLog,gedcomPeople:allGedcomPeople,homePersonId};download(new Blob([JSON.stringify(payload)],{type:'application/json'}),uniqueBackupFilename());localStorage.setItem(BACKUP_KEY,new Date().toLocaleString());$('lastbackup').textContent='Last backup exported: '+localStorage.getItem(BACKUP_KEY)}catch(e){alert('Backup failed: '+e.message)}};
-async function restoreBackupObject(data){await largeDataReady;if(data.format!=='CemeteryFieldbookBackup'||![1,2,3,4,5].includes(data.version)||!Array.isArray(data.extras)||!Array.isArray(data.photos)||!data.updates||typeof data.updates!=='object')throw Error('Unsupported backup format');if(data.version>=4&&(!Array.isArray(data.seed)||!data.seed.every(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.name==='string')))throw Error('Full backup contains an invalid burial list');
-if(!confirm('Restore this backup? '+((data.seed?.length||0)+(data.extras?.length||0)).toLocaleString()+' total burial records ('+(data.seed?.length||0).toLocaleString()+' original + '+(data.extras?.length||0).toLocaleString()+' added), '+(data.photos?.length||0).toLocaleString()+' photos. Existing records, history, and photos on this device will be replaced.'))return false;
+async function restoreBackupObject(data,opts={}){await largeDataReady;if(data.format!=='CemeteryFieldbookBackup'||![1,2,3,4,5].includes(data.version)||!Array.isArray(data.extras)||!Array.isArray(data.photos)||!data.updates||typeof data.updates!=='object')throw Error('Unsupported backup format');if(data.version>=4&&(!Array.isArray(data.seed)||!data.seed.every(x=>x&&typeof x==='object'&&typeof x.id==='string'&&typeof x.name==='string')))throw Error('Full backup contains an invalid burial list');
+if(!opts.skipRestoreConfirm&&!confirm('Restore this backup? '+((data.seed?.length||0)+(data.extras?.length||0)).toLocaleString()+' total burial records ('+(data.seed?.length||0).toLocaleString()+' original + '+(data.extras?.length||0).toLocaleString()+' added), '+(data.photos?.length||0).toLocaleString()+' photos. Existing records, history, and photos on this device will be replaced.'))return false;
 // Backups v1-v3 did not contain a burial list. Keep any separately loaded list.
 // Stage and write photos before mutating record edits.
 if(!db)db=await openDB();await new Promise((resolve,reject)=>{const tx=db.transaction('photos','readwrite'),s=tx.objectStore('photos');s.clear();for(const p of data.photos)s.put(p);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
@@ -941,7 +941,7 @@ if(data.version>=4){await saveLargeData(data.seed,data.version===5?data.gedcomPe
  if(homePersonId)localStorage.setItem(HOME_PERSON_KEY,homePersonId);else localStorage.removeItem(HOME_PERSON_KEY);
  refreshHomeDisplay();searchHomePeople();
 }
-refreshOptions();render();renderChangeLog();nearbySearch();$('privateSeedStatus').textContent=seed.length+' private burial records loaded on this device';alert(data.version>=4?'Complete backup restored: '+(seed.length+extras.length).toLocaleString()+' total burial records ('+seed.length.toLocaleString()+' original + '+extras.length.toLocaleString()+' added) and '+(data.photos?.length||0).toLocaleString()+' photos.':'Older backup restored. If original burials are missing, load the private burial list separately.');return true;}
+refreshOptions();render();renderChangeLog();nearbySearch();$('privateSeedStatus').textContent=seed.length+' private burial records loaded on this device';if(!opts.silentRestoreSuccess)alert(data.version>=4?'Complete backup restored: '+(seed.length+extras.length).toLocaleString()+' total burial records ('+seed.length.toLocaleString()+' original + '+extras.length.toLocaleString()+' added) and '+(data.photos?.length||0).toLocaleString()+' photos.':'Older backup restored. If original burials are missing, load the private burial list separately.');return true;}
 window.fieldbookRestoreFromObject=restoreBackupObject;
 $('restoreFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{await restoreBackupObject(JSON.parse(await f.text()))}catch(err){alert('Restore failed: '+err.message)}finally{e.target.value=''}};
 renderChangeLog();$('nearResults').append(textNode('p','hint','Choose a starting point and tap Find nearby cemeteries to see results.'));
@@ -3397,12 +3397,12 @@ function isolatedPackageMerge(base,local,pkg,marker){
 function appendIsolatedExport(panel,pkg,base,local,marker,filename,report){
  if(!report.established)return;
  const info=document.createElement('div');info.style.cssText='border-top:1px solid #b1cdb8;margin-top:12px;padding-top:10px';
- const heading=document.createElement('strong');heading.textContent='Isolated proposed merge — TEST only';info.append(heading);
- const note=document.createElement('p');note.className='tiny';note.textContent='Two explicit downloads: first save an untouched recovery backup of this browser; then download the proposed merged file. Restore the proposal only in a different, empty private browser session. This never writes to your current records or OneDrive.';info.append(note);
- const backupButton=document.createElement('button');backupButton.className='secondary';backupButton.type='button';backupButton.textContent='1 · Download recovery backup';
- const mergeButton=document.createElement('button');mergeButton.className='secondary';mergeButton.type='button';mergeButton.disabled=true;mergeButton.textContent='2 · Download proposed merged TEST backup';
- const applyButton=document.createElement('button');applyButton.className='secondary';applyButton.type='button';applyButton.disabled=true;applyButton.textContent='3 · Apply this reviewed package to this isolated TEST browser';
- const status=document.createElement('p');status.className='tiny';status.textContent='Not prepared. Both files will be local downloads only.';
+ const heading=document.createElement('strong');heading.textContent='Apply a reviewed change — disposable TEST browser only';info.append(heading);
+ const note=document.createElement('p');note.className='tiny';note.textContent='To test a direct change: save a recovery backup, then apply to this disposable TEST browser. No data goes to OneDrive and your regular TEST/LIVE installations are not touched. You can also download a proposed merged file instead, without applying.';info.append(note);
+ const backupButton=document.createElement('button');backupButton.className='secondary';backupButton.type='button';backupButton.textContent='1 · Save recovery backup';
+ const mergeButton=document.createElement('button');mergeButton.className='secondary';mergeButton.type='button';mergeButton.disabled=true;mergeButton.textContent='Optional: Download proposed merge (no changes applied)';
+ const applyButton=document.createElement('button');applyButton.className='secondary';applyButton.type='button';applyButton.disabled=true;applyButton.textContent='2 · Apply reviewed changes to this TEST browser';
+ const status=document.createElement('p');status.className='tiny';status.setAttribute('role','status');status.setAttribute('aria-live','polite');status.textContent='No changes applied. Save a recovery backup first.';
  const consent=document.createElement('label');consent.style.cssText='display:flex;gap:8px;align-items:flex-start;margin:10px 0';
  const consentBox=document.createElement('input');consentBox.type='checkbox';consentBox.style.cssText='flex:none;width:19px;height:19px;min-height:19px';
  const wording=document.createElement('span');wording.textContent='I will restore the proposed backup only in an isolated TEST browser, never in LIVE or over my working phone data.';consent.append(consentBox,wording);
@@ -3445,9 +3445,9 @@ function appendIsolatedExport(panel,pkg,base,local,marker,filename,report){
    const ready=isolatedPackageMerge(newBase,before,pkg,newMarker);
    if(ready.report.totals.conflict||ready.report.totals.missing||!ready.report.established)throw Error('Package is not eligible for application.');
    const expectedHash=await syncContentHash(ready.backup);
-   if(!confirm('TEST ONLY: Apply '+ready.report.totals.safe+' reviewed change(s) to THIS disposable browser? A recovery backup has been downloaded, but automatic rollback is not guaranteed. No OneDrive package or checkpoint will be changed.'))throw Error('Application cancelled.');
-   // Restore deliberately requests a second confirmation from the existing Fieldbook backup workflow.
-   const restored=await window.fieldbookRestoreFromObject(ready.backup);
+   if(!confirm('APPLY '+ready.report.totals.safe+' REVIEWED CHANGE(S) TO THIS DISPOSABLE TEST BROWSER?\n\nThis replaces the local TEST data with the verified proposed merge. Your saved recovery file can restore the previous state. Automatic rollback is NOT guaranteed.\n\nNothing is sent to OneDrive and no checkpoint is advanced.\n\nSelect OK to apply or Cancel to leave this browser unchanged.'))throw Error('Application cancelled.');
+   // The dedicated TEST apply prompt above is the only confirmation; ordinary backup restores keep their own confirmation.
+   const restored=await window.fieldbookRestoreFromObject(ready.backup,{skipRestoreConfirm:true,silentRestoreSuccess:true});
    if(!restored)throw Error('Application cancelled at restore confirmation.');
    const actual=await makePayload();
    if(await syncContentHash(actual)!==expectedHash)throw Error('Post-apply verification failed. Use the downloaded recovery file; do not continue syncing.');
@@ -3460,7 +3460,7 @@ function appendIsolatedExport(panel,pkg,base,local,marker,filename,report){
    // No silent automatic restore: the user holds a separate recovery copy.
   }finally{if(!backupButton.disabled)applyButton.disabled=false;}
  };
- info.append(backupButton,consent,mergeButton,applyConsent,applyButton,status);panel.append(info);
+ info.append(backupButton,applyConsent,applyButton,status);const opt=document.createElement('details');opt.style.marginTop='12px';const optHead=document.createElement('summary');optHead.textContent='Optional: export merged backup for separate testing';opt.append(optHead,consent,mergeButton);info.append(opt);panel.append(info);
 }
 
 const crossDevicePreview=el('crossDevicePreview');
