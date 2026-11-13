@@ -308,7 +308,7 @@
 </div>
 <div class="home-panel" style="margin:12px 0 0;padding:12px;border:1px solid #b1cdb8;border-radius:10px">
 <h4 style="margin:0 0 7px">Device change packages — TEST (simplified review)</h4>
-<p class="tiny">Verify this browser's historical baseline checkpoint, then inspect a small package of additions and edits since that baseline. Publish only with your approval. Choose one cloud package at a time to see safe changes, conflicts, or changes already present. Older packages stay available when you need them. A verified receiving browser may download an isolated proposed merged backup; no local records are directly modified, and automatic sync remains OFF.</p>
+<p class="tiny">Verify this browser's historical baseline checkpoint, then inspect a small package of additions and edits since that baseline. Publish only with your approval. Choose one cloud package at a time to see safe changes, conflicts, or changes already present. Older packages stay available when you need them. A verified receiving browser may download an isolated proposed merged backup or test a strictly manual local apply in an isolated TEST browser after downloading a recovery backup. Automatic sync remains OFF.</p>
 <div class="buttons"><button type="button" class="secondary" id="changePackagePreview">Preview this device's package</button><button type="button" class="secondary" id="changePackageFind">Find device packages in OneDrive</button></div>
 <div id="changePackageStatus" class="hint" role="status">No change package checked.</div>
 <div id="cloudPackageChooser" hidden style="border:1px solid #b1cdb8;padding:10px;border-radius:10px;margin:12px 0">
@@ -3372,6 +3372,7 @@ function appendIsolatedExport(panel,pkg,base,local,marker,filename,report){
  const note=document.createElement('p');note.className='tiny';note.textContent='Two explicit downloads: first save an untouched recovery backup of this browser; then download the proposed merged file. Restore the proposal only in a different, empty private browser session. This never writes to your current records or OneDrive.';info.append(note);
  const backupButton=document.createElement('button');backupButton.className='secondary';backupButton.type='button';backupButton.textContent='1 · Download recovery backup';
  const mergeButton=document.createElement('button');mergeButton.className='secondary';mergeButton.type='button';mergeButton.disabled=true;mergeButton.textContent='2 · Download proposed merged TEST backup';
+ const applyButton=document.createElement('button');applyButton.className='secondary';applyButton.type='button';applyButton.disabled=true;applyButton.textContent='3 · Apply this reviewed package to this isolated TEST browser';
  const status=document.createElement('p');status.className='tiny';status.textContent='Not prepared. Both files will be local downloads only.';
  const consent=document.createElement('label');consent.style.cssText='display:flex;gap:8px;align-items:flex-start;margin:10px 0';
  const consentBox=document.createElement('input');consentBox.type='checkbox';consentBox.style.cssText='flex:none;width:19px;height:19px;min-height:19px';
@@ -3382,8 +3383,8 @@ function appendIsolatedExport(panel,pkg,base,local,marker,filename,report){
   if(canonicalValue(syncContentView(live))!==canonicalValue(syncContentView(local)))throw Error('Data changed since package review. Find packages again.');
   const stamp=new Date().toISOString().replace(/[:.]/g,'-');
   download(new Blob([JSON.stringify(live)],{type:'application/json'}),'fieldbook-TEST-recovery-before-package-'+stamp+'.json');
-  snapshotHash=hash;mergeButton.disabled=false;status.textContent='Recovery backup downloaded. Save it safely before creating the proposed merged backup.';
- }catch(e){status.textContent='Recovery download blocked: '+e.message;mergeButton.disabled=true}};
+  snapshotHash=hash;mergeButton.disabled=false;applyButton.disabled=false;status.textContent='Recovery backup downloaded. Keep this file outside the browser before proceeding.';
+ }catch(e){status.textContent='Recovery download blocked: '+e.message;mergeButton.disabled=true;applyButton.disabled=true}};
  mergeButton.onclick=async()=>{try{
   if(!consentBox.checked)throw Error('Review and check the isolated-restore acknowledgement.');
   const current=await makePayload();if(await syncContentHash(current)!==snapshotHash)throw Error('Local database changed after recovery download. Review again.');
@@ -3394,7 +3395,43 @@ function appendIsolatedExport(panel,pkg,base,local,marker,filename,report){
   download(new Blob([JSON.stringify(result.backup)],{type:'application/json'}),'fieldbook-TEST-isolated-package-merge-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json');
   status.textContent='Proposed merged backup downloaded. Current browser unchanged. No synchronization/checkpoint advanced.';
  }catch(e){status.textContent='Proposed merge blocked: '+e.message}};
- info.append(backupButton,consent,mergeButton,status);panel.append(info);
+ // TEST-only direct application: no upload and no baseline advancement.
+ // Require the exact reviewed local snapshot, a separate recovery download, and a verified checkpoint.
+ const applyConsent=document.createElement('label');applyConsent.style.cssText='display:flex;gap:8px;align-items:flex-start;margin:10px 0';
+ const applyCheck=document.createElement('input');applyCheck.type='checkbox';applyCheck.style.cssText='flex:none;width:19px;height:19px;min-height:19px';
+ const applyWords=document.createElement('span');applyWords.textContent='I am in a disposable isolated TEST browser, saved the recovery file outside Fieldbook, and understand this button changes this browser’s data. Never use on LIVE or my working phone.';
+ applyConsent.append(applyCheck,applyWords);
+ applyButton.onclick=async()=>{
+  applyButton.disabled=true;
+  let before=null;
+  try{
+   if(!applyCheck.checked)throw Error('Acknowledge the isolated TEST and recovery-backup requirement.');
+   if(!snapshotHash)throw Error('Download a recovery backup first.');
+   if(autoCheckbox.checked)throw Error('Turn OFF automatic OneDrive backups in this isolated TEST browser before applying.');
+   if(!location.pathname.endsWith('/test/'))throw Error('Direct apply is allowed only on the GitHub /test/ site.');
+   before=await makePayload();
+   if(await syncContentHash(before)!==snapshotHash)throw Error('Local data changed since recovery download. Start the package review again.');
+   const {doc:newBase,marker:newMarker}=await readVerifiedBaselineForDiff();
+   if(newMarker.markerId!==marker.markerId||newMarker.hash!==marker.hash)throw Error('Shared baseline changed. Review again.');
+   const ready=isolatedPackageMerge(newBase,before,pkg,newMarker);
+   if(ready.report.totals.conflict||ready.report.totals.missing||!ready.report.established)throw Error('Package is not eligible for application.');
+   const expectedHash=await syncContentHash(ready.backup);
+   if(!confirm('TEST ONLY: Apply '+ready.report.totals.safe+' reviewed change(s) to THIS disposable browser? A recovery backup has been downloaded, but automatic rollback is not guaranteed. No OneDrive package or checkpoint will be changed.'))throw Error('Application cancelled.');
+   // Restore deliberately requests a second confirmation from the existing Fieldbook backup workflow.
+   const restored=await window.fieldbookRestoreFromObject(ready.backup);
+   if(!restored)throw Error('Application cancelled at restore confirmation.');
+   const actual=await makePayload();
+   if(await syncContentHash(actual)!==expectedHash)throw Error('Post-apply verification failed. Use the downloaded recovery file; do not continue syncing.');
+   const after=compareRemotePackage(pkg,newBase,actual,newMarker);
+   if(after.totals.safe||after.totals.conflict||after.totals.missing)throw Error('Post-apply classification failed; use recovery backup.');
+   status.textContent='TEST APPLY VERIFIED: '+ready.report.totals.safe+' incoming change(s) are now present in this isolated browser. No OneDrive sync cursor advanced. Save a new full backup before closing this window.';
+   backupButton.disabled=true;mergeButton.disabled=true;applyCheck.disabled=true;
+  }catch(e){
+   status.textContent='Direct TEST apply not completed or not verified: '+e.message+(before?' If data was modified, restore your recovery backup before proceeding.':'');
+   // No silent automatic restore: the user holds a separate recovery copy.
+  }finally{if(!backupButton.disabled)applyButton.disabled=false;}
+ };
+ info.append(backupButton,consent,mergeButton,applyConsent,applyButton,status);panel.append(info);
 }
 
 const crossDevicePreview=el('crossDevicePreview');
