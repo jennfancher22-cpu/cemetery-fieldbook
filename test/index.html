@@ -855,10 +855,57 @@ function render(){
  else if(!rows.length)out.append(textNode('p','empty','No matching burials. Try a broader search.'));
 }
 
+// Legacy imports may contain GEDCOM NOTE IDs in editable notes. Never treat
+// these hidden identifiers as editable user text; keep the original seed intact.
+function gedcomNoteReferences(record){
+ const explicit=Array.isArray(record?.gedcomNoteRefs)?record.gedcomNoteRefs:[];
+ const legacy=String(record?.notes||'').match(/@N\d+@/gi)||[];
+ return [...new Set([...explicit,...legacy])];
+}
 function cleanGedcomNotePointers(value){return String(value||'').replace(/(?:\s*\|\s*)?@[A-Za-z0-9_:-]+@(?=\s*(?:\||$))/g,'').trim()}
-function openEditor(id){current=id;const r=all().find(x=>x.id===id)||{id:'new',name:'',dates:'',relation:'',side:'',line:'',state:'Indiana',county:'',town:'',cemetery:'',plot:'',findagrave:'',notes:'',visited:false,stone:false,photo:false,gps:false};$('editTitle').textContent=id?'Edit burial record':'New cemetery discovery';for(const e of $('editForm').querySelectorAll('[name]')){e.type==='checkbox'?e.checked=!!r[e.name]:e.value=e.name==='notes'?cleanGedcomNotePointers(r.notes):(r[e.name]||'')}$('delete').hidden=!id||!id.startsWith('new-');$('editNote').textContent=r.gedcomId?'GEDCOM reference: '+r.gedcomId+(r.gedcomBurial?' · Burial: '+r.gedcomBurial:'')+(window.fieldbookDerivedRelationship?.(r)?' · Empty Relationship, Side and MRCA fields are shown using GEDCOM-derived suggestions; verify before saving.':''):'';$('photoFile').value='';renderPhotos();$('editor').showModal()}
+function renderedGedcomNotes(record){
+ const text=String(record.gedcomNoteText||'').trim();
+ const refs=gedcomNoteReferences(record);
+ return {text,refs};
+}
+
+function openEditor(id){current=id;const r=all().find(x=>x.id===id)||{id:'new',name:'',dates:'',relation:'',side:'',line:'',state:'Indiana',county:'',town:'',cemetery:'',plot:'',findagrave:'',notes:'',visited:false,stone:false,photo:false,gps:false};$('editTitle').textContent=id?'Edit burial record':'New cemetery discovery';for(const e of $('editForm').querySelectorAll('[name]')){e.type==='checkbox'?e.checked=!!r[e.name]:e.value=e.name==='notes'?cleanGedcomNotePointers(r.notes):(r[e.name]||'')}$('delete').hidden=!id||!id.startsWith('new-');$('editNote').textContent=r.gedcomId?'GEDCOM reference: '+r.gedcomId+(r.gedcomBurial?' · Burial: '+r.gedcomBurial:'')+(window.fieldbookDerivedRelationship?.(r)?' · Empty Relationship, Side and MRCA fields are shown using GEDCOM-derived suggestions; verify before saving.':''):'';const existingInfo=$('gedcomSourceNotes');if(existingInfo)existingInfo.remove();
+ const source=renderedGedcomNotes(r);
+ if(source.text||source.refs.length){
+  const block=document.createElement('details');block.id='gedcomSourceNotes';block.style.margin='12px 0';
+  const summary=document.createElement('summary');summary.textContent='Imported GEDCOM burial note (read-only)'+(source.refs.length?' · '+source.refs.join(', '):'');block.append(summary);
+  const content=document.createElement('div');content.className='meta';content.style.whiteSpace='pre-wrap';content.style.marginTop='8px';
+  content.textContent=source.text||'Note reference preserved in the original GEDCOM record. To display its full text, use a fresh GEDCOM import into an empty TEST session. No existing records will be modified automatically.';
+  block.append(content);$('editNote').before(block);
+ }
+ $('photoFile').value='';renderPhotos();$('editor').showModal()}
 function closeEditor(){$('editor').close();current=null}
-$('editForm').onsubmit=e=>{e.preventDefault();const form=$('editForm'),r={};for(const el of form.querySelectorAll('[name]'))r[el.name]=el.type==='checkbox'?el.checked:el.value.trim();const before=current?all().find(x=>x.id===current):null;if(!r.name||(!r.cemetery&&!(before&&before.source==='GEDCOM import'))){alert('Name and cemetery are required for new discoveries; GEDCOM records with unknown cemetery may remain incomplete.');return}let changed=[];if(before){changed=Object.keys(r).filter(k=>formatLogValue(before[k])!==formatLogValue(r[k])).map(k=>({key:k,detail:(FIELD_NAMES[k]||k)+': '+formatLogValue(before[k])+' → '+formatLogValue(r[k])}))}if(current){if(current.startsWith('new-'))extras=extras.map(x=>x.id===current?{...x,...r}:x);else updates[current]={...(updates[current]||{}),...r}}else{r.id='new-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);r.source='Field discovery';extras.push(r)}persist();if(!before)addChange('New discovery',r.name,r.id,DISCOVERY_FIELDS.filter(([key])=>String(r[key]||'').trim()).map(([key,label])=>label+': '+r[key]).join('; '));else if(changed.length){const genealogical=changed.filter(x=>!ROUTINE_FIELDS.has(x.key));const routine=changed.filter(x=>ROUTINE_FIELDS.has(x.key));if(genealogical.length)addChange('Record updated',r.name,current,genealogical.map(x=>x.detail).join('; '),true);if(routine.length)addChange('Visit tracking updated',r.name,current,routine.map(x=>x.detail).join('; '),false)}closeEditor();refreshOptions();render()};
+$('editForm').onsubmit=e=>{
+ e.preventDefault();const form=$('editForm'),entered={};
+ for(const el of form.querySelectorAll('[name]'))entered[el.name]=el.type==='checkbox'?el.checked:el.value.trim();
+ const before=current?all().find(x=>x.id===current):null;
+ if(!entered.name||(!entered.cemetery&&!(before&&before.source==='GEDCOM import'))){alert('Name and cemetery are required for new discoveries; GEDCOM records with unknown cemetery may remain incomplete.');return;}
+ const patch={};
+ if(before){for(const [key,value] of Object.entries(entered)){
+  // A calculated relationship is displayed but must not be stored on an unrelated save.
+  // Legacy GEDCOM note pointers are also hidden, so compare notes against the editor view.
+  const prior=key==='notes'?cleanGedcomNotePointers(before.notes):before[key];
+  if(formatLogValue(prior)!==formatLogValue(value))patch[key]=value;
+ }}else Object.assign(patch,entered);
+ const changed=Object.keys(patch).map(key=>({key,detail:(FIELD_NAMES[key]||key)+': '+formatLogValue(before?.[key])+' → '+formatLogValue(patch[key])}));
+ if(current){
+  if(current.startsWith('new-'))extras=extras.map(x=>x.id===current?{...x,...patch}:x);
+  else if(changed.length)updates[current]={...(updates[current]||{}),...patch};
+ }else{patch.id='new-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);patch.source='Field discovery';extras.push(patch)}
+ if(!before||changed.length)persist();
+ if(!before)addChange('New discovery',patch.name,patch.id,DISCOVERY_FIELDS.filter(([key])=>String(patch[key]||'').trim()).map(([key,label])=>label+': '+patch[key]).join('; '));
+ else if(changed.length){
+  const genealogical=changed.filter(x=>!ROUTINE_FIELDS.has(x.key));const routine=changed.filter(x=>ROUTINE_FIELDS.has(x.key));
+  if(genealogical.length)addChange('Record updated',entered.name,current,genealogical.map(x=>x.detail).join('; '),true);
+  if(routine.length)addChange('Visit tracking updated',entered.name,current,routine.map(x=>x.detail).join('; '),false);
+ }
+ closeEditor();refreshOptions();render();
+};
 $('close').onclick=$('cancel').onclick=closeEditor;$('delete').onclick=async()=>{if(!confirm('Delete this new discovery and its pictures?'))return;const removed=extras.find(x=>x.id===current);extras=extras.filter(x=>x.id!==current);await photoDeleteAll(current);persist();if(removed)addChange('Discovery deleted',removed.name,current,'Cemetery: '+removed.cemetery);closeEditor();refreshOptions();render()};
 $('add').onclick=()=>openEditor(null);
 const clearBurialFilters=()=>{$('q').value='';$('stateFilter').value='';refreshOptions();$('county').value='';$('cem').value='';$('status').value='';showAllRecords=false;resultsSuppressed=false;visible=65;render()};
@@ -1160,13 +1207,26 @@ function normalizeBurialPlace(raw) {
 }
 function parseGedcomBurials(text){
  const lines=String(text).replace(/^\uFEFF/,'').split(/\r\n|\n|\r/);
+ // Resolve GEDCOM shared notes in a separate pass. 0 @N…@ NOTE is a
+ // definition; CONT creates a newline, CONC joins the previous line.
+ const noteMap=new Map();let noteId='';
+ for(const row of lines){
+  const m=row.match(/^(\d+)\s+(?:(@[^\s]+@)\s+)?(\S+)(?:\s+(.*))?$/);if(!m)continue;
+  const lev=Number(m[1]),id=m[2],tag=m[3],value=m[4]||'';
+  if(lev===0){noteId=tag==='NOTE'&&id?id:'';if(noteId)noteMap.set(noteId,value);continue;}
+  if(noteId&&lev===1&&(tag==='CONT'||tag==='CONC'))noteMap.set(noteId,(noteMap.get(noteId)||'')+(tag==='CONT'?'\n':'')+value);
+ }
  const individuals=[];let person=null,context='',level2='',burial=null;
  function commit(){if(!person)return; if(person.burials.length){const best=person.burials.find(x=>normalizeBurialPlace(x.place).hasCemetery)||person.burials[0]; const location=normalizeBurialPlace(best.place); const dates=[gedYear(person.birth),gedYear(person.death)].join('–');const noteBits=[];
    if(best.date)noteBits.push('Burial date: '+best.date);
    if(!location.hasCemetery&&best.place)noteBits.push('GEDCOM burial place (cemetery not identified): '+best.place);
-   if(best.note&&!/^@[A-Za-z0-9_:-]+@$/.test(best.note.trim()))noteBits.push(best.note.slice(0,500));
+   // Source note references and their resolved content are NOT user notes.
+   const refs=[...new Set((best.note.match(/@N\d+@/gi)||[]))];
+   const inline=best.note.replace(/@N\d+@/gi,'').trim();
+   if(inline)noteBits.push(inline.slice(0,500));
+   const gedcomNoteText=[...refs.map(id=>noteMap.get(id)||''),].filter(Boolean).join('\n\n');
    const memorial=best.link.match(/https?:\/\/[^\s<>"']+/i);
-   individuals.push({id:'ged-'+person.id.replace(/[^A-Za-z0-9_-]/g,''),gedcomId:person.id,name:gedName(person.name)||'Unnamed individual '+person.id,nameSuffix:person.nameSuffix||gedNameSuffix(person.name),dates:dates==='–'?'':dates,relation:'',side:'',line:'',state:location.state,county:location.county,town:location.town,cemetery:location.cemetery,plot:'',findagrave:memorial?memorial[0]:'',notes:noteBits.join(' | '),visited:false,stone:false,photo:false,gps:false,gedcomBurial:best.place,source:'GEDCOM import'});
+   individuals.push({id:'ged-'+person.id.replace(/[^A-Za-z0-9_-]/g,''),gedcomId:person.id,name:gedName(person.name)||'Unnamed individual '+person.id,nameSuffix:person.nameSuffix||gedNameSuffix(person.name),dates:dates==='–'?'':dates,relation:'',side:'',line:'',state:location.state,county:location.county,town:location.town,cemetery:location.cemetery,plot:'',findagrave:memorial?memorial[0]:'',notes:noteBits.join(' | '),gedcomNoteRefs:refs,gedcomNoteText,visited:false,stone:false,photo:false,gps:false,gedcomBurial:best.place,source:'GEDCOM import'});
  }}
  for(const row of lines){const m=row.match(/^(\d+)\s+(?:(@[^\s]+@)\s+)?(\S+)(?:\s+(.*))?$/);if(!m)continue;const lev=Number(m[1]),tag=m[3],value=(m[4]||'').trim();
   if(lev===0){commit();person=(tag==='INDI'&&m[2])?{id:m[2],name:'',nameSuffix:'',birth:'',death:'',burials:[]}:null;context='';level2='';burial=null;continue;}
@@ -1174,7 +1234,7 @@ function parseGedcomBurials(text){
   if(lev===1){context=tag;level2='';burial=null;if(tag==='NAME'&&!person.name)person.name=value;if(tag==='BURI'){burial={place:'',date:'',link:'',note:''};person.burials.push(burial)};continue;}
   if(lev===2){level2=tag;if(context==='NAME'&&tag==='NSFX'&&!person.nameSuffix)person.nameSuffix=value;if(context==='BIRT'&&tag==='DATE')person.birth=value;
    if(context==='DEAT'&&tag==='DATE')person.death=value;
-   if(context==='BURI'&&burial){if(tag==='PLAC')burial.place=value;else if(tag==='DATE')burial.date=value;else if(tag==='NOTE'&&(value.startsWith('https://')||value.startsWith('http://')))burial.link=value;else if(tag==='NOTE')burial.note=value;else if(tag==='_LINK')burial.link=value;}continue;}
+   if(context==='BURI'&&burial){if(tag==='PLAC')burial.place=value;else if(tag==='DATE')burial.date=value;else if(tag==='NOTE'&&(value.startsWith('https://')||value.startsWith('http://')))burial.link=value;else if(tag==='NOTE')burial.note+=(burial.note?' | ':'')+value;else if(tag==='_LINK')burial.link=value;}continue;}
   if(lev>=3&&context==='BURI'&&burial){if(tag==='_LINK'&&value.includes('findagrave.com'))burial.link=value;else if(tag==='NOTE'&&value.includes('findagrave.com'))burial.link=value;else if((tag==='CONT'||tag==='CONC')&&level2==='NOTE')burial.note+=(tag==='CONT'?'\n':'')+value;}
  }
  commit();return individuals;
