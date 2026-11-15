@@ -871,19 +871,29 @@ function gedcomNoteReferences(record){
 function cleanGedcomNotePointers(value){return String(value||'').replace(/(?:\s*\|\s*)?@[A-Za-z0-9_:-]+@(?=\s*(?:\||$))/g,'').trim()}
 // Older backups put the burial date into the general notes string. Read it without
 // mutating the imported seed, so old backups and new imports remain compatible.
-function legacyBurialDate(record){
- const m=String(record?.notes||'').match(/(?:^|\s*\|\s*)Burial date:\s*([^|\n]+)/i);
- return m?m[1].trim():'';
+// Split legacy "Burial date: ..." prefixes without treating appended fieldwork
+// notes as part of the date. Older TEST backups may have no " | " delimiter.
+function splitLegacyBurialNotes(value){
+ const raw=String(value||'');
+ const match=raw.match(/^(\s*Burial date:\s*)([^\n|]*)([\s\S]*)$/i);
+ if(!match)return {date:'',notes:raw};
+ const segment=match[2];
+ // Recognize GEDCOM-style dates, including common qualifiers and ranges.
+ // Do not consume unrelated prose following the final year.
+ const parsed=segment.match(/^\s*((?:(?:ABT|AFT|BEF|EST|CAL|ON|FROM|TO|BET)\s+)*(?:(?:\d{1,2}\s+)?[A-Z]{3,9}\s+)?\d{3,4}(?:\s+(?:AND|TO)\s+(?:(?:\d{1,2}\s+)?[A-Z]{3,9}\s+)?\d{3,4})?)(?=\s|$)/i);
+ if(!parsed)return {date:'',notes:raw};
+ const leftover=segment.slice(parsed[0].length).trim();
+ const suffix=match[3].replace(/^\s*\|\s*/,'').trim();
+ return {date:parsed[1].trim(),notes:[leftover,suffix].filter(Boolean).join(leftover&&suffix?' | ':'')};
 }
+function legacyBurialDate(record){return splitLegacyBurialNotes(record?.notes).date}
 function editableBurialNotes(record){
- let value=cleanGedcomNotePointers(record?.notes||'');
- // The date now has its own field. Do not show it again as a note.
- value=value.replace(/(?:^|\s*\|\s*)Burial date:\s*[^|\n]+/i,'').replace(/^\s*\|\s*|\s*\|\s*$/g,'').trim();
- // The importer preserves GEDCOM source content separately. For older records
- // containing that metadata, expose it inside the editable Burial Notes area.
+ const split=splitLegacyBurialNotes(record?.notes);
+ let value=cleanGedcomNotePointers(split.notes).replace(/^\s*\|\s*|\s*\|\s*$/g,'').trim();
  const imported=String(record?.gedcomNoteText||'').trim();
- const hasSavedNoteEdit=!!(record?.id&&Object.prototype.hasOwnProperty.call(updates[record.id]||{},'notes'));
- if(imported&&!value.includes(imported)&&!hasSavedNoteEdit)value=[value,imported].filter(Boolean).join('\n\n');
+ // Always show preserved FTM source text, even if an older edit replaced
+ // the editable note value before this bug was fixed.
+ if(imported&&!value.includes(imported))value=[value,imported].filter(Boolean).join('\n\n');
  return value;
 }
 function effectiveBurialDate(record){return String(record?.burialDate||'').trim()||legacyBurialDate(record)||legacyBurialDate(seed.find(x=>x.id===record?.id))}
@@ -921,11 +931,21 @@ $('editForm').onsubmit=e=>{
 };
 $('close').onclick=$('cancel').onclick=closeEditor;$('delete').onclick=async()=>{if(!confirm('Delete this new discovery and its pictures?'))return;const removed=extras.find(x=>x.id===current);extras=extras.filter(x=>x.id!==current);await photoDeleteAll(current);persist();if(removed)addChange('Discovery deleted',removed.name,current,'Cemetery: '+removed.cemetery);closeEditor();refreshOptions();render()};
 $('add').onclick=()=>openEditor(null);
-const clearBurialFilters=()=>{$('q').value='';$('stateFilter').value='';refreshOptions();$('county').value='';$('cem').value='';$('status').value='';showAllRecords=false;resultsSuppressed=false;visible=65;render()};
+const clearBurialFilters=()=>{clearTimeout(burialSearchTimer);burialSearchTimer=null;$('q').value='';$('stateFilter').value='';refreshOptions();$('county').value='';$('cem').value='';$('status').value='';showAllRecords=false;resultsSuppressed=false;visible=65;render()};
 const hideBurialResults=()=>{resultsSuppressed=true;render();$('burialPanel').scrollIntoView({block:'start',behavior:'smooth'})};
 ['clear','clearResultsTop','clearResultsBottom'].forEach(id=>$(id).onclick=clearBurialFilters);
 ['hideResultsTop','hideResultsBottom'].forEach(id=>$(id).onclick=hideBurialResults);
-['q','stateFilter','county','cem','status'].forEach(id=>$(id).addEventListener(id==='q'?'input':'change',()=>{
+// Keep keystrokes responsive with large GEDCOM imports. Filtering and grouping
+// are performed only after the user briefly stops typing.
+let burialSearchTimer=null;
+$('q').addEventListener('input',()=>{
+ clearTimeout(burialSearchTimer);
+ burialSearchTimer=setTimeout(()=>{
+  burialSearchTimer=null;showAllRecords=false;resultsSuppressed=false;visible=65;render();
+ },220);
+});
+['stateFilter','county','cem','status'].forEach(id=>$(id).addEventListener('change',()=>{
+ clearTimeout(burialSearchTimer);burialSearchTimer=null;
  if(id==='stateFilter'){$('county').value='';$('cem').value='';refreshOptions();}
  else if(id==='county'){$('cem').value='';refreshOptions();}
  showAllRecords=false;resultsSuppressed=false;visible=65;render();
