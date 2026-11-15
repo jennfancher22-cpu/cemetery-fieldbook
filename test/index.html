@@ -68,6 +68,12 @@
  .finder-sub{margin-left:0}
 }
 
+/* Compact burial detail fields: one row on phone and desktop. */
+#editForm .burial-fields-row{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1.2fr) 68px;gap:8px;align-items:end}
+#editForm .burial-fields-row>div{min-width:0}
+#editForm .burial-fields-row input{min-width:0;padding-left:9px;padding-right:9px}
+#editForm .burial-fields-row input[name="side"]{text-align:center}
+
 /* GEDCOM importer preview */
 .home-panel{border:1px solid #bfd5ca;border-radius:12px;padding:13px;margin:14px 0;background:#f6faf7}
 .home-panel label{display:block;margin:9px 0 5px;font-weight:700}
@@ -422,7 +428,7 @@
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
 <footer>Fieldbook v7 TEST · Read-only automatic baseline difference detection (no sync) · Existing-record comparison and accurate restore totals (TEST only) · Optional automatic OneDrive backup + direct restore + verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
-<dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side"></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Notes / discoveries</label><textarea name="notes" placeholder="Stone transcription, directions, related graves, evidence…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
+<dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div class="burial-fields-row"><div><label>Burial date</label><input name="burialDate" placeholder="4 JAN 1856"></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side" maxlength="1" placeholder="M/P"></div></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Burial Notes</label><textarea name="notes" placeholder="FTM burial notes, stone transcription, directions, discoveries…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
 const $=x=>document.getElementById(x);
@@ -445,7 +451,7 @@ const KEY='cemeteryFieldbook_V7_TEST_records', BACKUP_KEY='cemeteryFieldbook_V7_
 const CHANGE_KEY='cemeteryFieldbook_V7_TEST_changelog';
 let changeLog=[];
 try{const storedLog=JSON.parse(localStorage.getItem(CHANGE_KEY)||'[]');if(Array.isArray(storedLog))changeLog=storedLog;}catch(_){changeLog=[]}
-const FIELD_NAMES={name:'Name',dates:'Dates',relation:'Relationship',side:'Family side',line:'Family line',state:'State',county:'County',town:'Town',cemetery:'Cemetery',plot:'Plot',findagrave:'Find a Grave link',notes:'Notes',visited:'Visited',stone:'Stone',photo:'Photo status',gps:'GPS status'};
+const FIELD_NAMES={name:'Name',dates:'Dates',relation:'Relationship',side:'Family side',line:'Family line',state:'State',county:'County',town:'Town',cemetery:'Cemetery',plot:'Plot',burialDate:'Burial date',findagrave:'Find a Grave link',notes:'Burial Notes',visited:'Visited',stone:'Stone',photo:'Photo status',gps:'GPS status'};
 // Keep enteredFTM for compatibility with earlier v5 test backups.
 const ROUTINE_FIELDS=new Set(['visited','stone','photo','gps']);
 const ROUTINE_TYPES=new Set(['Photo deleted']);
@@ -585,8 +591,8 @@ function exportDetails(detail){
 // discovery row when that field has a separate recorded correction.
 const DISCOVERY_FIELDS=[
  ['dates','Dates'],['state','State'],['county','County'],['town','Town'],
- ['cemetery','Cemetery'],['plot','Plot'],['relation','Relationship'],
- ['side','Family side'],['line','Family line'],['findagrave','Find a Grave'],['notes','Notes']
+ ['cemetery','Cemetery'],['burialDate','Burial date'],['plot','Plot'],['relation','Relationship'],
+ ['side','Family side'],['line','Family line'],['findagrave','Find a Grave'],['notes','Burial Notes']
 ];
 function discoveryExportDetails(entry,person){
  const existing=exportDetails(entry.detail).filter(d=>d.field);
@@ -863,21 +869,28 @@ function gedcomNoteReferences(record){
  return [...new Set([...explicit,...legacy])];
 }
 function cleanGedcomNotePointers(value){return String(value||'').replace(/(?:\s*\|\s*)?@[A-Za-z0-9_:-]+@(?=\s*(?:\||$))/g,'').trim()}
-function renderedGedcomNotes(record){
- const text=String(record.gedcomNoteText||'').trim();
- const refs=gedcomNoteReferences(record);
- return {text,refs};
+// Older backups put the burial date into the general notes string. Read it without
+// mutating the imported seed, so old backups and new imports remain compatible.
+function legacyBurialDate(record){
+ const m=String(record?.notes||'').match(/(?:^|\s*\|\s*)Burial date:\s*([^|\n]+)/i);
+ return m?m[1].trim():'';
 }
-
-function openEditor(id){current=id;const r=all().find(x=>x.id===id)||{id:'new',name:'',dates:'',relation:'',side:'',line:'',state:'Indiana',county:'',town:'',cemetery:'',plot:'',findagrave:'',notes:'',visited:false,stone:false,photo:false,gps:false};$('editTitle').textContent=id?'Edit burial record':'New cemetery discovery';for(const e of $('editForm').querySelectorAll('[name]')){e.type==='checkbox'?e.checked=!!r[e.name]:e.value=e.name==='notes'?cleanGedcomNotePointers(r.notes):(r[e.name]||'')}$('delete').hidden=!id||!id.startsWith('new-');$('editNote').textContent=r.gedcomId?'GEDCOM reference: '+r.gedcomId+(r.gedcomBurial?' · Burial: '+r.gedcomBurial:'')+(window.fieldbookDerivedRelationship?.(r)?' · Empty Relationship, Side and MRCA fields are shown using GEDCOM-derived suggestions; verify before saving.':''):'';const existingInfo=$('gedcomSourceNotes');if(existingInfo)existingInfo.remove();
- const source=renderedGedcomNotes(r);
- if(source.text||source.refs.length){
-  const block=document.createElement('details');block.id='gedcomSourceNotes';block.style.margin='12px 0';
-  const summary=document.createElement('summary');summary.textContent='Imported GEDCOM burial note (read-only)'+(source.refs.length?' · '+source.refs.join(', '):'');block.append(summary);
-  const content=document.createElement('div');content.className='meta';content.style.whiteSpace='pre-wrap';content.style.marginTop='8px';
-  content.textContent=source.text||'Note reference preserved in the original GEDCOM record. To display its full text, use a fresh GEDCOM import into an empty TEST session. No existing records will be modified automatically.';
-  block.append(content);$('editNote').before(block);
- }
+function editableBurialNotes(record){
+ let value=cleanGedcomNotePointers(record?.notes||'');
+ // The date now has its own field. Do not show it again as a note.
+ value=value.replace(/(?:^|\s*\|\s*)Burial date:\s*[^|\n]+/i,'').replace(/^\s*\|\s*|\s*\|\s*$/g,'').trim();
+ // The importer preserves GEDCOM source content separately. For older records
+ // containing that metadata, expose it inside the editable Burial Notes area.
+ const imported=String(record?.gedcomNoteText||'').trim();
+ const hasSavedNoteEdit=!!(record?.id&&Object.prototype.hasOwnProperty.call(updates[record.id]||{},'notes'));
+ if(imported&&!value.includes(imported)&&!hasSavedNoteEdit)value=[value,imported].filter(Boolean).join('\n\n');
+ return value;
+}
+function effectiveBurialDate(record){return String(record?.burialDate||'').trim()||legacyBurialDate(record)||legacyBurialDate(seed.find(x=>x.id===record?.id))}
+function openEditor(id){current=id;const r=all().find(x=>x.id===id)||{id:'new',name:'',dates:'',relation:'',side:'',line:'',state:'Indiana',county:'',town:'',cemetery:'',burialDate:'',plot:'',findagrave:'',notes:'',visited:false,stone:false,photo:false,gps:false};$('editTitle').textContent=id?'Edit burial record':'New cemetery discovery';for(const e of $('editForm').querySelectorAll('[name]')){e.type==='checkbox'?e.checked=!!r[e.name]:e.value=e.name==='notes'?editableBurialNotes(r):e.name==='burialDate'?effectiveBurialDate(r):(r[e.name]||'')}$('delete').hidden=!id||!id.startsWith('new-');$('editNote').textContent=r.gedcomId?'GEDCOM reference: '+r.gedcomId+(r.gedcomBurial?' · Burial: '+r.gedcomBurial:'')+(window.fieldbookDerivedRelationship?.(r)?' · Empty Relationship, Side and MRCA fields are shown using GEDCOM-derived suggestions; verify before saving.':''):'';
+ const previous=$('gedcomSourceNotes');if(previous)previous.remove();
+ // The source note text now appears in the editable Burial Notes field, rather
+ // than in a separate read-only box. Preserve source identifiers as metadata.
  $('photoFile').value='';renderPhotos();$('editor').showModal()}
 function closeEditor(){$('editor').close();current=null}
 $('editForm').onsubmit=e=>{
@@ -889,7 +902,7 @@ $('editForm').onsubmit=e=>{
  if(before){for(const [key,value] of Object.entries(entered)){
   // A calculated relationship is displayed but must not be stored on an unrelated save.
   // Legacy GEDCOM note pointers are also hidden, so compare notes against the editor view.
-  const prior=key==='notes'?cleanGedcomNotePointers(before.notes):before[key];
+  const prior=key==='notes'?editableBurialNotes(before):key==='burialDate'?effectiveBurialDate(before):before[key];
   if(formatLogValue(prior)!==formatLogValue(value))patch[key]=value;
  }}else Object.assign(patch,entered);
  const changed=Object.keys(patch).map(key=>({key,detail:(FIELD_NAMES[key]||key)+': '+formatLogValue(before?.[key])+' → '+formatLogValue(patch[key])}));
@@ -1218,15 +1231,16 @@ function parseGedcomBurials(text){
  }
  const individuals=[];let person=null,context='',level2='',burial=null;
  function commit(){if(!person)return; if(person.burials.length){const best=person.burials.find(x=>normalizeBurialPlace(x.place).hasCemetery)||person.burials[0]; const location=normalizeBurialPlace(best.place); const dates=[gedYear(person.birth),gedYear(person.death)].join('–');const noteBits=[];
-   if(best.date)noteBits.push('Burial date: '+best.date);
+   // Store burial date in its own field, not mixed with burial notes.
    if(!location.hasCemetery&&best.place)noteBits.push('GEDCOM burial place (cemetery not identified): '+best.place);
    // Source note references and their resolved content are NOT user notes.
    const refs=[...new Set((best.note.match(/@N\d+@/gi)||[]))];
    const inline=best.note.replace(/@N\d+@/gi,'').trim();
    if(inline)noteBits.push(inline.slice(0,500));
    const gedcomNoteText=[...refs.map(id=>noteMap.get(id)||''),].filter(Boolean).join('\n\n');
+   if(gedcomNoteText)noteBits.push(gedcomNoteText);
    const memorial=best.link.match(/https?:\/\/[^\s<>"']+/i);
-   individuals.push({id:'ged-'+person.id.replace(/[^A-Za-z0-9_-]/g,''),gedcomId:person.id,name:gedName(person.name)||'Unnamed individual '+person.id,nameSuffix:person.nameSuffix||gedNameSuffix(person.name),dates:dates==='–'?'':dates,relation:'',side:'',line:'',state:location.state,county:location.county,town:location.town,cemetery:location.cemetery,plot:'',findagrave:memorial?memorial[0]:'',notes:noteBits.join(' | '),gedcomNoteRefs:refs,gedcomNoteText,visited:false,stone:false,photo:false,gps:false,gedcomBurial:best.place,source:'GEDCOM import'});
+   individuals.push({id:'ged-'+person.id.replace(/[^A-Za-z0-9_-]/g,''),gedcomId:person.id,name:gedName(person.name)||'Unnamed individual '+person.id,nameSuffix:person.nameSuffix||gedNameSuffix(person.name),dates:dates==='–'?'':dates,relation:'',side:'',line:'',state:location.state,county:location.county,town:location.town,cemetery:location.cemetery,burialDate:best.date||'',plot:'',findagrave:memorial?memorial[0]:'',notes:noteBits.join(' | '),gedcomNoteRefs:refs,gedcomNoteText,visited:false,stone:false,photo:false,gps:false,gedcomBurial:best.place,source:'GEDCOM import'});
  }}
  for(const row of lines){const m=row.match(/^(\d+)\s+(?:(@[^\s]+@)\s+)?(\S+)(?:\s+(.*))?$/);if(!m)continue;const lev=Number(m[1]),tag=m[3],value=(m[4]||'').trim();
   if(lev===0){commit();person=(tag==='INDI'&&m[2])?{id:m[2],name:'',nameSuffix:'',birth:'',death:'',burials:[]}:null;context='';level2='';burial=null;continue;}
