@@ -213,7 +213,7 @@
  #dataToolsFold .person-review-search input {box-sizing:border-box !important}
 }
 
-/* v7.05: compact workflow surfaces; technical details remain accessible. */
+/* v7.06: compact workflow surfaces; technical details remain accessible. */
 #simpleDataHub {border:1px solid #c8d8d0;background:#f8fbf9}
 #simpleDataHub details.hub-section > summary {padding:12px 13px;font-size:16px}
 #simpleDataHub .hub-content {padding:4px 12px 12px}
@@ -381,9 +381,9 @@
 </div>
 </div>
 <details style="margin-top:10px"><summary>Publish a reviewed backup as a baseline candidate (advanced TEST)</summary>
-<p class="hint">Only after independently verifying a merged backup in an isolated TEST restore. No older references or backup files will be overwritten or deleted.</p>
-<label style="display:block">Verified merged backup in OneDrive<select id="checkpointSource" style="width:100%;margin-top:5px"><option value="">Load cloud backup choices</option></select></label>
-<label style="display:flex;align-items:flex-start;gap:8px;margin:10px 0"><input type="checkbox" id="checkpointVerified" style="flex:none;width:19px;height:19px;min-height:19px"> <span>I restored this exact backup in an isolated TEST session and verified its records and photos.</span></label>
+<p class="hint">Use the verified full backup of this browser as a new baseline candidate. The app checks that all protected data matches before publishing. Older references and backups remain unchanged.</p>
+<label style="display:block">Verified full backup in OneDrive<select id="checkpointSource" style="width:100%;margin-top:5px"><option value="">Load cloud backup choices</option></select></label>
+<label style="display:flex;align-items:flex-start;gap:8px;margin:10px 0"><input type="checkbox" id="checkpointVerified" style="flex:none;width:19px;height:19px;min-height:19px"> <span>I verified this backup's records and photos. Fieldbook must also confirm an exact match with this browser before publishing.</span></label>
 <div class="buttons"><button type="button" id="checkpointPublish" class="secondary">Publish candidate reference in OneDrive</button></div>
 <div id="checkpointPublishStatus" class="hint" role="status">Nothing published.</div>
 </details>
@@ -3084,8 +3084,9 @@ const CPFILE=/^fieldbook-sync-reference-\d{4}-\d{2}-\d{2}T[\w-]+\.checkpoint\.js
 function populateCheckpointChoices(files){
  const prev=checkpointSource.value;checkpointSource.replaceChildren();
  const empty=document.createElement('option');empty.value='';empty.textContent='Choose a verified merged backup';checkpointSource.append(empty);
- // Only three-way merged backups are eligible, never arbitrary live or old GEDCOM snapshots.
- for(const f of files.filter(f=>/^fieldbook-TEST-three-way-merged-.*\.json$/i.test(f.name))){const op=document.createElement('option');op.value=f.id;op.textContent=f.name;checkpointSource.append(op)}
+ // Full v5 backups may be proposed, but publishing requires exact protected-content equality
+ // with the current browser, plus a recheck just before the new marker is uploaded.
+ for(const f of files.filter(f=>/^(?:fieldbook-|cemetery-fieldbook-backup-).*\.json$/i.test(f.name))){const op=document.createElement('option');op.value=f.id;op.textContent=f.name+' · '+new Date(f.createdDateTime).toLocaleString();checkpointSource.append(op)}
  if([...checkpointSource.options].some(x=>x.value===prev))checkpointSource.value=prev;
 }
 async function digestBytes(bytes){return b64url(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)))}
@@ -3119,22 +3120,24 @@ async function inspectCheckpoint(){
 el('checkpointLoad').onclick=async()=>{if(busy)return;setBusy(true);try{await inspectCheckpoint()}catch(e){checkpointCurrent.textContent='Could not check shared reference: '+e.message}finally{setBusy(false)}};
 el('checkpointPublish').onclick=async()=>{
  if(busy)return;
- if(!el('checkpointVerified').checked){checkpointPublishStatus.textContent='Confirm that you independently restored and checked the exact merged backup first.';return}
+ if(!el('checkpointVerified').checked){checkpointPublishStatus.textContent='Confirm you verified the backup records and photos first.';return}
  const chosen=syncCompareEntries.find(f=>f.id===checkpointSource.value);
- if(!chosen){checkpointPublishStatus.textContent='Select a merged backup after clicking Load backup choices.';return}
+ if(!chosen){checkpointPublishStatus.textContent='Choose the verified full backup from OneDrive after loading cloud choices.';return}
  if(!confirm('Publish a TEST baseline CANDIDATE referring to '+chosen.name+'?\n\nThis does NOT synchronize devices. It creates a new small metadata file in OneDrive. Older markers and backups stay unchanged.'))return;
  setBusy(true);
  try{
   checkpointPublishStatus.textContent='Reading and validating selected backup…';
   const bytes=await fetchCloudBackupBytes(chosen);const doc=JSON.parse(new TextDecoder().decode(bytes));
-  if(doc.format!=='CemeteryFieldbookBackup'||doc.version!==5||!Array.isArray(doc.seed)||!Array.isArray(doc.extras)||!Array.isArray(doc.photos))throw Error('Not a complete Fieldbook backup');
-  if(doc.syncCheckpoint?.kind!=='unapplied-three-way-merge')throw Error('Backup does not contain a three-way merge provenance checkpoint');
+  if(doc.format!=='CemeteryFieldbookBackup'||doc.version!==5||!Array.isArray(doc.seed)||!Array.isArray(doc.extras)||!Array.isArray(doc.photos)||!Array.isArray(doc.changeLog)||!Array.isArray(doc.gedcomPeople)||!doc.updates||typeof doc.updates!=='object')throw Error('Not a complete Fieldbook v5 backup');
+  const localSnapshot=await makePayload();
+  if(await syncContentHash(doc)!==await syncContentHash(localSnapshot))throw Error('The selected cloud backup does not match this browser across records, photos, notes, history, and GEDCOM directory. No candidate published.');
   const idSet=new Set([...doc.seed,...doc.extras].map(r=>r.id));
   if(idSet.size!==doc.seed.length+doc.extras.length)throw Error('Duplicate burial IDs in selected backup');
   const marker={format:'CemeteryFieldbookSyncReference',schema:1,status:'candidate',created:new Date().toISOString(),
     backup:{id:chosen.id,filename:chosen.name,bytes:bytes.byteLength,sha256:await digestBytes(bytes)},
     burials:idSet.size,photos:doc.photos.length,history:doc.changeLog?.length||0,
     caution:'Reference candidate only. Neither device has adopted a sync cursor. Do not use as automatic-sync authorization.'};
+  if(await syncContentHash(doc)!==await syncContentHash(await makePayload()))throw Error('Browser data changed during verification. Nothing published.');
   const name='fieldbook-sync-reference-'+new Date().toISOString().replace(/[:.]/g,'-')+'-'+b64url(randomBytes(5))+'.checkpoint.json';
   await ensureAppFolder();
   const upload=await graph('/me/drive/special/approot:/'+encodeURIComponent(name)+':/content',
@@ -3739,7 +3742,7 @@ finishRedirect();
 </script>
 
 <script>
-/* v7.05 presentation-only cleanup. No storage, cloud, or record writes. */
+/* v7.06 presentation-only cleanup. No storage, cloud, or record writes. */
 (function compactFieldbookInterface(){
  const $=id=>document.getElementById(id);
  const backup=$('simpleBackupContent'),sync=$('deviceSyncContent');
