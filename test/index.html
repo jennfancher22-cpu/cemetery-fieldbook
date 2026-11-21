@@ -259,16 +259,21 @@
 #simpleDataHub #dataBackupsFold, #simpleDataHub #cloudBackupLab {display:none}
 #simpleDataHub .hub-warning {font-size:13px;color:#674b23;background:#fff9ed;padding:9px 11px;border-radius:8px;margin-bottom:12px}
 @media(max-width:600px){#simpleDataHub details.hub-section > summary {font-size:16px;padding:13px 10px}#simpleDataHub .hub-content {padding:3px 10px 12px}}
-</style></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#fff3cb;color:#765113">V7.07 · TEST</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div></div></header><main>
+</style></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#fff3cb;color:#765113">V7.08 · TEST · SYNC WORKFLOW</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div></div></header><main>
 <div class="notice" style="border:2px solid #d0a23f;margin:10px 0;padding:12px;border-radius:12px"><strong>TEST ONLY — Cloud backup experiment.</strong> This is separate from LIVE data. Cloud sign-in needs a developer application ID; do not enter passwords here. Backups uploaded to OneDrive are not encrypted by Fieldbook yet.</div><div class="stats"><div class="stat"><div id="sPeople" class="num">—</div><div class="small">Burial entries</div></div><div class="stat"><div id="sCem" class="num">—</div><div class="small">Cemeteries</div></div><div class="stat"><div id="sVisited" class="num">—</div><div class="small">Visited</div></div></div>
 <section class="panel" id="nearbyPanel"><details class="finder-fold" id="nearbyFold"><summary>📍 Find cemeteries nearby <span class="finder-sub">Search by distance</span></summary><div class="finder-body"><p class="hint">Straight-line distance, not driving distance. Works offline with saved cemetery coordinates. Choose a starting town or try your phone location.</p><div class="filters"><div><label for="startPlace">Starting point</label><select id="startPlace"><option value="39.7684,-86.1581">Indianapolis, IN</option><option value="38.9592,-85.8903" selected>Seymour, IN</option><option value="39.6128,-86.3742">Mooresville, IN</option><option value="39.2014,-85.9214">Columbus, IN</option><option value="custom">Custom coordinates</option></select></div><div><label for="radius">Within</label><select id="radius"><option>10</option><option selected>25</option><option>50</option><option>100</option><option>250</option><option>500</option></select></div><div><label for="startLat">Latitude</label><input id="startLat" type="number" step="any" placeholder="39.123"></div><div><label for="startLon">Longitude</label><input id="startLon" type="number" step="any" placeholder="-86.123"></div></div><div class="buttons" style="margin-top:10px"><button id="nearSearch">Find nearby cemeteries</button><button class="secondary" id="myLocation">Use phone GPS</button></div><div id="geoNote" class="hint" role="status"></div><div id="nearResults"></div></div></details></section><section class="panel" id="relativePanel"><details class="finder-fold" id="relativeFold" open><summary>🔎 Find a relative or cemetery <span class="finder-sub">Search names &amp; filters</span></summary><div class="finder-body"><div class="filters"><div class="wide"><input id="q" type="search" placeholder="Search name, cemetery, town, family line…" aria-label="Search"></div><div><label for="stateFilter">State</label><select id="stateFilter"><option value="">All states</option></select></div><div><label for="county">County</label><select id="county"><option value="">All counties</option></select></div><div><label for="cem">Cemetery</label><select id="cem"><option value="">All cemeteries</option></select></div><div><label for="status">Visit filter</label><select id="status"><option value="">All records</option><option value="unvisited">Not visited</option><option value="nophoto">Photo needed</option><option value="nogps">GPS needed</option></select></div></div><div class="buttons" style="margin-top:12px"><button id="add">+ Add discovery</button><button class="secondary" id="clear">Clear filters</button><button class="outline" id="showAll">Show all records</button><button class="secondary" type="button" id="showMatches">Show filtered results</button></div></div></details></section>
 <section class="panel" id="burialPanel"><div class="resulthead"><h2 style="margin:0">Burial records</h2><span class="tiny" id="count"></span></div><div class="burial-list-controls"><span class="hint">Tap a name to view details and edit.</span><div class="inline-controls"><button class="secondary" id="hideResultsTop" type="button">Hide results</button><button class="secondary" id="clearResultsTop" type="button">Clear filters</button></div></div><div id="out"></div><div class="burial-list-controls"><button id="more" class="secondary" hidden>Show more</button><div class="inline-controls"><button class="secondary" id="hideResultsBottom" type="button">Hide results</button><button class="secondary" id="clearResultsBottom" type="button">Clear filters</button></div></div></section>
 <section class="panel" id="changeLogPanel"><div class="resulthead"><h2 style="margin:0">📋 Cemetery change log</h2><span class="tiny" id="changeCount"></span></div><p class="hint">Keep a complete activity history, and review just the discoveries and corrections you still need to enter in your family tree. Tracking starts with edits made in v5. v6 hides reversed and superseded field edits from outstanding tree updates, while preserving their activity history.</p><div class="buttons"><button id="viewTreeChanges">Changes to enter in tree</button><button id="viewHistory" class="secondary">Complete activity history</button></div><div id="changeList" hidden></div><div class="buttons" id="changeTools" hidden style="margin-top:10px"><button id="downloadChangeCsv">Export tree changes (Excel)</button><button class="secondary" id="downloadHistoryCsv">Export full history (Excel)</button><button class="secondary" id="hideChangeLog">Hide reports</button></div></section>
 <section class="panel" id="simpleDataHub" aria-label="Backup and device synchronization">
 <h2>💾 Backups &amp; device sync</h2>
-<p class="hint">Your TEST and LIVE records are separate. <strong>Two-way sync is not yet active.</strong></p>
+<p class="hint">Your TEST and LIVE records are separate. <strong>Guided two-device syncing is available in TEST; unattended sync is still OFF.</strong></p>
 <details class="hub-section" id="simpleBackupFold"><summary>Backups &amp; OneDrive <span class="finder-sub">Save, check, or recover records</span></summary><div class="hub-content" id="simpleBackupContent"><p class="hub-help">Use this for everyday backups or recovery. Restoring replaces this browser's current records; it does not merge devices.</p></div></details>
-<details class="hub-section" id="simpleSyncFold"><summary>Device sync testing <span class="finder-sub">Review changes safely — not automatic</span></summary><div class="hub-content" id="deviceSyncContent"><p class="hub-help">TEST preview only. Choose one device's changes to inspect. <strong>Nothing syncs automatically.</strong> Only run apply tests in a disposable private browser with a recovery backup.</p></div></details>
+<details class="hub-section" id="simpleSyncFold"><summary>Device sync testing <span class="finder-sub">Review changes safely — not automatic</span></summary><div class="hub-content" id="deviceSyncContent"><div class="home-panel" id="syncWorkflowPanel" style="border:2px solid #b1cdb8;border-radius:12px;padding:13px;margin:10px 0 14px">
+<h3 style="margin:0 0 6px">Two-device sync — guided TEST</h3>
+<p class="tiny" style="margin:0 0 12px">Uses your existing verified shared baseline. Check incoming device changes, or publish changes made here. Applying incoming changes requires a recovery download and your approval. Unattended automatic sync is OFF.</p>
+<div class="buttons"><button type="button" id="syncWorkflowCheck">Check other devices</button><button type="button" class="secondary" id="syncWorkflowPublish">Publish my changes</button><button type="button" id="syncWorkflowApply" disabled>Save recovery &amp; apply safe changes</button></div>
+<p id="syncWorkflowStatus" class="hint" role="status" aria-live="polite">No sync check run. Your data has not changed.</p><div id="syncWorkflowSummary" class="tiny"></div>
+</div><details><summary>Previous manual package tools (advanced)</summary><p class="hub-help">Existing package-by-package review remains available below for troubleshooting.</p></details></div></details>
 <details class="hub-section" id="simpleAdvancedFold"><summary>Developer tools <span class="finder-sub">Only for troubleshooting</span></summary><div class="hub-content" id="advancedToolsContent"><p class="hub-warning">Technical testing tools. Normally leave these closed. They are not needed for ordinary cemetery visits or backups.</p></div></details>
 <div class="hint" id="simpleHubStatus" role="status">TEST mode. No automatic two-way sync. Existing records are unchanged by the interface update.</div>
 </section>
@@ -3719,6 +3724,125 @@ el('deviceCheckpointList').onclick=async()=>{
   }
   deviceStatus.textContent=latest.size+' TEST browser installation(s) published a verified baseline checkpoint: '+[...latest.values()].map(x=>x.deviceId.slice(0,18)+'… '+x.filename).join(' | ')+'. These are NOT active sync cursors.';
  }catch(e){deviceStatus.textContent='Could not list checkpoints: '+e.message}finally{setBusy(false)}
+};
+
+
+// Guided two-device workflow. Manual TEST stage only; no background writes or cursor advancement.
+// Every operation uses the already verified baseline and the existing strict package merger.
+const workflowCheck=el('syncWorkflowCheck'),workflowApply=el('syncWorkflowApply'),workflowPublish=el('syncWorkflowPublish');
+const workflowStatus=el('syncWorkflowStatus'),workflowSummary=el('syncWorkflowSummary');
+let workflowPlan=null;
+function workflowClear(){workflowPlan=null;workflowApply.disabled=true;workflowSummary.replaceChildren()}
+function workflowGuard(){
+ if(!location.pathname.endsWith('/test/'))throw Error('Guided sync is available only at the /test/ TEST site.');
+ if(autoCheckbox.checked)throw Error('Turn off automatic OneDrive backups before a guided sync test.');
+}
+function workflowLine(s){const p=document.createElement('p');p.style.margin='5px 0';p.textContent=s;workflowSummary.append(p)}
+async function workflowPackages(base,marker){
+ const files=(await allCloudFiles()).filter(f=>f.file&&PACKAGE_FILE.test(f.name));
+ files.sort((a,b)=>String(b.createdDateTime||'').localeCompare(String(a.createdDateTime||'')));
+ if(files.length>60)throw Error('More than 60 package files exist. Use advanced review; no packages were applied.');
+ const found=[],seen=new Set();let skipped=0;
+ for(const f of files){
+  let pkg;
+  try{const res=await graph('/me/drive/items/'+encodeURIComponent(f.id)+'/content');pkg=await res.json();checkedDevicePackage(pkg,base,marker)}
+  catch(e){skipped++;continue}
+  if(seen.has(pkg.deviceId))continue;
+  seen.add(pkg.deviceId);
+  if(pkg.deviceId===getDeviceId())continue;
+  found.push({pkg,file:f});
+ }
+ return {found,skipped};
+}
+async function workflowScan(){
+ workflowClear();workflowGuard();
+ const {doc:base,marker}=await readVerifiedBaselineForDiff();
+ const local=await makePayload(),initialHash=await syncContentHash(local);
+ const cp=safeJSON(localStorage.getItem(DEVICECHECKKEY)||'null');
+ if(!cp||cp.deviceId!==getDeviceId()||cp.markerId!==marker.markerId||cp.hash!==marker.hash){
+  throw Error('This browser has not recorded a verified checkpoint for the current shared baseline. Existing data was not changed.');
+ }
+ const {found,skipped}=await workflowPackages(base,marker);
+ let running=structuredClone(local),received=0,already=0;
+ const steps=[];
+ for(const item of found){
+  const report=compareRemotePackage(item.pkg,base,running,marker);
+  if(!report.established||report.mismatch.length||report.totals.conflict||report.totals.missing){
+   const reason=report.totals.conflict+' conflicting changes, '+report.totals.missing+' missing records, '+report.mismatch.length+' protected section differences';
+   throw Error('Review required for '+item.file.name+' ('+reason+'). Nothing was applied. Use advanced package review for conflicts.');
+  }
+  already+=report.totals.already;
+  if(report.totals.safe){
+   const merged=isolatedPackageMerge(base,running,item.pkg,marker);
+   running=merged.backup;received+=report.totals.safe;
+  }
+  steps.push(item.file.name);
+ }
+ const resultHash=await syncContentHash(running);
+ workflowPlan={markerId:marker.markerId,markerHash:marker.hash,initialHash,resultHash,steps,received,already,skipped,result:running};
+ workflowLine('Compatible packages from other devices: '+steps.length+' · New changes: '+received+' · Already present: '+already+'.');
+ if(skipped)workflowLine(skipped+' older or incompatible cloud package(s) ignored.');
+ workflowLine('No browser records changed. Automatic sync remains OFF.');
+ workflowApply.disabled=!received;
+ workflowStatus.textContent=received?'Review complete: '+received+' incoming change(s) can be safely applied.':'No new compatible incoming changes. Your local data is unchanged.';
+}
+workflowCheck.onclick=async()=>{
+ if(busy)return;setBusy(true);workflowStatus.textContent='Checking verified baseline and other device packages…';
+ try{await workflowScan()}catch(e){workflowClear();workflowStatus.textContent='Check stopped safely: '+e.message}
+ finally{setBusy(false)}
+};
+workflowPublish.onclick=async()=>{
+ if(busy)return;setBusy(true);workflowClear();workflowStatus.textContent='Checking local differences against shared baseline…';
+ try{
+  workflowGuard();const {doc,marker}=await readVerifiedBaselineForDiff();const local=await makePayload();
+  const checkpoint=safeJSON(localStorage.getItem(DEVICECHECKKEY)||'null');
+  const pkg=prepareSafeChangePackage(doc,local,marker,checkpoint);
+  workflowLine('New burials '+pkg.counts.newBurials+' · Field edits '+pkg.counts.editedFields+' · Photos '+pkg.counts.newPhotos+' · History '+pkg.counts.newHistory+'.');
+  if(!confirm('Publish these local changes to OneDrive for other TEST devices? This does not change local records or mark changes as synchronized.')){
+   workflowStatus.textContent='Cancelled. Nothing published.';return;
+  }
+  const latest=await makePayload();
+  if(await syncContentHash(latest)!==await syncContentHash(local))throw Error('Data changed during review. Start again.');
+  const {marker:newMarker}=await readVerifiedBaselineForDiff();
+  if(newMarker.markerId!==marker.markerId||newMarker.hash!==marker.hash)throw Error('Shared baseline changed during review.');
+  const payload={...pkg,created:new Date().toISOString()};
+  const name='fieldbook-sync-changes-'+getDeviceId()+'-'+new Date().toISOString().replace(/[:.]/g,'-')+'-'+b64url(randomBytes(5))+'.package.json';
+  await ensureAppFolder();const response=await graph('/me/drive/special/approot:/'+encodeURIComponent(name)+':/content',
+   {method:'PUT',headers:{'Content-Type':'application/json','If-None-Match':'*'},body:JSON.stringify(payload)});
+  const saved=await response.json();if(!saved.id)throw Error('OneDrive did not confirm package creation.');
+  const verify=await graph('/me/drive/items/'+encodeURIComponent(saved.id)+'/content');
+  if(canonicalValue(await verify.json())!==canonicalValue(payload))throw Error('Cloud package verification failed.');
+  workflowStatus.textContent='Published and verified local changes for other TEST devices. Your data and checkpoint have not changed.';
+ }catch(e){workflowStatus.textContent='Publication not completed: '+e.message}
+ finally{setBusy(false)}
+};
+workflowApply.onclick=async()=>{
+ if(busy||!workflowPlan||!workflowPlan.received)return;
+ setBusy(true);workflowApply.disabled=true;
+ let started=false;
+ try{
+  workflowGuard();const plan=workflowPlan;
+  const current=await makePayload();
+  if(await syncContentHash(current)!==plan.initialHash)throw Error('Local data changed. Recheck other devices.');
+  const {marker}=await readVerifiedBaselineForDiff();
+  if(marker.markerId!==plan.markerId||marker.hash!==plan.markerHash)throw Error('Shared baseline changed. Recheck other devices.');
+  // Verify all latest packages again; avoid applying a stale cloud review.
+  const {doc:base}=await readVerifiedBaselineForDiff();
+  const latest=await workflowPackages(base,marker);
+  if(canonicalValue(latest.found.map(x=>x.file.name))!==canonicalValue(plan.steps))throw Error('Cloud packages changed. Recheck other devices.');
+  const recoveryName='fieldbook-TEST-RECOVERY-before-guided-sync-'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';
+  download(new Blob([JSON.stringify(current)],{type:'application/json'}),recoveryName);
+  workflowStatus.textContent='Recovery backup downloaded: '+recoveryName+'. Keep it before approving the change.';
+  if(!confirm('Confirm your recovery backup downloaded successfully. Apply '+plan.received+' SAFE incoming change(s) to THIS /test/ browser? No automatic sync or checkpoint advancement will occur. Cancel if no recovery file appeared.'))return;
+  if(await syncContentHash(await makePayload())!==plan.initialHash)throw Error('Local data changed before apply.');
+  started=true;
+  const restored=await window.fieldbookRestoreFromObject(plan.result,{skipRestoreConfirm:true,silentRestoreSuccess:true});
+  if(!restored)throw Error('Restore declined.');
+  if(await syncContentHash(await makePayload())!==plan.resultHash)throw Error('After-apply hash mismatch. Restore your recovery backup.');
+  workflowStatus.textContent='TEST MERGE VERIFIED: '+plan.received+' incoming changes applied to this browser; recovery file saved. Auto sync remains OFF. Your baseline checkpoint has not advanced.';
+  workflowClear();
+ }catch(e){workflowStatus.textContent='Apply stopped: '+e.message+(started?' If anything changed, restore your downloaded recovery JSON.':' No changes were made.');workflowClear()}
+ finally{setBusy(false)}
 };
 
 el('cloudList').onclick=async()=>{if(busy)return;setBusy(true);try{note('Reading backup list from OneDrive…');await listCloud();note('Cloud backup list updated.')}catch(e){note('Could not list cloud backups: '+e.message,true)}finally{setBusy(false)}};
