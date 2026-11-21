@@ -353,7 +353,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 #backupsHubFold:not([open]) .backups-hub-body{display:none}
 @media(max-width:600px){#backupsHubFold>summary{font-size:15px;flex-wrap:wrap}}
 </style>
-</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.17.1 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.18 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook">
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">A few simple steps to get your family cemetery records ready. Cloud storage and syncing are optional.</p>
@@ -391,10 +391,11 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 <p class="tiny">Joining is allowed only when this browser is empty or already identical to the cloud starting copy. Existing records are never silently overwritten. Sync stays OFF until you choose to turn it on.</p>
 </div><div class="home-panel" id="autoDeviceSyncPanel" style="border:2px solid #c1b1cd;border-radius:12px;padding:13px;margin:10px 0 14px">
 <h3 style="margin:0 0 6px">Automatic two-device sync</h3>
-<p class="tiny" style="margin:0 0 10px">After guided device setup, when enabled on this browser, Fieldbook checks OneDrive on opening, returning to this tab, and about every 2 minutes while the tab is open. It automatically publishes local changes, saves a verified OneDrive recovery backup before receiving changes, and applies only conflict-free changes. Conflicts stop automatic sync without changing this browser. Sync does not run when Fieldbook is closed.</p>
+<p class="tiny" style="margin:0 0 10px">After guided device setup, when enabled on this browser, Fieldbook checks OneDrive on opening, returning to this tab, and approximately every 30 seconds while the tab is visible. A periodic fallback remains active. It automatically publishes local changes, saves a verified OneDrive recovery backup before receiving changes, and applies only conflict-free changes. Conflicts stop automatic sync without changing this browser. Sync does not run when Fieldbook is closed.</p>
 <label style="display:flex;gap:8px;align-items:flex-start;margin:8px 0"><input type="checkbox" id="autoDeviceSyncConsent"> I understand Fieldbook may send local changes to OneDrive and apply conflict-free changes from my other devices. Conflicts pause sync; backups are readable JSON.</label>
 <div class="buttons"><button type="button" id="autoDeviceSyncEnable">Enable automatic sync</button><button type="button" class="secondary" id="autoDeviceSyncDisable">Turn off</button><button type="button" class="secondary" id="autoDeviceSyncNow">Sync now</button></div>
 <p id="autoDeviceSyncStatus" class="hint" role="status" aria-live="polite">Automatic sync OFF on this browser. No changes made.</p>
+<details id="syncDiagnosticsFold" class="data-subfold" style="margin-top:10px"><summary>Sync diagnostics <span class="tool-subnote">Recent checks, pauses and upgrade status</span></summary><div class="data-subbody"><p id="syncDiagnosticsSummary" class="hint" role="status">No diagnostics recorded.</p><div id="syncDiagnosticsHistory" class="tiny" style="white-space:pre-wrap;overflow-wrap:anywhere"></div><div class="buttons" style="margin-top:9px"><button type="button" id="copySyncDiagnostics" class="secondary">Copy diagnostic summary</button></div><p class="hint">Stored only in this TEST browser. Includes status and error messages, not family records or cloud credentials. This history survives a refresh and is cleared by Reset TEST Fieldbook.</p></div></details>
 </div><div class="home-panel" id="syncWorkflowPanel" style="border:2px solid #c1b1cd;border-radius:12px;padding:13px;margin:10px 0 14px">
 <h3 style="margin:0 0 6px">Two-device sync — guided controls</h3>
 <p class="tiny" style="margin:0 0 12px">Uses your existing verified shared baseline. Check incoming device changes, or publish changes made here. Applying incoming changes requires a recovery download and your approval. Unattended automatic sync is OFF.</p>
@@ -580,7 +581,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7.17.1 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.18 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div class="burial-fields-row"><div><label>Burial date</label><input name="burialDate" placeholder="Enter burial date"></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side" maxlength="1" placeholder="M/P"></div></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Burial Notes</label><textarea name="notes" placeholder="FTM burial notes, stone transcription, directions, discoveries…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -4020,6 +4021,41 @@ workflowApply.onclick=async()=>{
 
 // v7.11 opt-in automatic TEST sync. No background service worker or LIVE access.
 // OneDrive is the source for immutable device packages; the shared baseline is read-only.
+// v7.18: TEST-only durable synchronization diagnostics; no records, tokens or package contents.
+const AUTO_DIAG_KEY='fieldbook_test_v713_auto_sync_diagnostics_v1';
+const AUTO_DIAG_BOOT_KEY='fieldbook_test_v713_auto_sync_last_boot_state_v1';
+const AUTO_DIAG_LAST_KEY='fieldbook_test_v713_auto_sync_last_result_v1';
+function autoDiagRead(){try{const a=JSON.parse(localStorage.getItem(AUTO_DIAG_KEY)||'[]');return Array.isArray(a)?a:[]}catch(_){return []}}
+function autoDiagRecord(kind,message){
+ const clean=String(message||'').replace(/https?:\/\/\S+/g,'[URL]').slice(0,420);
+ const items=autoDiagRead();items.unshift({at:new Date().toISOString(),kind,message:clean});
+ try{localStorage.setItem(AUTO_DIAG_KEY,JSON.stringify(items.slice(0,24)));localStorage.setItem(AUTO_DIAG_LAST_KEY,JSON.stringify(items[0]))}catch(_){/* diagnostics must never block sync */}
+ autoDiagRender();
+}
+function autoDiagRender(){
+ const panel=document.getElementById('syncDiagnosticsHistory');
+ const summary=document.getElementById('syncDiagnosticsSummary');
+ if(!panel||!summary)return;
+ const rows=autoDiagRead(),nowOn=localStorage.getItem('fieldbook_test_v713_auto_device_sync_enabled_v2')==='yes';
+ const paused=localStorage.getItem('fieldbook_test_v713_auto_device_paused_reason_v1');
+ const last=rows[0];
+ summary.textContent='Current: '+(paused?'PAUSED':nowOn?'ON':'OFF')+(last?' · Latest: '+last.kind+' at '+new Date(last.at).toLocaleString():' · No events yet')+(paused?' · '+paused:'');
+ panel.textContent=rows.map(x=>new Date(x.at).toLocaleString()+' · '+x.kind+' · '+x.message).join('\n');
+}
+(function(){
+ // Record the state at each page load. Do not claim the update itself changed sync settings.
+ const enabled=localStorage.getItem('fieldbook_test_v713_auto_device_sync_enabled_v2')==='yes';
+ const paused=localStorage.getItem('fieldbook_test_v713_auto_device_paused_reason_v1');
+ const boot={at:new Date().toISOString(),enabled,paused:!!paused,version:'v7.18'};
+ try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify(boot))}catch(_){}
+ autoDiagRecord('Page loaded',enabled?'Sync authorization present (ON)':paused?'Saved safety pause present':'Sync setting is OFF at load');
+ const copy=document.getElementById('copySyncDiagnostics');
+ if(copy)copy.addEventListener('click',async()=>{
+  const text='Cemetery Fieldbook TEST v7.18 diagnostics\n'+(document.getElementById('syncDiagnosticsSummary')?.textContent||'')+'\n'+(document.getElementById('syncDiagnosticsHistory')?.textContent||'');
+  try{await navigator.clipboard.writeText(text);copy.textContent='Copied';setTimeout(()=>copy.textContent='Copy diagnostic summary',1800)}
+  catch(_){copy.textContent='Copy unavailable; select the text above';}
+ });
+})();
 const AUTO_DEVICE_KEY='fieldbook_test_v713_auto_device_sync_enabled_v2';
 const AUTO_DEVICE_PUBLISHED_KEY='fieldbook_test_v713_auto_device_sync_last_published_v1';
 const AUTO_CHECKED_KEY='fieldbook_test_v713_auto_device_last_checked_v1';
@@ -4040,12 +4076,14 @@ function autoDeviceOn(){return localStorage.getItem(AUTO_DEVICE_KEY)==='yes'}
 function autoDeviceState(message){
  autoDeviceEnable.disabled=autoDeviceOn();autoDeviceDisable.disabled=!autoDeviceOn();
  if(message)autoDeviceStatus.textContent=message;
+ autoDiagRender();
 }
 function autoDeviceOff(reason){
  const wasEnabled=autoDeviceOn();
  if(wasEnabled&&/^Automatic sync PAUSED safely:/i.test(String(reason||'')))localStorage.setItem(AUTO_PAUSED_KEY,String(reason));
  else if(!/^Automatic sync PAUSED safely:/i.test(String(reason||'')))localStorage.removeItem(AUTO_PAUSED_KEY);
  localStorage.removeItem(AUTO_DEVICE_KEY);
+ autoDiagRecord(/^Automatic sync PAUSED safely:/i.test(String(reason||''))?'Sync PAUSED':'Sync OFF',reason||'Synchronization disabled');
  if(autoDeviceEditTimer){clearTimeout(autoDeviceEditTimer);autoDeviceEditTimer=null;}
  window.dispatchEvent(new Event('fieldbook-test-sync-status'));
  if(autoDeviceTimer){clearInterval(autoDeviceTimer);autoDeviceTimer=null;}
@@ -4130,12 +4168,13 @@ async function autoDeviceCycle(){
   }
   // A check counts only after all safety checks and any read-back verification complete.
   autoDeviceMarkChecked(sent>0||received>0);
+  autoDiagRecord('Check passed','Published '+sent+', received '+received+', already present '+already+'.');
  }catch(e){autoDeviceOff('Automatic sync PAUSED safely: '+e.message+' No further unattended operations. Review before enabling again.');}
  finally{setBusy(false);autoDeviceRunning=false;}
 }
 function autoDeviceSchedule(){
  if(autoDeviceTimer){clearInterval(autoDeviceTimer);autoDeviceTimer=null;}
- if(autoDeviceOn())autoDeviceTimer=setInterval(()=>{if(Date.now()-autoDeviceLastRun>=110000)autoDeviceCycle()},120000);
+ if(autoDeviceOn())autoDeviceTimer=setInterval(()=>{if(document.visibilityState==='visible'&&Date.now()-autoDeviceLastRun>=27000)autoDeviceCycle()},30000);
 }
 autoDeviceEnable.onclick=()=>{
  if(!(location.pathname==='/cemetery-fieldbook/test/'||location.pathname==='/cemetery-fieldbook/test/index.html')){autoDeviceState('Automatic sync is available only on the published TEST site.');return;}
@@ -4143,7 +4182,7 @@ autoDeviceEnable.onclick=()=>{
  if(autoCheckbox.checked){autoDeviceState('Turn off the separate automatic OneDrive BACKUP feature first.');return;}
  if(!confirm('Enable automatic TEST synchronization on THIS browser? A verified starting copy and device checkpoint are required. Changes may publish and safely merge, with a verified OneDrive recovery file before each merge. Genuine conflicts will pause sync.'))return;
  localStorage.removeItem(AUTO_PAUSED_KEY);
- localStorage.setItem(AUTO_DEVICE_KEY,'yes');autoDeviceConsent.checked=false;
+ localStorage.setItem(AUTO_DEVICE_KEY,'yes');autoDiagRecord('Sync ON','Enabled by user; starting verified check');autoDeviceConsent.checked=false;
  autoDeviceState('Automatic sync enabled on this TEST browser. Checking OneDrive…');
  autoDeviceSchedule();autoDeviceCycle();
 };
@@ -4153,9 +4192,14 @@ autoDeviceNow.onclick=()=>{
  if(autoDeviceRunning){autoDeviceState('Automatic sync is already running.');return;}
  autoDeviceCycle();
 };
+// Always retain the exact current status before navigation/reload. No silent auto-enable.
+window.addEventListener('pagehide',()=>{
+ try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.18',event:'pagehide'}))}catch(_){}
+});
 window.addEventListener('online',()=>{if(autoDeviceOn())autoDeviceCycle()});
 document.addEventListener('visibilitychange',()=>{if(autoDeviceOn()&&document.visibilityState==='visible'&&Date.now()-autoDeviceLastRun>8000)autoDeviceCycle()});
 window.addEventListener('pageshow',()=>{if(autoDeviceOn()&&Date.now()-autoDeviceLastRun>8000)autoDeviceCycle()});
+window.addEventListener('storage',event=>{if(event.key===AUTO_DEVICE_KEY||event.key===AUTO_PAUSED_KEY)autoDiagRender()});
 if(autoDeviceOn()){
  autoDeviceState('Automatic sync ON for this TEST browser. Checking on page load…');autoDeviceSchedule();
  setTimeout(()=>autoDeviceCycle(),6000);
@@ -4164,7 +4208,7 @@ if(autoDeviceOn()){
  autoDeviceState(pausedReason||'Automatic sync OFF on this browser. Existing guided sync remains available below.');
 }
 
-// Upload local edits promptly while this tab is active. Leave the two-minute check as fallback.
+// Upload local edits promptly while this tab is active; also check incoming packages every 30 seconds in foreground.
 // Defer while another operation is busy, and coalesce multiple record/log/photo writes.
 const originalFieldbookDirty=window.fieldbookCloudMarkDirty;
 window.fieldbookCloudMarkDirty=(reason)=>{
