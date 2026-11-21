@@ -332,7 +332,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 #reopenSetup{margin:0 0 12px;display:none}
 @media(max-width:600px){#getStartedPanel{padding:11px}#getStartedPanel .onboard-step>summary{padding:11px 9px}#getStartedPanel .onboard-body{padding:9px}#getStartedPanel .onboard-route button{min-width:145px}}
 </style>
-</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.16 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><span class="cloud-dot"></span><span id="headerCloudText">Cloud disconnected</span></button><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><span class="cloud-dot"></span><span id="headerSyncText">Sync OFF</span></button></div></div></header><main>
+</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.16.2 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><span class="cloud-dot"></span><span id="headerCloudText">Cloud disconnected</span></button><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><span class="cloud-dot"></span><span id="headerSyncText">Sync OFF</span></button></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook">
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">A few simple steps to get your family cemetery records ready. Cloud storage and syncing are optional.</p>
@@ -558,7 +558,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7.16.1 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.16.2 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div class="burial-fields-row"><div><label>Burial date</label><input name="burialDate" placeholder="Enter burial date"></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side" maxlength="1" placeholder="M/P"></div></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Burial Notes</label><textarea name="notes" placeholder="FTM burial notes, stone transcription, directions, discoveries…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -4351,13 +4351,14 @@ finishRedirect();
 })();
 </script>
 <script id="unifiedOnboarding">
-/* v7.16: one first-run location; reuse established handlers and protect existing data. */
+/* v7.16.2: resume setup after external Microsoft sign-in; reuse established handlers and protect existing data. */
 (function(){
  'use strict';
  const $=id=>document.getElementById(id);
  const root=$('getStartedPanel'),startAgain=$('reopenSetup');
  if(!root||!$('pickGedcom')||!$('guidedFirstDevice'))return;
  const WIZARD_KEY='fieldbook_test_v715_welcome_dismissed';
+ const ROUTE_KEY='fieldbook_test_v715_welcome_route';
  let route='';let setupReady=false;let lastTransition='';
  const step=n=>$('onboardStep'+n);
  const openStep=n=>{const el=step(n);if(el&&!el.hidden)el.open=true;};
@@ -4378,6 +4379,7 @@ finishRedirect();
  function setDone(n,done){const badge=$('onboardN'+n);if(badge){badge.classList.toggle('done',done);badge.textContent=done?'✓':n}}
  function viewRoute(which){
   route=which==='join'?'join':'new';
+  localStorage.setItem(ROUTE_KEY,route);
   $('onboardNew').className=route==='new'?'selected':'secondary';$('onboardJoin').className=route==='join'?'selected':'secondary';
   $('onboardNew').setAttribute('aria-pressed',String(route==='new'));$('onboardJoin').setAttribute('aria-pressed',String(route==='join'));
   $('onboardNewSteps').hidden=route!=='new';$('onboardFirstDevice').hidden=route==='join';$('onboardJoinDevice').hidden=route==='new';
@@ -4453,6 +4455,10 @@ finishRedirect();
  function observe(id){const target=$(id);if(target)new MutationObserver(()=>refresh()).observe(target,{subtree:true,childList:true,characterData:true,attributes:false})}
  for(const id of ['gedcomStatus','homeSelected','gedcomImportHint','guidedSetupStatus','cloudState','autoDeviceSyncStatus','sPeople'])observe(id);
  window.addEventListener('focus',()=>refresh());window.addEventListener('pageshow',()=>refresh());
+ // Microsoft sign-in navigates away and back: restore the user's chosen setup path.
+ // Never auto-select a path for a genuinely new, empty installation.
+ const savedRoute=localStorage.getItem(ROUTE_KEY);
+ if(savedRoute==='new'||savedRoute==='join')viewRoute(savedRoute);
  if(localStorage.getItem(WIZARD_KEY)==='yes'){root.hidden=true;startAgain.style.display='inline-block'}
  // Wait for IndexedDB hydration; a blank transient placeholder is not a new user.
  Promise.resolve(typeof largeDataReady==='undefined'?null:largeDataReady).then(()=>{
