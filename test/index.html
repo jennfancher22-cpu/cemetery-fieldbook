@@ -1,27 +1,27 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#124c47"><title>Cemetery Fieldbook · v7 One-file GEDCOM Setup</title><style>
-:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#172f2b;background:#f4f6f1}*{box-sizing:border-box}body{margin:0}header{background:#124c47;color:white;padding:20px 16px 17px}header .wrap{max-width:880px;margin:auto}h1{font-size:24px;letter-spacing:-.6px;margin:0 0 4px}.sub{color:#cde5db;font-size:13px}main{max-width:880px;margin:auto;padding:14px 12px 80px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 14px}.stat{background:white;border:1px solid #dce5dd;border-radius:12px;text-align:center;padding:12px 5px}.num{font-size:23px;font-weight:800;color:#124c47}.small{font-size:12px;color:#58716a}.panel{background:#fff;border:1px solid #dce5dd;border-radius:15px;padding:14px;margin-bottom:13px;box-shadow:0 2px 12px #16392b09}h2{font-size:16px;margin:0 0 10px}input,select,textarea{font:inherit;width:100%;border:1px solid #b8cbc1;background:white;color:#1a332d;border-radius:10px;padding:11px 12px;min-height:44px}textarea{min-height:80px}label{font-size:13px;font-weight:600;display:block;margin:8px 0 4px}.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px}.filters .wide{grid-column:1/-1}.buttons{display:flex;flex-wrap:wrap;gap:8px}button,.btn{border:0;border-radius:10px;background:#14675e;color:white;font-weight:650;font-size:14px;min-height:42px;padding:10px 14px;cursor:pointer}button.secondary,.btn.secondary{background:#edf4ef;color:#14594e;border:1px solid #bfd5ca}button.outline{background:white;color:#14594e;border:1px solid #a6c7b5}button.danger{background:#fce8e5;color:#8a271e}button:active{transform:scale(.99)}.resulthead{display:flex;justify-content:space-between;align-items:center;gap:12px}.person{padding:13px 0;border-top:1px solid #e5ede7}.person:first-of-type{border-top:0}.person h3{font-size:16px;margin:0 0 3px}.meta{font-size:13px;color:#566f67;line-height:1.6}.chips{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.chip{background:#eaf2ed;border-radius:6px;padding:3px 7px;font-size:11px;color:#295d4e}.chip.done{background:#d9ecdb;color:#1f5d38}.chip.not{background:#f3eee4;color:#81663b}.cemtitle{font-size:13px;font-weight:800;color:#286b5b;text-transform:uppercase;letter-spacing:.05em;margin:15px 0 7px}.right{margin-left:auto}.tiny{font-size:12px;color:#64756e}.empty{text-align:center;padding:25px 5px;color:#64756e}dialog{width:min(94vw,600px);max-height:90vh;border:0;border-radius:16px;padding:0;box-shadow:0 20px 70px #001c1c66}dialog::backdrop{background:#071d1bbb}.dialogbody{padding:17px;max-height:85vh;overflow:auto}.dialogtop{display:flex;align-items:center;justify-content:space-between}.dialogtop h2{margin:0}.checkrow{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin:12px 0}.checkrow label{font-weight:500;display:flex;align-items:center;gap:7px;border:1px solid #d6e3da;padding:10px;border-radius:9px;margin:0}.checkrow input{width:19px;min-height:19px;height:19px;accent-color:#14675e}.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 0}.photoitem{position:relative}.photoitem img{width:100%;height:100px;object-fit:cover;border-radius:8px}.photoitem button{position:absolute;right:2px;top:2px;min-height:25px;padding:3px 8px;background:#74281fe3}.nearcard{border-top:1px solid #dbe6df;padding:12px 0}.nearcard h3{font-size:15px;margin:0 0 3px}.coordedit{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:7px}.coordedit input{max-width:125px;min-width:110px}.coordedit button{min-height:36px;padding:7px 10px}footer{text-align:center;font-size:12px;color:#6a7973;padding:15px}.hint{font-size:12px;line-height:1.5;color:#60766d}.badge{display:inline-block;background:#d8ede2;border-radius:8px;font-size:11px;padding:3px 8px;font-weight:700;color:#236046}.topline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.notice{background:#fff6df;border:1px solid #efdeb4;border-radius:9px;padding:9px 10px;font-size:12px;margin:10px 0;color:#755c28}a{color:#11695c}#out{padding-top:2px}@media(min-width:700px){.filters{grid-template-columns:repeat(3,1fr)}.filters .wide{grid-column:1/-1}}
- .person-group{border:1px solid #dce5dd;border-radius:11px;margin:9px 0;background:#fff;overflow:hidden}.person-group summary{list-style:none;cursor:pointer;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:10px}.person-group summary::-webkit-details-marker{display:none}.person-group summary::after{content:'▾';font-size:18px;color:#286b5b}.person-group[open] summary::after{content:'▴'}.person-group .group-body{border-top:1px solid #e6ece8;padding:8px 12px 12px}.person-group .group-item{padding:10px 0;border-bottom:1px solid #edf1ee}.person-group .group-item:last-child{border-bottom:none}.group-title{font-weight:700}.group-sub{font-size:12px;color:#62776c;margin-top:2px}.group-check{margin-top:5px}.report-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}.report-actions button{min-height:36px;padding:6px 11px;font-size:12px}.report-count{margin:9px 0;color:#4f6a5e;font-size:12px} .change-check{display:inline-flex;align-items:center;gap:8px;font-weight:500;margin:8px 12px 3px 0;cursor:pointer}.change-check input[type="checkbox"]{appearance:auto;width:18px;height:18px;min-height:18px;padding:0;margin:0;flex:none;accent-color:#14675e}.change-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.change-view-title{margin:14px 0 5px;font-size:15px}.change-muted{color:#64756e;font-size:12px} 
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#14675e"><title>Cemetery Fieldbook · TEST v7.13</title><style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#24172f;background:#f4f1f6}*{box-sizing:border-box}body{margin:0}header{background:#31124c;color:white;padding:20px 16px 17px}header .wrap{max-width:880px;margin:auto}h1{font-size:24px;letter-spacing:-.6px;margin:0 0 4px}.sub{color:#dacde5;font-size:13px}main{max-width:880px;margin:auto;padding:14px 12px 80px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 14px}.stat{background:white;border:1px solid #e1dce5;border-radius:12px;text-align:center;padding:12px 5px}.num{font-size:23px;font-weight:800;color:#31124c}.small{font-size:12px;color:#664e7b}.panel{background:#fff;border:1px solid #e1dce5;border-radius:15px;padding:14px;margin-bottom:13px;box-shadow:0 2px 12px #29163909}h2{font-size:16px;margin:0 0 10px}input,select,textarea{font:inherit;width:100%;border:1px solid #c3b4cf;background:white;color:#271a33;border-radius:10px;padding:11px 12px;min-height:44px}textarea{min-height:80px}label{font-size:13px;font-weight:600;display:block;margin:8px 0 4px}.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px}.filters .wide{grid-column:1/-1}.buttons{display:flex;flex-wrap:wrap;gap:8px}button,.btn{border:0;border-radius:10px;background:#401665;color:white;font-weight:650;font-size:14px;min-height:42px;padding:10px 14px;cursor:pointer}button.secondary,.btn.secondary{background:#f1edf4;color:#391459;border:1px solid #cbbed6}button.outline{background:white;color:#391459;border:1px solid #b8a6c7}button.danger{background:#fce8e5;color:#8a271e}button:active{transform:scale(.99)}.resulthead{display:flex;justify-content:space-between;align-items:center;gap:12px}.person{padding:13px 0;border-top:1px solid #e9e5ed}.person:first-of-type{border-top:0}.person h3{font-size:16px;margin:0 0 3px}.meta{font-size:13px;color:#644d78;line-height:1.6}.chips{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.chip{background:#eeeaf2;border-radius:6px;padding:3px 7px;font-size:11px;color:#45295d}.chip.done{background:#e4d9ec;color:#401f5d}.chip.not{background:#f3eee4;color:#81663b}.cemtitle{font-size:13px;font-weight:800;color:#4c286b;text-transform:uppercase;letter-spacing:.05em;margin:15px 0 7px}.right{margin-left:auto}.tiny{font-size:12px;color:#6e5584}.empty{text-align:center;padding:25px 5px;color:#6e5584}dialog{width:min(94vw,600px);max-height:90vh;border:0;border-radius:16px;padding:0;box-shadow:0 20px 70px #0f051766}dialog::backdrop{background:#13071dbb}.dialogbody{padding:17px;max-height:85vh;overflow:auto}.dialogtop{display:flex;align-items:center;justify-content:space-between}.dialogtop h2{margin:0}.checkrow{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin:12px 0}.checkrow label{font-weight:500;display:flex;align-items:center;gap:7px;border:1px solid #ddd6e3;padding:10px;border-radius:9px;margin:0}.checkrow input{width:19px;min-height:19px;height:19px;accent-color:#401665}.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 0}.photoitem{position:relative}.photoitem img{width:100%;height:100px;object-fit:cover;border-radius:8px}.photoitem button{position:absolute;right:2px;top:2px;min-height:25px;padding:3px 8px;background:#74281fe3}.nearcard{border-top:1px solid #e1dbe6;padding:12px 0}.nearcard h3{font-size:15px;margin:0 0 3px}.coordedit{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:7px}.coordedit input{max-width:125px;min-width:110px}.coordedit button{min-height:36px;padding:7px 10px}footer{text-align:center;font-size:12px;color:#73598a;padding:15px}.hint{font-size:12px;line-height:1.5;color:#6c5383}.badge{display:inline-block;background:#e4d8ed;border-radius:8px;font-size:11px;padding:3px 8px;font-weight:700;color:#432360}.topline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.notice{background:#fff6df;border:1px solid #efdeb4;border-radius:9px;padding:9px 10px;font-size:12px;margin:10px 0;color:#755c28}a{color:#3f1565}#out{padding-top:2px}@media(min-width:700px){.filters{grid-template-columns:repeat(3,1fr)}.filters .wide{grid-column:1/-1}}
+ .person-group{border:1px solid #e1dce5;border-radius:11px;margin:9px 0;background:#fff;overflow:hidden}.person-group summary{list-style:none;cursor:pointer;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:10px}.person-group summary::-webkit-details-marker{display:none}.person-group summary::after{content:'▾';font-size:18px;color:#4c286b}.person-group[open] summary::after{content:'▴'}.person-group .group-body{border-top:1px solid #e9e6ec;padding:8px 12px 12px}.person-group .group-item{padding:10px 0;border-bottom:1px solid #efedf1}.person-group .group-item:last-child{border-bottom:none}.group-title{font-weight:700}.group-sub{font-size:12px;color:#6e5584;margin-top:2px}.group-check{margin-top:5px}.report-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}.report-actions button{min-height:36px;padding:6px 11px;font-size:12px}.report-count{margin:9px 0;color:#5e4871;font-size:12px} .change-check{display:inline-flex;align-items:center;gap:8px;font-weight:500;margin:8px 12px 3px 0;cursor:pointer}.change-check input[type="checkbox"]{appearance:auto;width:18px;height:18px;min-height:18px;padding:0;margin:0;flex:none;accent-color:#401665}.change-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.change-view-title{margin:14px 0 5px;font-size:15px}.change-muted{color:#6e5584;font-size:12px} 
 /* v6 compact burial list and controls */
 .buttons{gap:6px} .buttons button,.buttons .btn{font-size:12px;min-height:36px;padding:7px 10px;border-radius:8px}
-.burial-item{border:1px solid #dce5dd;border-radius:10px;margin:6px 0;background:#fff;overflow:hidden}
+.burial-item{border:1px solid #e1dce5;border-radius:10px;margin:6px 0;background:#fff;overflow:hidden}
 .burial-item>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px}
 .burial-item>summary::-webkit-details-marker{display:none}
-.burial-item>summary:after{content:'▾';font-size:15px;color:#58716a}
+.burial-item>summary:after{content:'▾';font-size:15px;color:#664e7b}
 .burial-item[open]>summary:after{content:'▴'}
-.burial-item .burial-detail{border-top:1px solid #e5ede7;padding:9px 10px}
+.burial-item .burial-detail{border-top:1px solid #e9e5ed;padding:9px 10px}
 .burial-title{font-size:14px;font-weight:700;line-height:1.3}
-.burial-subtitle{font-size:11px;color:#58716a;margin-top:2px}
+.burial-subtitle{font-size:11px;color:#664e7b;margin-top:2px}
 .burial-summary-tags{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
 .burial-summary-tags .chip{font-size:10px;padding:2px 5px;margin:0}
 .burial-list-controls{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
 @media(max-width:520px){.burial-summary-tags .chip{font-size:9px}.burial-title{font-size:13px}}
 
 /* v6 navigation and alignment iteration */
-.finder-fold>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:9px;font-size:18px;font-weight:750;color:#124c47;line-height:1.4}
+.finder-fold>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:9px;font-size:18px;font-weight:750;color:#31124c;line-height:1.4}
 .finder-fold>summary::-webkit-details-marker{display:none}
-.finder-fold>summary::before{content:'▸';font-size:14px;color:#406e62}
+.finder-fold>summary::before{content:'▸';font-size:14px;color:#58406e}
 .finder-fold[open]>summary::before{content:'▾'}
-.finder-sub{margin-left:auto;font-size:11px;font-weight:500;color:#58716a}
+.finder-sub{margin-left:auto;font-size:11px;font-weight:500;color:#664e7b}
 .finder-body{padding-top:10px}
 .inline-controls{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .inline-controls button{font-size:12px;padding:6px 9px;min-height:32px;border-radius:7px}
@@ -31,8 +31,8 @@
 .burial-summary-tags{width:152px;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;justify-items:center;gap:3px}
 /* Find a Grave indicator: only shown for records with a saved memorial URL. */
 .burial-name-line{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0}
-.fg-marker{display:inline-flex;align-items:center;justify-content:center;border:1px solid #b9d5c8;background:#e9f5ec;color:#21624a;border-radius:6px;min-width:27px;min-height:24px;padding:2px 5px;font-size:12px;line-height:1;text-decoration:none;white-space:nowrap;font-weight:800}
-.fg-marker:hover,.fg-marker:focus-visible{background:#d2eadd;outline-offset:2px}
+.fg-marker{display:inline-flex;align-items:center;justify-content:center;border:1px solid #c9b9d5;background:#f0e9f5;color:#432162;border-radius:6px;min-width:27px;min-height:24px;padding:2px 5px;font-size:12px;line-height:1;text-decoration:none;white-space:nowrap;font-weight:800}
+.fg-marker:hover,.fg-marker:focus-visible{background:#dfd2ea;outline-offset:2px}
 
 .burial-summary-tags .chip{justify-self:center;text-align:center;min-width:27px;margin:0}
 @media(max-width:540px){
@@ -75,69 +75,69 @@
 #editForm .burial-fields-row input[name="side"]{text-align:center}
 
 /* GEDCOM importer preview */
-.home-panel{border:1px solid #bfd5ca;border-radius:12px;padding:13px;margin:14px 0;background:#f6faf7}
+.home-panel{border:1px solid #cbbed6;border-radius:12px;padding:13px;margin:14px 0;background:#f8f6fa}
 .home-panel label{display:block;margin:9px 0 5px;font-weight:700}
 .home-panel input{width:100%;box-sizing:border-box}
-.home-results{max-height:240px;overflow-y:auto;border:1px solid #d3ddd7;background:#fff;border-radius:9px;margin:9px 0}
-.home-option{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid #ebefeb;border-radius:0;background:#fff;color:#173b37;padding:9px 11px;font-size:14px}
-.home-option:last-child{border-bottom:0}.home-option:hover,.home-option:focus{background:#eef7f2}
-.home-identity{font-weight:700}.home-secondary{font-size:12px;color:#526960;margin-top:2px}
+.home-results{max-height:240px;overflow-y:auto;border:1px solid #d9cfe1;background:#fff;border-radius:9px;margin:9px 0}
+.home-option{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid #edebef;border-radius:0;background:#fff;color:#2a173b;padding:9px 11px;font-size:14px}
+.home-option:last-child{border-bottom:0}.home-option:hover,.home-option:focus{background:#f3eef7}
+.home-identity{font-weight:700}.home-secondary{font-size:12px;color:#5f4972;margin-top:2px}
 
-.ged-preview{border:1px solid #bfd5ca;background:#f6faf7;border-radius:12px;padding:12px;margin-top:12px}
+.ged-preview{border:1px solid #cbbed6;background:#f8f6fa;border-radius:12px;padding:12px;margin-top:12px}
 .ged-counts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:9px 0}
-.ged-count{border:1px solid #dbe9df;border-radius:9px;background:#fff;padding:9px;text-align:center}
-.ged-count strong{display:block;font-size:19px;color:#124c47}
-.ged-example{font-size:12px;border-top:1px solid #dce5dd;padding:7px 0}
+.ged-count{border:1px solid #e3dbe9;border-radius:9px;background:#fff;padding:9px;text-align:center}
+.ged-count strong{display:block;font-size:19px;color:#31124c}
+.ged-example{font-size:12px;border-top:1px solid #e1dce5;padding:7px 0}
 @media(max-width:450px){.ged-counts{grid-template-columns:1fr 1fr}}
 
 /* v7: Each cemetery+location is its own expandable group. */
-.cemetery-group{border:1px solid #cbded3;border-radius:11px;margin:9px 0;background:#fff;overflow:hidden}
-.cemetery-group>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;cursor:pointer;background:#edf5ee;list-style:none}
+.cemetery-group{border:1px solid #d6cbde;border-radius:11px;margin:9px 0;background:#fff;overflow:hidden}
+.cemetery-group>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;cursor:pointer;background:#f1edf5;list-style:none}
 .cemetery-group>summary::-webkit-details-marker{display:none}
-.cemetery-group>summary:before{content:'▸';flex:0 0 auto;color:#2d5e50;font-size:14px}
+.cemetery-group>summary:before{content:'▸';flex:0 0 auto;color:#472d5e;font-size:14px}
 .cemetery-group[open]>summary:before{content:'▾'}
 .cemetery-group-title{display:flex;flex:1;flex-direction:column;min-width:0;gap:3px}
-.cemetery-group-name{font-size:14px;font-weight:750;color:#174a3b;overflow-wrap:anywhere}
-.cemetery-group-location{font-size:12px;color:#526c61;overflow-wrap:anywhere}
-.cemetery-group-count{font-size:11px;white-space:nowrap;border-radius:15px;padding:4px 8px;background:#fff;color:#33624d;font-weight:650}
+.cemetery-group-name{font-size:14px;font-weight:750;color:#32174a;overflow-wrap:anywhere}
+.cemetery-group-location{font-size:12px;color:#604a74;overflow-wrap:anywhere}
+.cemetery-group-count{font-size:11px;white-space:nowrap;border-radius:15px;padding:4px 8px;background:#fff;color:#4c3362;font-weight:650}
 .cemetery-group-people{padding:5px 10px 10px}
 @media(max-width:540px){.cemetery-group>summary{padding:10px 8px;gap:7px}.cemetery-group-people{padding:3px 5px 7px}}
 
 /* v7: organized data administration sections */
-.data-subfold { border:1px solid var(--line, #d7e1dd); border-radius:12px; margin:10px 0; background:var(--card, #fff); overflow:hidden; }
+.data-subfold { border:1px solid var(--line, #ddd7e1); border-radius:12px; margin:10px 0; background:var(--card, #fff); overflow:hidden; }
 .data-subfold > summary { cursor:pointer; display:flex; align-items:center; flex-wrap:wrap; gap:7px; padding:13px 15px; font-weight:700; line-height:1.35; }
-.data-subfold > summary::marker { color:var(--muted, #63746d); }
-.data-subfold[open] > summary { border-bottom:1px solid var(--line, #d7e1dd); }
+.data-subfold > summary::marker { color:var(--muted, #6d5483); }
+.data-subfold[open] > summary { border-bottom:1px solid var(--line, #ddd7e1); }
 .data-subbody { padding:14px; }
-.tool-subnote { color:var(--muted, #63746d); font-weight:400; font-size:.83em; }
+.tool-subnote { color:var(--muted, #6d5483); font-weight:400; font-size:.83em; }
 .data-subbody .home-panel { margin-top:12px; }
 @media(max-width:600px){ .data-subbody{padding:10px} .data-subfold > summary{padding:12px 10px} }
 
 /* Clear, responsive approval controls for the GEDCOM safe merge. */
-.merge-approval{display:flex;align-items:flex-start;gap:10px;margin:12px 0;padding:10px 12px;border:1px solid #d7e4dc;border-radius:10px;background:#f6faf7;cursor:pointer;font-size:13px;font-weight:600;line-height:1.45}
-.merge-approval input[type="checkbox"]{appearance:auto;-webkit-appearance:checkbox;display:block;flex:0 0 18px;width:18px;height:18px;min-height:18px;max-width:18px;margin:1px 0 0;padding:0;border:0;border-radius:3px;accent-color:#14675e;cursor:pointer}
+.merge-approval{display:flex;align-items:flex-start;gap:10px;margin:12px 0;padding:10px 12px;border:1px solid #ded7e4;border-radius:10px;background:#f8f6fa;cursor:pointer;font-size:13px;font-weight:600;line-height:1.45}
+.merge-approval input[type="checkbox"]{appearance:auto;-webkit-appearance:checkbox;display:block;flex:0 0 18px;width:18px;height:18px;min-height:18px;max-width:18px;margin:1px 0 0;padding:0;border:0;border-radius:3px;accent-color:#401665;cursor:pointer}
 .merge-approval span{flex:1;min-width:0}
 .merge-approval:has(input:disabled){opacity:.58;cursor:not-allowed}
 .merge-approval input:disabled{cursor:not-allowed}
-.data-subbody > .hint:first-child{line-height:1.65;background:#f3f8f4;border-radius:9px;padding:10px 12px}.data-subfold .data-subfold{margin:12px 0}.data-subfold .home-panel{max-width:100%}
+.data-subbody > .hint:first-child{line-height:1.65;background:#f6f3f8;border-radius:9px;padding:10px 12px}.data-subfold .data-subfold{margin:12px 0}.data-subfold .home-panel{max-width:100%}
 #dataToolsFold .ged-preview{margin-top:14px}#dataToolsFold .ged-counts{gap:8px}#dataToolsFold .ged-count{padding:11px 7px}#dataToolsFold .cemetery-group>summary{cursor:pointer}#dataToolsFold .merge-approval{align-items:center}#dataToolsFold .merge-approval input{flex-shrink:0}
 @media(max-width:640px){#dataToolsFold .ged-counts{grid-template-columns:repeat(2,minmax(0,1fr))}#dataToolsFold .cemetery-group-people{padding:10px}#dataToolsFold .merge-approval{padding:10px 8px}}
 
 /* Clear, compact GEDCOM update workflow */
-#dataToolsFold .update-intro{margin:0 0 12px;padding:10px 13px;background:#eef5f0;border-radius:9px;font-size:13px;color:#36584c;line-height:1.5}
-#dataToolsFold .comparison-context{margin:8px 0 12px;font-size:13px;color:#4b6359;line-height:1.55}
-#dataToolsFold .compare-explainer{margin:10px 0 12px;padding:10px 12px;border-left:3px solid #2c7561;background:#f4f8f5;color:#345649;border-radius:6px;font-size:13px;line-height:1.5}
-#dataToolsFold .guided-step{border:1px solid #d4e3d9;border-radius:12px;margin:12px 0;padding:13px;background:#fff}
-#dataToolsFold .guided-step-title{font-size:16px;font-weight:700;color:#173f35;margin:0 0 8px}
-#dataToolsFold .guided-step-hint{font-size:13px;color:#527065;line-height:1.5;margin:4px 0 10px}
+#dataToolsFold .update-intro{margin:0 0 12px;padding:10px 13px;background:#f2eef5;border-radius:9px;font-size:13px;color:#483658;line-height:1.5}
+#dataToolsFold .comparison-context{margin:8px 0 12px;font-size:13px;color:#58446a;line-height:1.55}
+#dataToolsFold .compare-explainer{margin:10px 0 12px;padding:10px 12px;border-left:3px solid #532c75;background:#f6f4f8;color:#463456;border-radius:6px;font-size:13px;line-height:1.5}
+#dataToolsFold .guided-step{border:1px solid #dcd4e3;border-radius:12px;margin:12px 0;padding:13px;background:#fff}
+#dataToolsFold .guided-step-title{font-size:16px;font-weight:700;color:#2c173f;margin:0 0 8px}
+#dataToolsFold .guided-step-hint{font-size:13px;color:#624c76;line-height:1.5;margin:4px 0 10px}
 #dataToolsFold .guided-step details{margin:7px 0}
-#dataToolsFold .guided-step summary{font-size:14px;text-align:left;line-height:1.45;padding:12px;background:#eff6f1;border-radius:8px}
+#dataToolsFold .guided-step summary{font-size:14px;text-align:left;line-height:1.45;padding:12px;background:#f3eff6;border-radius:8px}
 #dataToolsFold .guided-step .cemetery-group-people{padding:10px}
 #dataToolsFold .guided-step .merge-approval{margin:8px 0}
-#dataToolsFold .guided-status{border-radius:8px;padding:9px 12px;background:#eff6f1;font-size:13px;color:#37584b;margin:8px 0}
-#dataToolsFold .guided-empty{padding:12px;border:1px dashed #cbded2;border-radius:9px;color:#526b5f;font-size:13px;background:#fafcfb}
-#dataToolsFold .compare-tech{margin-top:14px;border-top:1px solid #d7e4dc;padding-top:10px}
-#dataToolsFold .compare-tech>summary{background:#eef3ef;text-align:left;font-size:13px;padding:10px}
+#dataToolsFold .guided-status{border-radius:8px;padding:9px 12px;background:#f3eff6;font-size:13px;color:#483758;margin:8px 0}
+#dataToolsFold .guided-empty{padding:12px;border:1px dashed #d6cbde;border-radius:9px;color:#604a73;font-size:13px;background:#fbfafc}
+#dataToolsFold .compare-tech{margin-top:14px;border-top:1px solid #ded7e4;padding-top:10px}
+#dataToolsFold .compare-tech>summary{background:#f1eef3;text-align:left;font-size:13px;padding:10px}
 #dataToolsFold .merge-approval{display:flex;flex-direction:row;align-items:center;gap:10px}
 #dataToolsFold .merge-approval input[type="checkbox"]{width:18px;height:18px;min-height:18px;flex:0 0 18px}
 #dataToolsFold .ged-count{background:#fff}
@@ -150,16 +150,16 @@
 #dataToolsFold .person-review-card[hidden]{display:none}
 #dataToolsFold .person-review-card>summary{justify-content:flex-start;text-align:left}
 #dataToolsFold .person-review-heading{flex:1;min-width:0;overflow-wrap:anywhere;font-weight:650}
-#dataToolsFold .person-review-pill{flex:0 0 auto;font-size:11px;background:#fff;border-radius:100px;padding:4px 9px;color:#355b4e}
-#dataToolsFold .person-review-field span.person-review-values{display:block;margin-top:3px;font-size:12px;line-height:1.5;color:#355c51;font-weight:400;overflow-wrap:anywhere}
-#dataToolsFold .person-review-note{margin:9px 2px;padding:8px 10px;background:#f4f7f2;border-radius:7px;font-size:12px;color:#4e655d;line-height:1.5}
-#dataToolsFold .person-review-detail{padding:5px 3px;border-bottom:1px solid #e6eee7;font-size:13px;overflow-wrap:anywhere}
+#dataToolsFold .person-review-pill{flex:0 0 auto;font-size:11px;background:#fff;border-radius:100px;padding:4px 9px;color:#49355b}
+#dataToolsFold .person-review-field span.person-review-values{display:block;margin-top:3px;font-size:12px;line-height:1.5;color:#4a355c;font-weight:400;overflow-wrap:anywhere}
+#dataToolsFold .person-review-note{margin:9px 2px;padding:8px 10px;background:#f5f2f7;border-radius:7px;font-size:12px;color:#5b466d;line-height:1.5}
+#dataToolsFold .person-review-detail{padding:5px 3px;border-bottom:1px solid #eae6ee;font-size:13px;overflow-wrap:anywhere}
 #dataToolsFold .person-review-field strong{display:block}
 #dataToolsFold .person-review-card>summary{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px}
-#dataToolsFold .person-review-accept{display:inline-flex;align-items:center;gap:6px;margin:0;padding:5px 7px;border-radius:8px;background:#edf5ee;color:#1c5548;font-size:12px;font-weight:650;cursor:pointer}
-#dataToolsFold .person-review-accept input[type="checkbox"]{width:19px;height:19px;min-height:19px;flex:0 0 19px;margin:0;accent-color:#14675e}
+#dataToolsFold .person-review-accept{display:inline-flex;align-items:center;gap:6px;margin:0;padding:5px 7px;border-radius:8px;background:#f1edf5;color:#3a1c55;font-size:12px;font-weight:650;cursor:pointer}
+#dataToolsFold .person-review-accept input[type="checkbox"]{width:19px;height:19px;min-height:19px;flex:0 0 19px;margin:0;accent-color:#401665}
 #dataToolsFold .person-review-accept input:disabled{cursor:not-allowed}
-#dataToolsFold .person-review-progress{font-size:11px;color:#536b60;white-space:nowrap}
+#dataToolsFold .person-review-progress{font-size:11px;color:#604a74;white-space:nowrap}
 @media(max-width:550px){#dataToolsFold .person-review-card>summary{gap:7px}#dataToolsFold .person-review-heading{flex:1 1 100%;font-size:13px}#dataToolsFold .person-review-accept{margin-left:0}#dataToolsFold .person-review-pill{font-size:10px}}
 
 
@@ -197,14 +197,14 @@
  #dataToolsFold .ged-preview, #dataToolsFold .home-panel {border:0 !important;box-shadow:none !important;padding:6px 2px !important;background:transparent !important}
  #dataToolsFold .guided-step {border:0 !important;box-shadow:none !important;border-radius:0 !important;padding:7px 0 !important;background:transparent !important}
  #dataToolsFold .guided-step .cemetery-group-people {padding:8px 4px 10px !important}
- #dataToolsFold .person-review-card {border:1px solid #cfded3;border-radius:12px;background:#fff;margin:7px 0 !important;overflow:hidden}
+ #dataToolsFold .person-review-card {border:1px solid #d8cedf;border-radius:12px;background:#fff;margin:7px 0 !important;overflow:hidden}
  #dataToolsFold .person-review-card>summary {padding:11px 10px !important;grid-template-columns:12px minmax(0,1fr) !important;column-gap:8px !important;row-gap:6px !important}
  #dataToolsFold .person-review-heading {font-size:15px !important;line-height:1.35 !important;overflow-wrap:break-word !important}
  #dataToolsFold .person-review-pill {font-size:11px !important;padding:3px 9px !important}
  #dataToolsFold .person-review-accept {font-size:14px !important;min-height:34px !important;gap:9px !important}
  #dataToolsFold .person-review-accept input[type=checkbox] {width:22px !important;height:22px !important;flex-basis:22px !important}
  #dataToolsFold .person-review-progress {font-size:12px !important}
- #dataToolsFold .person-review-card .merge-approval {background:transparent !important;border:0 !important;border-bottom:1px solid #e0e9e2 !important;border-radius:0 !important;margin:0 !important;padding:12px 6px !important;font-size:13px !important;gap:10px !important}
+ #dataToolsFold .person-review-card .merge-approval {background:transparent !important;border:0 !important;border-bottom:1px solid #e5e0e9 !important;border-radius:0 !important;margin:0 !important;padding:12px 6px !important;font-size:13px !important;gap:10px !important}
  #dataToolsFold .person-review-card .merge-approval:has(input:disabled) {opacity:.65}
  #dataToolsFold .person-review-field strong {font-size:13px !important;line-height:1.4}
  #dataToolsFold .person-review-field .person-review-values {font-size:13px !important;line-height:1.5 !important}
@@ -214,18 +214,18 @@
 }
 
 /* v7.06: compact workflow surfaces; technical details remain accessible. */
-#simpleDataHub {border:1px solid #c8d8d0;background:#f8fbf9}
+#simpleDataHub {border:1px solid #d1c6da;background:#faf8fb}
 #simpleDataHub details.hub-section > summary {padding:12px 13px;font-size:16px}
 #simpleDataHub .hub-content {padding:4px 12px 12px}
 #simpleDataHub .hub-help {background:transparent;padding:0;margin:4px 0 10px}
 #simpleDataHub .hub-content > p.hint {margin:6px 0}
-#simpleDataHub .compact-fold {margin:10px 0;border:1px solid #d5e0db;border-radius:9px;background:#fafdfb;overflow:hidden}
-#simpleDataHub .compact-fold > summary {padding:10px 11px;font-weight:600;cursor:pointer;color:#235646;font-size:14px}
+#simpleDataHub .compact-fold {margin:10px 0;border:1px solid #dbd5e0;border-radius:9px;background:#fcfafd;overflow:hidden}
+#simpleDataHub .compact-fold > summary {padding:10px 11px;font-weight:600;cursor:pointer;color:#3e2356;font-size:14px}
 #simpleDataHub .compact-fold > .compact-inner {padding:4px 11px 12px;min-width:0;overflow-wrap:anywhere}
 #simpleDataHub #cloudBackups {max-height:360px;overflow:auto}
-#simpleDataHub #simpleAdvancedFold > summary {color:#4b5952}
+#simpleDataHub #simpleAdvancedFold > summary {color:#534064}
 #simpleDataHub #cloudState {font-weight:600;margin-top:4px}
-#simpleDataHub .compact-disclaimer {font-size:12px;color:#626c65}
+#simpleDataHub .compact-disclaimer {font-size:12px;color:#68507e}
 #simpleDataHub #simpleHubStatus {font-size:12px;margin-top:9px}
 #simpleDataHub .buttons {flex-wrap:wrap}
 #simpleDataHub button {max-width:100%}
@@ -233,21 +233,21 @@
 </style><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="icon" type="image/svg+xml" href="icon.svg"><style>
 /* v7 read-only relationship verification */
 .relationship-results{display:grid;gap:8px;margin-top:9px}
-.relationship-card{background:#fff;border:1px solid #d9e5dd;border-radius:10px;padding:11px}
-.relationship-card strong{color:#174a3b}
-.relationship-card .meta-line{font-size:12px;color:#546b60;margin:4px 0}
+.relationship-card{background:#fff;border:1px solid #e0d9e5;border-radius:10px;padding:11px}
+.relationship-card strong{color:#32174a}
+.relationship-card .meta-line{font-size:12px;color:#614a75;margin:4px 0}
 .relationship-card .uncertain{font-size:12px;color:#8a6230;background:#fff7e8;border-radius:6px;padding:6px 8px;margin-top:7px}
-.relationship-card .rel-title{font-size:14px;font-weight:700;color:#174e40;margin:7px 0}
+.relationship-card .rel-title{font-size:14px;font-weight:700;color:#34174e;margin:7px 0}
 
-/* Simplified backup/synchronization navigation, TEST only */
-#simpleDataHub {border:2px solid #a9c8bb;background:#f8fbf9}
-#simpleDataHub > h2 {margin:0 0 8px;color:#164f40}
+/* Simplified backup/synchronization navigation */
+#simpleDataHub {border:2px solid #baa9c8;background:#faf8fb}
+#simpleDataHub > h2 {margin:0 0 8px;color:#34164f}
 #simpleDataHub > p {margin:0 0 12px}
-#simpleDataHub details.hub-section {margin:10px 0;border:1px solid #b7d0c5;background:#fff;border-radius:12px;overflow:hidden}
-#simpleDataHub details.hub-section > summary {padding:15px 13px;font-size:17px;font-weight:700;cursor:pointer;color:#134b3b;list-style-position:inside}
-#simpleDataHub details.hub-section > summary::marker {color:#256c56}
+#simpleDataHub details.hub-section {margin:10px 0;border:1px solid #c5b6d1;background:#fff;border-radius:12px;overflow:hidden}
+#simpleDataHub details.hub-section > summary {padding:15px 13px;font-size:17px;font-weight:700;cursor:pointer;color:#31134b;list-style-position:inside}
+#simpleDataHub details.hub-section > summary::marker {color:#4b256c}
 #simpleDataHub .hub-content {padding:4px 14px 15px;min-width:0}
-#simpleDataHub .hub-help {padding:9px 12px;margin:0 0 12px;background:#eef5f1;color:#285548;border-radius:8px;font-size:13px;line-height:1.5}
+#simpleDataHub .hub-help {padding:9px 12px;margin:0 0 12px;background:#f2eef5;color:#402855;border-radius:8px;font-size:13px;line-height:1.5}
 #simpleDataHub .home-panel {max-width:100%;min-width:0}
 #simpleDataHub #sharedCheckpointLab {border:none!important;padding:0!important;margin:0!important}
 #simpleDataHub #sharedCheckpointLab > h4 {display:none}
@@ -259,22 +259,64 @@
 #simpleDataHub #dataBackupsFold, #simpleDataHub #cloudBackupLab {display:none}
 #simpleDataHub .hub-warning {font-size:13px;color:#674b23;background:#fff9ed;padding:9px 11px;border-radius:8px;margin-bottom:12px}
 @media(max-width:600px){#simpleDataHub details.hub-section > summary {font-size:16px;padding:13px 10px}#simpleDataHub .hub-content {padding:3px 10px 12px}}
-</style></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#fff3cb;color:#765113">V7.11 · TEST · STALE-NOTE GUARD</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div></div></header><main>
-<div class="notice" style="border:2px solid #d0a23f;margin:10px 0;padding:12px;border-radius:12px"><strong>TEST ONLY — Cloud backup experiment.</strong> This is separate from LIVE data. Cloud sign-in needs a developer application ID; do not enter passwords here. Backups uploaded to OneDrive are not encrypted by Fieldbook yet.</div><div class="stats"><div class="stat"><div id="sPeople" class="num">—</div><div class="small">Burial entries</div></div><div class="stat"><div id="sCem" class="num">—</div><div class="small">Cemeteries</div></div><div class="stat"><div id="sVisited" class="num">—</div><div class="small">Visited</div></div></div>
+</style><style id="testReleaseTheme">
+/* v7.13 Green TEST theme; original warning/error statuses remain meaningful. */
+#simpleDataHub #syncWorkflowPanel, #simpleDataHub #legacyDeviceSyncTools,
+#simpleDataHub #simpleAdvancedFold, #advancedToolsFold,
+#syncStagePanel, #syncThreeWayLab {display:none!important}
+#headerCloudStatus{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+ border:1px solid #ddc8fa;background:#f5ecff;color:#50217b;border-radius:999px;
+ padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px}
+#headerCloudStatus:focus-visible{outline:3px solid #ffda8e;outline-offset:2px}
+#headerCloudStatus .cloud-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#987cad}
+#headerCloudStatus.cloud-connected .cloud-dot{background:#4c9a65}
+#headerCloudStatus.cloud-sync-on .cloud-dot{background:#4c9a65}
+#headerCloudStatus.cloud-sync-paused .cloud-dot{background:#b56a27}
+#autoDeviceSyncPanel{border-color:#c4a4e8!important}
+#simpleDataHub{border-color:#d6c4eb!important}
+
+/* v7.12.1 photograph viewer: leaves saved records and photographs unchanged. */
+.fieldbook-photo-viewer{width:min(96vw,1100px);max-width:96vw;max-height:96vh;padding:10px;background:#201329;color:#fff;overflow:auto}
+.fieldbook-photo-viewer::backdrop{background:#120a19dc}
+.fieldbook-photo-viewer-bar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:8px;overflow-wrap:anywhere}
+.fieldbook-photo-viewer-bar button{flex-shrink:0;min-height:36px;padding:7px 12px;background:#72439b}
+.fieldbook-photo-viewer img{display:block;max-width:100%;max-height:calc(96vh - 95px);width:auto;height:auto;object-fit:contain;margin:0 auto}
+.photoitem img:focus-visible{outline:3px solid #9a58d3;outline-offset:2px}
+</style><style id="testGreenOverrides">
+:root{color:#193a33;background:#f0f6f3}
+header{background:#104d43}
+header .wrap{position:relative;padding-right:0}
+header .topline{padding-right:275px}
+header .badge{background:#d9f6e8!important;color:#15583e!important}
+header .sub{color:#d2eae1}
+.header-controls{position:absolute;right:0;top:0;display:flex;gap:7px;align-items:center}
+#headerCloudStatus,#headerSyncStatus{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;margin:0;padding:7px 10px;min-height:32px;border:1px solid #a7ddcc;border-radius:999px;background:#e7f8ef;color:#124f3a;font-size:12px;font-weight:750}
+#headerCloudStatus .cloud-dot,#headerSyncStatus .cloud-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#a8aaa8}
+#headerCloudStatus.cloud-connected .cloud-dot,#headerSyncStatus.cloud-sync-on .cloud-dot{background:#268558}
+#headerSyncStatus.cloud-sync-paused .cloud-dot{background:#c17f31}
+#headerSyncStatus:disabled{opacity:.64;cursor:not-allowed}
+.num,h2,.finder-fold>summary,.cemetery-group-name{color:#165e50}
+button,.btn{background:#14675e}button.secondary,.btn.secondary{background:#edf7f2;color:#19584b;border-color:#bbd8cd}
+button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
+#simpleDataHub{border-color:#afdbcb!important;background:#f7fcfa!important}
+#autoDeviceSyncPanel{border-color:#a9d9c6!important}
+@media(max-width:650px){header .wrap{padding-right:0}header .topline{padding-right:0}header .sub{margin-bottom:9px}.header-controls{position:static;justify-content:flex-start;flex-wrap:wrap;margin-top:9px}#headerCloudStatus,#headerSyncStatus{font-size:11px;padding:6px 8px}}
+</style></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.13 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><span class="cloud-dot"></span><span id="headerCloudText">Cloud disconnected</span></button><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><span class="cloud-dot"></span><span id="headerSyncText">Sync OFF</span></button></div></div></header><main>
+<div class="notice" style="border:2px solid #d0a23f;margin:10px 0;padding:12px;border-radius:12px"><strong>Cloud privacy:</strong> Backups are stored in your personal OneDrive application folder as readable JSON, not encrypted by Fieldbook. Keep your account secure.</div><div class="stats"><div class="stat"><div id="sPeople" class="num">—</div><div class="small">Burial entries</div></div><div class="stat"><div id="sCem" class="num">—</div><div class="small">Cemeteries</div></div><div class="stat"><div id="sVisited" class="num">—</div><div class="small">Visited</div></div></div>
 <section class="panel" id="nearbyPanel"><details class="finder-fold" id="nearbyFold"><summary>📍 Find cemeteries nearby <span class="finder-sub">Search by distance</span></summary><div class="finder-body"><p class="hint">Straight-line distance, not driving distance. Works offline with saved cemetery coordinates. Choose a starting town or try your phone location.</p><div class="filters"><div><label for="startPlace">Starting point</label><select id="startPlace"><option value="39.7684,-86.1581">Indianapolis, IN</option><option value="38.9592,-85.8903" selected>Seymour, IN</option><option value="39.6128,-86.3742">Mooresville, IN</option><option value="39.2014,-85.9214">Columbus, IN</option><option value="custom">Custom coordinates</option></select></div><div><label for="radius">Within</label><select id="radius"><option>10</option><option selected>25</option><option>50</option><option>100</option><option>250</option><option>500</option></select></div><div><label for="startLat">Latitude</label><input id="startLat" type="number" step="any" placeholder="39.123"></div><div><label for="startLon">Longitude</label><input id="startLon" type="number" step="any" placeholder="-86.123"></div></div><div class="buttons" style="margin-top:10px"><button id="nearSearch">Find nearby cemeteries</button><button class="secondary" id="myLocation">Use phone GPS</button></div><div id="geoNote" class="hint" role="status"></div><div id="nearResults"></div></div></details></section><section class="panel" id="relativePanel"><details class="finder-fold" id="relativeFold" open><summary>🔎 Find a relative or cemetery <span class="finder-sub">Search names &amp; filters</span></summary><div class="finder-body"><div class="filters"><div class="wide"><input id="q" type="search" placeholder="Search name, cemetery, town, family line…" aria-label="Search"></div><div><label for="stateFilter">State</label><select id="stateFilter"><option value="">All states</option></select></div><div><label for="county">County</label><select id="county"><option value="">All counties</option></select></div><div><label for="cem">Cemetery</label><select id="cem"><option value="">All cemeteries</option></select></div><div><label for="status">Visit filter</label><select id="status"><option value="">All records</option><option value="unvisited">Not visited</option><option value="nophoto">Photo needed</option><option value="nogps">GPS needed</option></select></div></div><div class="buttons" style="margin-top:12px"><button id="add">+ Add discovery</button><button class="secondary" id="clear">Clear filters</button><button class="outline" id="showAll">Show all records</button><button class="secondary" type="button" id="showMatches">Show filtered results</button></div></div></details></section>
 <section class="panel" id="burialPanel"><div class="resulthead"><h2 style="margin:0">Burial records</h2><span class="tiny" id="count"></span></div><div class="burial-list-controls"><span class="hint">Tap a name to view details and edit.</span><div class="inline-controls"><button class="secondary" id="hideResultsTop" type="button">Hide results</button><button class="secondary" id="clearResultsTop" type="button">Clear filters</button></div></div><div id="out"></div><div class="burial-list-controls"><button id="more" class="secondary" hidden>Show more</button><div class="inline-controls"><button class="secondary" id="hideResultsBottom" type="button">Hide results</button><button class="secondary" id="clearResultsBottom" type="button">Clear filters</button></div></div></section>
 <section class="panel" id="changeLogPanel"><div class="resulthead"><h2 style="margin:0">📋 Cemetery change log</h2><span class="tiny" id="changeCount"></span></div><p class="hint">Keep a complete activity history, and review just the discoveries and corrections you still need to enter in your family tree. Tracking starts with edits made in v5. v6 hides reversed and superseded field edits from outstanding tree updates, while preserving their activity history.</p><div class="buttons"><button id="viewTreeChanges">Changes to enter in tree</button><button id="viewHistory" class="secondary">Complete activity history</button></div><div id="changeList" hidden></div><div class="buttons" id="changeTools" hidden style="margin-top:10px"><button id="downloadChangeCsv">Export tree changes (Excel)</button><button class="secondary" id="downloadHistoryCsv">Export full history (Excel)</button><button class="secondary" id="hideChangeLog">Hide reports</button></div></section>
 <section class="panel" id="simpleDataHub" aria-label="Backup and device synchronization">
 <h2>💾 Backups &amp; device sync</h2>
-<p class="hint">Your TEST and LIVE records are separate. <strong>Automatic two-device syncing is available as an opt-in TEST pilot. LIVE is unaffected.</strong></p>
+<p class="hint">Your burial records stay on this device. <strong>Cloud syncing is optional.</strong> TEST v7.13 still requires an advanced verified baseline; simpler first-time setup is under development.</p>
 <details class="hub-section" id="simpleBackupFold"><summary>Backups &amp; OneDrive <span class="finder-sub">Save, check, or recover records</span></summary><div class="hub-content" id="simpleBackupContent"><p class="hub-help">Use this for everyday backups or recovery. Restoring replaces this browser's current records; it does not merge devices.</p></div></details>
-<details class="hub-section" id="simpleSyncFold"><summary>Device sync testing <span class="finder-sub">Opt-in automatic sync and guided controls</span></summary><div class="hub-content" id="deviceSyncContent"><div class="home-panel" id="autoDeviceSyncPanel" style="border:2px solid #b1cdb8;border-radius:12px;padding:13px;margin:10px 0 14px">
-<h3 style="margin:0 0 6px">Automatic two-device sync — TEST pilot</h3>
-<p class="tiny" style="margin:0 0 10px">When enabled on this browser, Fieldbook checks OneDrive on opening, returning to this tab, and about every 2 minutes while the tab is open. It automatically publishes local changes, saves a verified OneDrive recovery backup before receiving changes, and applies only conflict-free changes. Conflicts stop automatic sync without changing this browser. The installed LIVE app is unaffected. Sync does not run when Fieldbook is closed.</p>
-<label style="display:flex;gap:8px;align-items:flex-start;margin:8px 0"><input type="checkbox" id="autoDeviceSyncConsent"> I understand this is a TEST pilot. I have a separate backup and authorize safe automatic merges with verified cloud recovery copies on this TEST browser.</label>
+<details class="hub-section" id="simpleSyncFold"><summary>Device synchronization <span class="finder-sub">Optional two-device syncing</span></summary><div class="hub-content" id="deviceSyncContent"><div class="home-panel" id="autoDeviceSyncPanel" style="border:2px solid #c1b1cd;border-radius:12px;padding:13px;margin:10px 0 14px">
+<h3 style="margin:0 0 6px">Automatic two-device sync</h3>
+<p class="tiny" style="margin:0 0 10px">When enabled on this browser, Fieldbook checks OneDrive on opening, returning to this tab, and about every 2 minutes while the tab is open. It automatically publishes local changes, saves a verified OneDrive recovery backup before receiving changes, and applies only conflict-free changes. Conflicts stop automatic sync without changing this browser. Sync does not run when Fieldbook is closed.</p>
+<label style="display:flex;gap:8px;align-items:flex-start;margin:8px 0"><input type="checkbox" id="autoDeviceSyncConsent"> I have saved a separate backup, verified the TEST baseline on this browser, and authorize conflict-checked automatic merges with verified OneDrive recovery copies.</label>
 <div class="buttons"><button type="button" id="autoDeviceSyncEnable">Enable automatic sync</button><button type="button" class="secondary" id="autoDeviceSyncDisable">Turn off</button><button type="button" class="secondary" id="autoDeviceSyncNow">Sync now</button></div>
 <p id="autoDeviceSyncStatus" class="hint" role="status" aria-live="polite">Automatic sync OFF on this browser. No changes made.</p>
-</div><div class="home-panel" id="syncWorkflowPanel" style="border:2px solid #b1cdb8;border-radius:12px;padding:13px;margin:10px 0 14px">
+</div><div class="home-panel" id="syncWorkflowPanel" style="border:2px solid #c1b1cd;border-radius:12px;padding:13px;margin:10px 0 14px">
 <h3 style="margin:0 0 6px">Two-device sync — guided controls</h3>
 <p class="tiny" style="margin:0 0 12px">Uses your existing verified shared baseline. Check incoming device changes, or publish changes made here. Applying incoming changes requires a recovery download and your approval. Unattended automatic sync is OFF.</p>
 <div class="buttons"><button type="button" id="syncWorkflowCheck">Check other devices</button><button type="button" class="secondary" id="syncWorkflowPublish">Publish my changes</button><button type="button" id="syncWorkflowApply" disabled>Save recovery &amp; apply safe changes</button></div>
@@ -310,8 +352,8 @@
 <div id="compareGedcomResults" class="ged-preview" hidden></div></div>
 </div></details>
 <details class="data-subfold" id="dataBackupsFold"><summary>3 · Backup and restore <span class="tool-subnote">Now under Backups &amp; OneDrive</span></summary><div class="data-subbody">
-<h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your v6.1 backup safe. This TEST version uses separate storage from your LIVE Fieldbook. Do not restore a backup unless recovery is needed; restoring replaces current data.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The new full backup includes the original burial list, photos, notes, and change history. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This app stores records privately on this device and is not synced. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div>
-<details class="data-subfold" id="cloudBackupLab" style="margin-top:18px"><summary>☁️ OneDrive cloud backup (experimental) <span class="tool-subnote">TEST only · optional automatic backup and direct recovery</span></summary>
+<h3>Backups and field notes</h3><p class="hint"><strong>Upgrading?</strong> Keep your v6.1 backup safe. This TEST version uses separate storage from LIVE Fieldbook. Do not restore a backup unless recovery is needed; restoring replaces current data.</p><p class="hint">Your edits and attached photos are kept on this device in this browser. Export a backup after each cemetery trip. The new full backup includes the original burial list, photos, notes, and change history. You can restore it here or on a different device.</p><div class="buttons"><button id="backup">Export full backup</button><button class="secondary" id="restore">Restore backup</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div><div class="notice"><b>Important:</b> This app stores records privately on this device and is not synced. Browser storage may be erased, especially if you clear browsing data or open the file in a different app. Keep backups. Nearby search calculates straight-line miles for cemeteries with verified coordinates; it is not driving distance. GPS requires a secure HTTPS installation and may be blocked when this file is opened from Downloads. Automatic synchronization is not included.</div><div id="lastbackup" class="tiny"></div>
+<details class="data-subfold" id="cloudBackupLab" style="margin-top:18px"><summary>☁️ OneDrive cloud backup <span class="tool-subnote">Optional backup and direct recovery</span></summary>
 <div class="data-subbody">
 <p class="hint"><strong>Private beta experiment:</strong> Each user signs in to their own personal OneDrive. This browser may remember the authorization; clearing site data, sign-out, or Microsoft session expiry can require a new sign-in. A dedicated app folder is used for date-stamped backup copies. This is <strong>not</strong> two-way synchronization. Uploaded backups are readable JSON; do not upload sensitive records until you are comfortable with that.</p>
 <p class="hint"><strong>Connect your personal OneDrive:</strong> Cemetery Fieldbook's Microsoft application is preconfigured. Sign in with your own Microsoft account; no application ID or developer setup is needed. Cloud backups stay in the application folder of your own OneDrive.</p>
@@ -319,7 +361,7 @@
 <p class="tiny" id="cloudRedirectHelp"></p>
 <div class="buttons"><button id="cloudConnect" type="button">Connect personal OneDrive</button><button id="cloudDisconnect" type="button" class="secondary">Disconnect</button></div>
 <p id="cloudState" class="hint" role="status">Not connected. No data has been uploaded.</p><p class="tiny">Experimental remembered sign-in stores a Microsoft refresh token in this browser’s local storage. Only use on a trusted device. Disconnect removes it; clearing site data removes it too. Microsoft may require sign-in again periodically.</p>
-<div class="home-panel" style="margin:12px 0;padding:12px;border:1px solid #bbd6cc;border-radius:12px">
+<div class="home-panel" style="margin:12px 0;padding:12px;border:1px solid #cabbd6;border-radius:12px">
 <label style="display:flex;align-items:flex-start;gap:10px;line-height:1.5"><input type="checkbox" id="cloudAutoEnabled" style="flex:0 0 19px;width:19px;height:19px;min-height:19px;margin-top:3px"><span><strong>Automatically back up changes to OneDrive (TEST)</strong><br><span class="tiny">With your permission, Fieldbook will back up saved changes after a quiet period while this page is open and online. New backups are date-stamped and never replace previous backups. For this TEST version, uploads are limited to approximately once every 2 minutes.</span></span></label>
 <p id="cloudAutoStatus" class="hint" role="status" style="margin:10px 0 3px">Automatic cloud backup is off.</p>
 <p class="tiny" style="margin:0">Not two-way sync. Backups cannot run while Fieldbook is closed; unsaved or unsynchronized changes may be lost if site data is cleared. Cloud files are readable JSON; keep independent backups.</p>
@@ -345,16 +387,16 @@
 </div>
 <div class="buttons"><button type="button" id="syncCompareRefresh" class="secondary">Load backup choices</button><button type="button" id="syncCompareRun">Compare selected backups</button></div>
 <div id="syncCompareResult" class="hint" role="status">No comparison run. Read-only; no records will be changed.</div>
-<div class="home-panel" id="sharedCheckpointLab" style="margin:14px 0;padding:12px;border:1px solid #a8c9bc;border-radius:12px">
+<div class="home-panel" id="sharedCheckpointLab" style="margin:14px 0;padding:12px;border:1px solid #baa8c9;border-radius:12px">
 <h4 style="margin:0 0 8px">Shared baseline reference — TEST (no sync)</h4>
 <p class="hint">A <strong>baseline reference</strong> lets a computer and phone recognize the same reviewed backup in OneDrive. It does not restore data, mark any device as synchronized, or enable automatic changes. Choose a merged TEST backup you have already restored and checked. Keep the underlying backup in OneDrive.</p>
 <div class="buttons"><button type="button" class="secondary" id="checkpointLoad">Find shared reference</button></div>
 <div id="checkpointCurrent" class="hint" role="status">No cloud reference checked yet.</div>
-<div class="home-panel" style="padding:12px;margin-top:10px;border:1px solid #d2dbdf;border-radius:10px">
+<div class="home-panel" style="padding:12px;margin-top:10px;border:1px solid #dad0e1;border-radius:10px">
 <h4 style="margin:0 0 7px">This browser's baseline checkpoint — TEST</h4>
 <p class="tiny">The browser gets a private installation ID. Verify that its <strong>entire local database</strong> matches the cloud baseline before recording a checkpoint. Merely finding a candidate is not synchronization. No burial records or photos are changed.</p>
 <div id="deviceCheckpointInfo" class="hint" role="status">No device checkpoint checked.</div>
-<div class="home-panel" style="margin:9px 0;padding:9px;border:1px solid #d2dbdf;border-radius:9px">
+<div class="home-panel" style="margin:9px 0;padding:9px;border:1px solid #dad0e1;border-radius:9px">
 <label for="myDeviceLabel" style="font-weight:600">Name this browser (optional)</label>
 <div class="buttons" style="margin-top:5px"><input id="myDeviceLabel" type="text" maxlength="36" placeholder="e.g. My computer / Android" style="flex:1;min-width:130px"><button type="button" class="secondary" id="saveMyDeviceLabel">Save name</button></div>
 <p class="tiny">Friendly names are saved only in this browser. Technical device IDs remain unchanged.</p>
@@ -363,19 +405,19 @@
 <label style="display:flex;gap:8px;align-items:flex-start;margin:10px 0"><input type="checkbox" style="flex:0 0 19px;width:19px;height:19px;min-height:19px" id="deviceAdoptVerify"><span>I understand this only records that this browser matches the baseline; automatic synchronization stays off.</span></label>
 <div class="buttons"><button type="button" id="deviceAdoptCheckpoint" disabled>Record verified baseline checkpoint</button></div>
 <div id="deviceCheckpointStatus" class="hint" role="status">Not checked.</div>
-<div class="home-panel" style="margin:12px 0 0;padding:12px;border:1px solid #b1cdb8;border-radius:10px">
+<div class="home-panel" style="margin:12px 0 0;padding:12px;border:1px solid #c1b1cd;border-radius:10px">
 <h4 style="margin:0 0 7px">Automatic baseline change detection — TEST (read only)</h4>
 <p class="tiny">No manual backup selection. Fieldbook verifies the newest shared baseline in OneDrive, then compares its records with this browser's current data. This is a difference report, <strong>not</strong> proof that this device previously synced. Missing baseline records are not automatically deletions.</p>
 <div class="buttons"><button type="button" class="secondary" id="baselineDetectChanges">Detect this browser's differences</button></div>
 <div id="baselineChangesStatus" class="hint" role="status">No changes checked. Automatic synchronization is OFF.</div>
 <div id="baselineChangesDetail" style="overflow-wrap:anywhere"></div>
 </div>
-<div class="home-panel" style="margin:12px 0 0;padding:12px;border:1px solid #b1cdb8;border-radius:10px">
+<div class="home-panel" style="margin:12px 0 0;padding:12px;border:1px solid #c1b1cd;border-radius:10px">
 <h4 style="margin:0 0 7px">Device change packages — TEST (simplified review)</h4>
 <p class="tiny">Verify this browser's historical baseline checkpoint, then inspect a small package of additions and edits since that baseline. Publish only with your approval. Choose one cloud package at a time to see safe changes, conflicts, or changes already present. Older packages stay available when you need them. A verified receiving browser may download an isolated proposed merged backup or test a strictly manual local apply in an isolated TEST browser after downloading a recovery backup. Automatic sync remains OFF.</p>
 <div class="buttons"><button type="button" class="secondary" id="changePackagePreview">Preview this device's package</button><button type="button" class="secondary" id="changePackageFind">Find device packages in OneDrive</button></div>
 <div id="changePackageStatus" class="hint" role="status">No change package checked.</div>
-<div id="cloudPackageChooser" hidden style="border:1px solid #b1cdb8;padding:10px;border-radius:10px;margin:12px 0">
+<div id="cloudPackageChooser" hidden style="border:1px solid #c1b1cd;padding:10px;border-radius:10px;margin:12px 0">
 <label for="cloudPackageSelect" style="display:block;font-weight:600;margin-bottom:5px">Select a device package to review</label>
 <select id="cloudPackageSelect" style="display:block;width:100%;max-width:100%;min-width:0;overflow:hidden"><option value="">Find packages in OneDrive first</option></select>
 <label style="display:flex;align-items:center;gap:8px;margin:9px 0 0"><input type="checkbox" id="cloudPackageOlder" style="flex:none;width:19px;height:19px;min-height:19px"><span>Show older packages from each device</span></label>
@@ -400,9 +442,9 @@
 <div class="buttons"><button type="button" id="checkpointPublish" class="secondary">Publish candidate reference in OneDrive</button></div>
 <div id="checkpointPublishStatus" class="hint" role="status">Nothing published.</div>
 </details>
-<p class="tiny">This is a cloud-visible marker, not a shared sync cursor. No records or backup files are modified. Automatic synchronization remains OFF.</p>
+<p class="tiny">This is an advanced cloud baseline reference. No records or backup files are modified by creating it.</p>
 </div>
-<div class="home-panel" style="margin:14px 0;padding:12px;border:1px solid #a8c9bc;border-radius:12px">
+<div class="home-panel" style="margin:14px 0;padding:12px;border:1px solid #baa8c9;border-radius:12px">
 <h4 style="margin:0 0 7px">Three-way sync safety and merged-backup preview — TEST</h4>
 <p class="tiny">Select the <strong>last shared backup</strong> (the baseline), then the computer and phone backups made after it. This compares one-sided edits and conflicting fields. You can generate a separate merged TEST backup without modifying any device or OneDrive file.</p>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
@@ -412,7 +454,7 @@
 </div>
 <div class="buttons"><button type="button" class="secondary" id="syncThreeWayRun">Review three-way merge</button><button type="button" class="secondary" id="syncThreeWaySelfTest">Run fictional safety checks</button><button type="button" class="secondary" id="syncRepeatAudit">Run repeat-merge and history safety checks</button></div><div id="syncRepeatAuditResult" class="hint" role="status">Safety audit is TEST-only and uses fictional records; no OneDrive files or browser data are changed.</div>
 <div class="hint" id="syncThreeWayOutput" role="status">No three-way comparison run. No files will be modified.</div>
-<div id="threeMergePanel" style="display:none;margin-top:14px;border:1px solid #afcdb7;border-radius:12px;padding:12px;min-width:0">
+<div id="threeMergePanel" style="display:none;margin-top:14px;border:1px solid #c0afcd;border-radius:12px;padding:12px;min-width:0">
 <h4 style="margin:0 0 8px">Create a three-way merged TEST backup</h4>
 <p class="hint">Safe one-sided edits are selected automatically. Review only genuine conflicts; the computer and phone values are never silently chosen over each other. This creates a <strong>downloadable JSON file only</strong> and does not restore, upload, or alter any Fieldbook database.</p>
 <div id="threeMergeSummary" class="hint" role="status"></div>
@@ -421,7 +463,7 @@
 <p id="threeMergeStatus" class="hint" role="status">Compare three backups to start.</p>
 </div>
 </div>
-<div id="syncStagePanel" class="home-panel" style="display:none;margin-top:14px;border:1px solid #b6d8c6" aria-live="polite">
+<div id="syncStagePanel" class="home-panel" style="display:none;margin-top:14px;border:1px solid #c9b6d8" aria-live="polite">
 <h4 style="margin:0 0 6px">Prepare a one-way recovery backup (TEST only)</h4>
 <p class="hint">Choose records found <strong>only in Backup B</strong> (phone). Their attached photographs and applicable activity entries come along. Original Backup A records and existing values remain unchanged. <strong>This generates a downloadable backup file only; it never edits either device or any OneDrive backup.</strong></p>
 <div id="syncStageCandidates"></div>
@@ -434,7 +476,7 @@
 <div id="resetFieldbookPanel" class="fieldbook-reset-panel" style="margin-top:18px;padding:14px;border:1px solid #d8b3ad;border-radius:12px;background:#fff9f7">
 <h3 style="margin:0 0 6px;color:#813d32">Start over / reset Fieldbook data</h3>
 <p class="hint" style="margin:0 0 10px">Use this only when you want an empty Fieldbook before a fresh GEDCOM import. This erases this browser's <strong>TEST burial entries, edits, discoveries, photographs, visit statuses, change history, saved cemetery coordinates, Home Person, and GEDCOM directory</strong>. It does not delete your downloaded backups or the app on GitHub. It does not erase your separate LIVE Fieldbook records.</p>
-<label style="display:flex;align-items:flex-start;gap:9px;margin:8px 0;font-size:13px"><input id="resetBackupAck" type="checkbox" style="width:18px;height:18px;min-height:18px;flex:0 0 18px;margin-top:2px"><span>I have saved a full backup and understand that resetting removes my TEST data from this browser.</span></label>
+<label style="display:flex;align-items:flex-start;gap:9px;margin:8px 0;font-size:13px"><input id="resetBackupAck" type="checkbox" style="width:18px;height:18px;min-height:18px;flex:0 0 18px;margin-top:2px"><span>I understand that resetting removes my TEST data from this browser.</span></label>
 <button type="button" class="danger" id="resetFieldbookButton" disabled>Reset TEST Fieldbook data…</button>
 <p id="resetFieldbookStatus" class="hint" role="status" style="margin:8px 0 0"></p>
 </div></div></details>
@@ -458,18 +500,19 @@
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7 TEST · Read-only automatic baseline difference detection (no sync) · Existing-record comparison and accurate restore totals (TEST only) · Optional automatic OneDrive backup + direct restore + verified backup · Simplified approvals · Accept all per person · Improved loading · Expanded data storage · Reset option · Full backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.13 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div class="burial-fields-row"><div><label>Burial date</label><input name="burialDate" placeholder="Enter burial date"></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side" maxlength="1" placeholder="M/P"></div></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Burial Notes</label><textarea name="notes" placeholder="FTM burial notes, stone transcription, directions, discoveries…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
+if(!/^\/cemetery-fieldbook\/test\/(?:index\.html)?$/.test(location.pathname)){document.body.innerHTML='<main style=\"padding:30px;font-family:sans-serif\"><h2>TEST build only</h2><p>Open this build at /cemetery-fieldbook/test/. No data was loaded.</p></main>';throw Error('TEST build cannot run outside /cemetery-fieldbook/test/');}
 const $=x=>document.getElementById(x);
-const SEED_KEY='cemeteryFieldbook_V7_TEST_private_seed';
+const SEED_KEY='cemeteryFieldbook_TEST_V713_private_seed';
 let largeDataHydrated=false; // Prevent stale localStorage counts before IndexedDB hydration.
 
 
 // Large GEDCOM directories and burial lists are saved in IndexedDB, NOT localStorage.
-// Only the LIVE app uses this database; TEST has a different database name.
-const LARGE_DB_NAME='cemeteryFieldbook_V7_TEST_LargeData_v7';
+// TEST-specific IndexedDB; LIVE uses a different database name.
+const LARGE_DB_NAME='cemeteryFieldbook_TEST_V713_LargeData_v7';
 function openLargeDB(){return new Promise((resolve,reject)=>{const q=indexedDB.open(LARGE_DB_NAME,1);q.onupgradeneeded=()=>{if(!q.result.objectStoreNames.contains('datasets'))q.result.createObjectStore('datasets')};q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error||Error('Cannot open Fieldbook large-data storage'))})}
 async function readLargeData(){const db=await openLargeDB();return new Promise((resolve,reject)=>{const tx=db.transaction('datasets','readonly');const a=tx.objectStore('datasets').get('burials'),b=tx.objectStore('datasets').get('people');tx.oncomplete=()=>{db.close();resolve({burials:a.result,people:b.result})};tx.onerror=()=>{db.close();reject(tx.error)};tx.onabort=()=>{db.close();reject(tx.error)}})}
 async function saveLargeData(burials,people){const db=await openLargeDB();return new Promise((resolve,reject)=>{const tx=db.transaction('datasets','readwrite'),st=tx.objectStore('datasets');st.put(burials,'burials');st.put(people,'people');tx.oncomplete=()=>{db.close();window.fieldbookCloudMarkDirty?.('burial directory');resolve()};tx.onerror=()=>{db.close();reject(tx.error||Error('Large-data save failed'))};tx.onabort=()=>{db.close();reject(tx.error||Error('Large-data save aborted'))}})}
@@ -477,9 +520,9 @@ async function clearLargeData(){const db=await openLargeDB();return new Promise(
 
 let seed=[];
 try { const saved=localStorage.getItem(SEED_KEY); if(saved) {const parsed=JSON.parse(saved); if(Array.isArray(parsed))seed=parsed;} } catch(err) {alert('Could not read private cemetery records: '+err.message)}
-const KEY='cemeteryFieldbook_V7_TEST_records', BACKUP_KEY='cemeteryFieldbook_V7_TEST_backup_time';
+const KEY='cemeteryFieldbook_TEST_V713_records', BACKUP_KEY='cemeteryFieldbook_TEST_V713_backup_time';
 
-const CHANGE_KEY='cemeteryFieldbook_V7_TEST_changelog';
+const CHANGE_KEY='cemeteryFieldbook_TEST_V713_changelog';
 let changeLog=[];
 try{const storedLog=JSON.parse(localStorage.getItem(CHANGE_KEY)||'[]');if(Array.isArray(storedLog))changeLog=storedLog;}catch(_){changeLog=[]}
 const FIELD_NAMES={name:'Name',dates:'Dates',relation:'Relationship',side:'Family side',line:'Family line',state:'State',county:'County',town:'Town',cemetery:'Cemetery',plot:'Plot',burialDate:'Burial date',findagrave:'Find a Grave link',notes:'Burial Notes',visited:'Visited',stone:'Stone',photo:'Photo status',gps:'GPS status'};
@@ -985,12 +1028,27 @@ $('showMatches').onclick=()=>{resultsSuppressed=false;render();$('burialPanel').
 $('more').onclick=()=>{visible+=65;render()};
 $('showAll').onclick=()=>{showAllRecords=true;resultsSuppressed=false;visible=65;render();$('burialPanel').scrollIntoView({block:'start',behavior:'smooth'})};
 // Binary images are stored in IndexedDB; record changes are stored in localStorage.
-function openDB(){return new Promise((res,rej)=>{if(!indexedDB){rej(Error('IndexedDB unavailable'));return}const req=indexedDB.open('cemeteryFieldbook_V7_TEST_Photos_v1',1);req.onupgradeneeded=()=>{req.result.createObjectStore('photos',{keyPath:'id'})};req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error)})}
+function openDB(){return new Promise((res,rej)=>{if(!indexedDB){rej(Error('IndexedDB unavailable'));return}const req=indexedDB.open('cemeteryFieldbook_TEST_V713_Photos_v1',1);req.onupgradeneeded=()=>{req.result.createObjectStore('photos',{keyPath:'id'})};req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error)})}
 async function store(mode,act){if(!db)db=await openDB();return new Promise((res,rej)=>{let tx=db.transaction('photos',mode),s=tx.objectStore('photos');let q=act(s);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
 const getPhotos=async()=>await store('readonly',s=>s.getAll());
 async function photoDeleteAll(recordId){try{for(const p of (await getPhotos()).filter(p=>p.person===recordId))await store('readwrite',s=>s.delete(p.id))}catch(e){console.warn(e)}}
 function compress(file){return new Promise((resolve,reject)=>{const fr=new FileReader;fr.onerror=()=>reject(fr.error);fr.onload=()=>{let im=new Image;im.onload=()=>{let scale=Math.min(1,1400/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*scale);c.height=Math.round(im.height*scale);c.getContext('2d').drawImage(im,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',.78))};im.onerror=()=>reject(Error('Image cannot be read'));im.src=fr.result};fr.readAsDataURL(file)})}
-async function renderPhotos(){const container=$('photos');container.replaceChildren();if(!current)return;try{const photos=(await getPhotos()).filter(p=>p.person===current);photos.forEach(p=>{const d=textNode('div','photoitem'),im=document.createElement('img');im.src=p.data;im.alt='Field photo';const b=textNode('button','','×');b.type='button';b.onclick=async()=>{if(confirm('Remove this photograph?')){await store('readwrite',s=>s.delete(p.id));addChange('Photo deleted',(all().find(x=>x.id===current)||{}).name,current,p.name||'Photograph');renderPhotos()}};d.append(im,b);container.append(d)});if(!photos.length)container.append(textNode('span','hint','No attached photographs yet.'))}catch(e){container.append(textNode('div','hint','Photo storage unavailable: '+e.message))}}
+function openFieldbookPhoto(data, name){
+ const viewer=document.createElement('dialog');
+ viewer.className='fieldbook-photo-viewer';
+ viewer.setAttribute('aria-label','Photograph viewer');
+ const bar=document.createElement('div');bar.className='fieldbook-photo-viewer-bar';
+ const label=document.createElement('span');label.textContent=name||'Field photograph';
+ const close=document.createElement('button');close.type='button';close.textContent='Close ✕';
+ close.setAttribute('aria-label','Close photograph');close.onclick=()=>viewer.close();
+ bar.append(label,close);
+ const full=document.createElement('img');full.src=data;full.alt=name||'Field photograph';
+ viewer.append(bar,full);document.body.append(viewer);
+ viewer.addEventListener('close',()=>viewer.remove(),{once:true});
+ viewer.addEventListener('click',event=>{if(event.target===viewer)viewer.close()});
+ try{viewer.showModal()}catch(error){viewer.remove();window.open(data,'_blank')}
+}
+async function renderPhotos(){const container=$('photos');container.replaceChildren();if(!current)return;try{const photos=(await getPhotos()).filter(p=>p.person===current);photos.forEach(p=>{const d=textNode('div','photoitem'),im=document.createElement('img');im.src=p.data;im.alt='Field photo';im.tabIndex=0;im.setAttribute('role','button');im.setAttribute('aria-label','Open photograph '+(p.name||''));im.style.cursor='zoom-in';im.onclick=()=>openFieldbookPhoto(p.data,p.name);im.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openFieldbookPhoto(p.data,p.name)}};const b=textNode('button','','×');b.type='button';b.onclick=async()=>{if(confirm('Remove this photograph?')){await store('readwrite',s=>s.delete(p.id));addChange('Photo deleted',(all().find(x=>x.id===current)||{}).name,current,p.name||'Photograph');renderPhotos()}};d.append(im,b);container.append(d)});if(!photos.length)container.append(textNode('span','hint','No attached photographs yet.'))}catch(e){container.append(textNode('div','hint','Photo storage unavailable: '+e.message))}}
 $('photoFile').onchange=async e=>{if(!current){alert('Save the new entry first, then reopen it to attach photos.');e.target.value='';return}const files=[...e.target.files];for(const f of files){try{const data=await compress(f);await store('readwrite',s=>s.put({id:'ph-'+Date.now()+'-'+Math.random().toString(36).slice(2),person:current,name:f.name,created:new Date().toISOString(),data}));addChange('Photo attached',(all().find(x=>x.id===current)||{}).name,current,f.name);}catch(err){alert('Could not attach '+f.name+': '+err.message)}}$('photoFile').value='';renderPhotos()};
 function uniqueBackupFilename(){
  const when=new Date().toISOString().replace(/[:.]/g,'-');
@@ -1016,7 +1074,7 @@ const geoSeeds={
  'Indiana|Marion|West Newton Cemetery':[39.6497147,-86.2769393],
  'Indiana|Morgan|Mooresville Cemetery':[39.610542,-86.366290]
 };
-const GEO_KEY='cemeteryFieldbook_V7_TEST_geo';
+const GEO_KEY='cemeteryFieldbook_TEST_V713_geo';
 let geoEdits={};try{geoEdits=JSON.parse(localStorage.getItem(GEO_KEY)||'{}')||{}}catch(_){}
 let activeOrigin=null;
 const cemeteryKey=r=>[r.state||'',r.county||'',r.cemetery||''].join('|');
@@ -1080,8 +1138,8 @@ renderChangeLog();$('nearResults').append(textNode('p','hint','Choose a starting
 </script><script>if ('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
 // v7 GEDCOM first-import prototype. Parser operates entirely on locally selected text.
 let pendingGedcom = null; // Includes the parsed people directory and burial preview from ONE selected file.
-const GED_PEOPLE_KEY='cemeteryFieldbook_V7_TEST_all_gedcom_people';
-const HOME_PERSON_KEY='cemeteryFieldbook_V7_TEST_home_person_id';
+const GED_PEOPLE_KEY='cemeteryFieldbook_TEST_V713_all_gedcom_people';
+const HOME_PERSON_KEY='cemeteryFieldbook_TEST_V713_home_person_id';
 let allGedcomPeople=[];let homePersonId='';
 try {const list=JSON.parse(localStorage.getItem(GED_PEOPLE_KEY)||'[]');if(Array.isArray(list))allGedcomPeople=list;homePersonId=localStorage.getItem(HOME_PERSON_KEY)||'';}catch(_){allGedcomPeople=[];homePersonId='';}
 function parseGedcomPeople(text){
@@ -1987,7 +2045,7 @@ $('gedcomFile').onchange=async e=>{
    }
    if(!entries.length){alert('This GEDCOM has no burial facts to import. The people directory was prepared, but no burial list was created.');return;}
    if(seed.length||extras.length||Object.keys(updates).length||changeLog.length){
-    alert('Initial import requires an EMPTY Fieldbook. Your existing LIVE burial records are protected. Use Update from GEDCOM after legacy records are matched to GEDCOM IDs.');return;
+    alert('Initial import requires an EMPTY Fieldbook. Existing TEST burial records will remain until you choose an action. Use Update from GEDCOM after legacy records are matched to GEDCOM IDs.');return;
    }
    if(!confirm('Import '+entries.length+' burial entries ('+withSuffix+' with preserved suffixes; '+ambiguous.length+' conflicting-burial people excluded) from '+file.name+' with '+(allGedcomPeople.find(p=>p.id===homePersonId)?.name||homePersonId)+' as Home Person? This changes ONLY this browser dataset.'))return;
    try{
@@ -2130,7 +2188,7 @@ relSearch.addEventListener('input',()=>previewRelationship(false));
 relStatus.textContent='Select your Home Person and search for someone buried in your GEDCOM.';
 })();
 </script><script>
-// LIVE-only, deliberate reset. Never clear the whole origin: TEST shares this GitHub Pages origin.
+// TEST-only, deliberate reset. Never clear the whole origin: LIVE shares this GitHub Pages origin.
 (function () {
  'use strict';
  const ack=document.getElementById('resetBackupAck');
@@ -2140,7 +2198,7 @@ relStatus.textContent='Select your Home Person and search for someone buried in 
  ack.addEventListener('change',()=>{button.disabled=!ack.checked});
  button.addEventListener('click',async()=>{
   if(!ack.checked)return;
-  const answer=prompt('FINAL CHECK: This will permanently clear all TEST Fieldbook data stored in this browser, including photos and history.\n\nType RESET to continue:');
+  const answer=prompt('FINAL CHECK: This will permanently clear TEST Fieldbook data stored in this browser, including photos and history.\n\nType RESET to continue:');
   if(answer!=='RESET'){status.textContent='Reset cancelled. No data changed.';return;}
   if(!confirm('Clear TEST Fieldbook data from this browser now? Your saved backup files will not be deleted.')){
    status.textContent='Reset cancelled. No data changed.';return;
@@ -2157,18 +2215,18 @@ relStatus.textContent='Select your Home Person and search for someone buried in 
     tx.onabort=()=>reject(tx.error||Error('Photo clearing was aborted'));
    });
    await clearLargeData();
-   // Only TEST-specific keys: do not touch TEST keys on the same origin.
+   // Only TEST-specific keys: do not touch LIVE keys on the same origin.
    const liveKeys=[
-    'cemeteryFieldbook_V7_TEST_private_seed',
-    'cemeteryFieldbook_V7_TEST_records',
-    'cemeteryFieldbook_V7_TEST_backup_time',
-    'cemeteryFieldbook_V7_TEST_changelog',
-    'cemeteryFieldbook_V7_TEST_geo',
-    'cemeteryFieldbook_V7_TEST_all_gedcom_people',
-    'cemeteryFieldbook_V7_TEST_home_person_id'
+    'cemeteryFieldbook_TEST_V713_private_seed',
+    'cemeteryFieldbook_TEST_V713_records',
+    'cemeteryFieldbook_TEST_V713_backup_time',
+    'cemeteryFieldbook_TEST_V713_changelog',
+    'cemeteryFieldbook_TEST_V713_geo',
+    'cemeteryFieldbook_TEST_V713_all_gedcom_people',
+    'cemeteryFieldbook_TEST_V713_home_person_id'
    ];
    for(const key of liveKeys)localStorage.removeItem(key);
-   status.textContent='TEST data cleared. Reloading Fieldbook…';
+   status.textContent='Local data cleared. Reloading Fieldbook…';
    location.reload();
   } catch(err) {
    status.textContent='Reset did not finish: '+(err?.message||String(err))+'. Do not import until you verify that the Fieldbook is empty. Your original backup remains available.';
@@ -2204,13 +2262,13 @@ if(!clientEl||!crypto?.subtle){if(state)state.textContent='This browser does not
 const GRAPH='https://graph.microsoft.com/v1.0';
 const AUTH='https://login.microsoftonline.com/consumers/oauth2/v2.0';
 const SCOPES='Files.ReadWrite.AppFolder offline_access';
-const CIDKEY='fieldbook_cloud_test_clientid';
-const TXKEY='fieldbook_cloud_test_oauth_transaction';
-const AUTHKEY='fieldbook_cloud_test_access_token';
-const REFRESHKEY='fieldbook_cloud_test_refresh_token_v2';
-const LASTKEY='fieldbook_cloud_test_last_verified_v2';
-const AUTOKEY='fieldbook_cloud_test_auto_enabled_v1';
-const DIRTYKEY='fieldbook_cloud_test_auto_dirty_v1';
+const CIDKEY='fieldbook_cloud_test_v713_clientid';
+const TXKEY='fieldbook_cloud_test_v713_oauth_transaction';
+const AUTHKEY='fieldbook_cloud_test_v713_access_token';
+const REFRESHKEY='fieldbook_cloud_test_v713_refresh_token_v2';
+const LASTKEY='fieldbook_cloud_test_v713_last_verified_v2';
+const AUTOKEY='fieldbook_cloud_test_v713_auto_enabled_v1';
+const DIRTYKEY='fieldbook_cloud_test_v713_auto_dirty_v1';
 const AUTOQUIET_MS=30_000;
 const AUTOMIN_MS=2*60_000;
 let autoTimer=null, autoQueued=false, autoInFlight=false, autoStatusMessage='';
@@ -2348,7 +2406,7 @@ async function preview(){
 }
 el('cloudPreview').onclick=async()=>{try{await preview()}catch(e){note('Cannot prepare backup: '+e.message,true)}};
 function setBusy(v){busy=v;for(const id of ['cloudUpload','cloudList','cloudPreview','cloudConnect'])el(id).disabled=v;}
-function uniqueName(){let d=new Date().toISOString().replace(/[:.]/g,'-');let tail=b64url(randomBytes(5));return `fieldbook-${d}-${tail}.json`}
+function uniqueName(){let d=new Date().toISOString().replace(/[:.]/g,'-');let tail=b64url(randomBytes(5));return `fieldbook-test-${d}-${tail}.json`}
 async function sha256(bytes){return b64url(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)));}
 async function verifyUploadedFile(file,expectedSize,expectedHash){
  const metaResponse=await graph('/me/drive/special/approot:/'+encodeURIComponent(file)+'?$select=id,name,size,file');
@@ -2445,17 +2503,17 @@ async function recoverCloudBackup(item){
  await largeDataReady;
  const current=seed.length+extras.length;
  const incomingTotal=data.seed.length+data.extras.length;
- if(!confirm(`RESTORE FROM ONEDRIVE (TEST ONLY)\n\nCloud backup: ${item.name}\nBurials: ${incomingTotal.toLocaleString()} total (${data.seed.length.toLocaleString()} original + ${data.extras.length.toLocaleString()} added)\nPhotos: ${data.photos.length.toLocaleString()}\nPeople directory: ${data.gedcomPeople.length.toLocaleString()}\n\nThis will REPLACE all ${current.toLocaleString()} local TEST burial records, your local photos, edits, and history. Your cloud backups are NOT changed.\n\nHave you kept a separate backup of any TEST work you want to preserve?`))return false;
+ if(!confirm(`RESTORE FROM ONEDRIVE (TEST DATA)\n\nCloud backup: ${item.name}\nBurials: ${incomingTotal.toLocaleString()} total (${data.seed.length.toLocaleString()} original + ${data.extras.length.toLocaleString()} added)\nPhotos: ${data.photos.length.toLocaleString()}\nPeople directory: ${data.gedcomPeople.length.toLocaleString()}\n\nThis will REPLACE all ${current.toLocaleString()} local TEST burial records, your local photos, edits, and history. Your cloud backups are NOT changed.\n\nHave you kept a separate backup of any TEST work you want to preserve?`))return false;
  // The shared restore function performs a final confirmation before modifying local data.
  const success=await window.fieldbookRestoreFromObject(data);
  if(success)note(`RESTORE COMPLETE: ${incomingTotal.toLocaleString()} burials and ${data.photos.length.toLocaleString()} photo records recovered from OneDrive. Refresh the page to verify persistence.`);
  return success;
 }
 // Retention is opt-in, and never touches manually uploaded backups or protected filenames.
-const RETKEY='fieldbook_cloud_test_retention_enabled_v1';
+const RETKEY='fieldbook_cloud_test_v713_retention_enabled_v1';
 const retainCheckbox=el('cloudRetentionEnabled'),retResults=el('cloudRetentionResults');
 let retentionPreview=null,retentionRunning=false;
-const cloudGenerated=/^fieldbook-\d{4}-\d{2}-\d{2}T[^/]*\.json$/i;
+const cloudGenerated=/^fieldbook-test-\d{4}-\d{2}-\d{2}T[^/]*\.json$/i;
 const protectedCloud=/^fieldbook-protected-/i;
 function isManagedBackup(f){return cloudGenerated.test(f.name)&&!!f.file;}
 function isProtectedBackup(f){return protectedCloud.test(f.name);}
@@ -2587,7 +2645,7 @@ async function cleanAfterVerifiedUpload(uploadedName){
 }
 async function listCloud(){
  await ensureAppFolder();
- const files=await allCloudFiles();const entries=files.filter(x=>/^(?:fieldbook-|cemetery-fieldbook-backup-).*\.json$/i.test(x.name)&&!x.name.endsWith('.checkpoint.json')&&x.file).sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
+ const files=await allCloudFiles();const entries=files.filter(x=>/^fieldbook-test-\d{4}-\d{2}-\d{2}T[^/]*\.json$/i.test(x.name)&&!x.name.endsWith('.checkpoint.json')&&x.file).sort((a,b)=>String(b.createdDateTime).localeCompare(String(a.createdDateTime)));
  results.replaceChildren();results.hidden=false;
  const h=document.createElement('h4');h.textContent=`OneDrive backups (${entries.length})`;results.append(h); const help=document.createElement('p');help.className='tiny';help.textContent='Includes cloud-created backups and full Fieldbook backups manually placed in this app folder. Restores validate the file before replacing local data.';results.append(help);
  if(!entries.length){const p=document.createElement('p');p.textContent='No Fieldbook backup files found in this app folder. The list includes both automatic cloud backups and manually uploaded full Fieldbook backups.';results.append(p)}
@@ -2634,7 +2692,7 @@ const syncStagePanel=el('syncStagePanel'),syncStageList=el('syncStageCandidates'
 function syncStageReset(){syncStageA=null;syncStageB=null;syncStageLabels=[];syncStageChoiceA='';syncStageChoiceB='';syncStagePanel.style.display='none';syncStageList.replaceChildren();syncStageDownload.disabled=true;}
 let syncCompareEntries=[];
 const syncA=el('syncCompareA'),syncB=el('syncCompareB'),syncResult=el('syncCompareResult');
-const backupNamePattern=/^(?:fieldbook-|cemetery-fieldbook-backup-).*\.json$/i;
+const backupNamePattern=/^fieldbook-test-\d{4}-\d{2}-\d{2}T[^/]*\.json$/i;
 function syncSay(msg){syncResult.replaceChildren();const p=document.createElement('p');p.textContent=msg;syncResult.append(p);}
 async function loadSyncChoices(){
   syncStageReset();
@@ -3108,13 +3166,13 @@ el('syncCompareRun').onclick=async()=>{
 // Shared, cloud-visible baseline *candidate*, not a claim that devices have synchronized.
 // Every published marker is immutable and named separately from backups. Only explicit user action writes a marker.
 const checkpointCurrent=el('checkpointCurrent'),checkpointSource=el('checkpointSource'),checkpointPublishStatus=el('checkpointPublishStatus');
-const CPFILE=/^fieldbook-sync-reference-\d{4}-\d{2}-\d{2}T[\w-]+\.checkpoint\.json$/i;
+const CPFILE=/^fieldbook-test-sync-reference-\d{4}-\d{2}-\d{2}T[\w-]+\.checkpoint\.json$/i;
 function populateCheckpointChoices(files){
  const prev=checkpointSource.value;checkpointSource.replaceChildren();
- const empty=document.createElement('option');empty.value='';empty.textContent='Choose the verified November 15 full backup';checkpointSource.append(empty);
+ const empty=document.createElement('option');empty.value='';empty.textContent='Choose a verified TEST full backup';checkpointSource.append(empty);
  // Full v5 backups may be proposed, but publishing requires exact protected-content equality
  // with the current browser, plus a recheck just before the new marker is uploaded.
- for(const f of files.filter(f=>/^(?:fieldbook-|cemetery-fieldbook-backup-).*\.json$/i.test(f.name))){const op=document.createElement('option');op.value=f.id;op.textContent=f.name+' · '+new Date(f.createdDateTime).toLocaleString();checkpointSource.append(op)}
+ for(const f of files.filter(f=>/^fieldbook-test-\d{4}-\d{2}-\d{2}T[^/]*\.json$/i.test(f.name))){const op=document.createElement('option');op.value=f.id;op.textContent=f.name+' · '+new Date(f.createdDateTime).toLocaleString();checkpointSource.append(op)}
  if([...checkpointSource.options].some(x=>x.value===prev))checkpointSource.value=prev;
 }
 async function digestBytes(bytes){return b64url(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)))}
@@ -3166,7 +3224,7 @@ el('checkpointPublish').onclick=async()=>{
     burials:idSet.size,photos:doc.photos.length,history:doc.changeLog?.length||0,
     caution:'Reference candidate only. Neither device has adopted a sync cursor. Do not use as automatic-sync authorization.'};
   if(await syncContentHash(doc)!==await syncContentHash(await makePayload()))throw Error('Browser data changed during verification. Nothing published.');
-  const name='fieldbook-sync-reference-'+new Date().toISOString().replace(/[:.]/g,'-')+'-'+b64url(randomBytes(5))+'.checkpoint.json';
+  const name='fieldbook-test-sync-reference-'+new Date().toISOString().replace(/[:.]/g,'-')+'-'+b64url(randomBytes(5))+'.checkpoint.json';
   await ensureAppFolder();
   const upload=await graph('/me/drive/special/approot:/'+encodeURIComponent(name)+':/content',
     {method:'PUT',headers:{'Content-Type':'application/json','If-None-Match':'*'},body:JSON.stringify(marker)});
@@ -3182,9 +3240,9 @@ el('checkpointPublish').onclick=async()=>{
 
 // Per-installation baseline adoption, verified against the entire local backup.
 // No write to any burial records, photos, source backups, or sync cursors.
-const DEVICEKEY='fieldbook_test_sync_device_id_v1';
-const DEVICECHECKKEY='fieldbook_test_sync_verified_checkpoint_v1';
-const DEVICEFILE=/^fieldbook-sync-device-[\w-]+\.checkpoint\.json$/i;
+const DEVICEKEY='fieldbook_test_v713_sync_device_id_v1';
+const DEVICECHECKKEY='fieldbook_test_v713_sync_verified_checkpoint_v1';
+const DEVICEFILE=/^fieldbook-test-sync-device-[\w-]+\.checkpoint\.json$/i;
 const deviceInfo=el('deviceCheckpointInfo'),deviceStatus=el('deviceCheckpointStatus');
 const deviceCheck=el('deviceCheckMatch'),deviceAdopt=el('deviceAdoptCheckpoint'),deviceVerify=el('deviceAdoptVerify');
 let pendingAdoption=null;
@@ -3254,7 +3312,7 @@ deviceAdopt.onclick=async()=>{
    filename:pendingAdoption.marker.backup.filename,created:new Date().toISOString(),
    warning:'Device content verified at this instant only. Not a sync cursor; no automatic sync authorized.'};
   await ensureAppFolder();
-  const filename='fieldbook-sync-device-'+getDeviceId()+'-'+new Date().toISOString().replace(/[:.]/g,'-')+'.checkpoint.json';
+  const filename='fieldbook-test-sync-device-'+getDeviceId()+'-'+new Date().toISOString().replace(/[:.]/g,'-')+'.checkpoint.json';
   const posted=await graph('/me/drive/special/approot:/'+encodeURIComponent(filename)+':/content',
     {method:'PUT',headers:{'Content-Type':'application/json','If-None-Match':'*'},body:JSON.stringify(payload)});
   const created=await posted.json();if(!created.id)throw Error('Microsoft did not return a checkpoint ID');
@@ -3358,7 +3416,7 @@ el('baselineDetectChanges').onclick=async()=>{
 const packageStatus=el('changePackageStatus'),packageDetails=el('changePackageDetails');
 const packagePublish=el('changePackagePublish'),packageConsent=el('changePackageConsent');
 let preparedPackage=null;
-const PACKAGE_FILE=/^fieldbook-sync-changes-device-[\w-]+\.package\.json$/i;
+const PACKAGE_FILE=/^fieldbook-test-sync-changes-device-[\w-]+\.package\.json$/i;
 function strictIdMap(items,label){
  if(!Array.isArray(items)||items.some(x=>!x||typeof x.id!=='string'||!x.id))throw Error('Malformed '+label+' IDs');
  const idx=indexById(items);if(idx.duplicates.size)throw Error('Duplicate '+label+' IDs');return idx.result;
@@ -3419,7 +3477,7 @@ packagePublish.onclick=async()=>{
   const fresh=prepareSafeChangePackage(doc,local,marker,checkpoint);
   if(marker.markerId!==preparedPackage.markerId||await syncContentHash(local)!==preparedPackage.localHash||canonicalValue(fresh)!==canonicalValue(preparedPackage.pkg))throw Error('Data or baseline changed since preview. Review again.');
   const payload={...fresh,created:new Date().toISOString()};
-  const filename='fieldbook-sync-changes-'+getDeviceId()+'-'+new Date().toISOString().replace(/[:.]/g,'-')+'-'+b64url(randomBytes(5))+'.package.json';
+  const filename='fieldbook-test-sync-changes-'+getDeviceId()+'-'+new Date().toISOString().replace(/[:.]/g,'-')+'-'+b64url(randomBytes(5))+'.package.json';
   await ensureAppFolder();const response=await graph('/me/drive/special/approot:/'+encodeURIComponent(filename)+':/content',{method:'PUT',headers:{'Content-Type':'application/json','If-None-Match':'*'},body:JSON.stringify(payload)});
   const saved=await response.json();if(!saved.id)throw Error('OneDrive returned no file ID');
   const got=await graph('/me/drive/items/'+encodeURIComponent(saved.id)+'/content');const copy=await got.json();
@@ -3434,7 +3492,7 @@ const cloudPackageChooser=el('cloudPackageChooser'),cloudPackageSelect=el('cloud
 const cloudPackageOlder=el('cloudPackageOlder'),cloudPackageSelectionStatus=el('cloudPackageSelectionStatus');
 let cloudPackages=[],cloudPackageContext=null,cloudPackageErrors=0;
 // Friendly labels are cosmetic, per-browser, and never transmitted to OneDrive.
-const FRIENDLY_DEVICES_KEY='fieldbook_test_friendly_device_labels_v1';
+const FRIENDLY_DEVICES_KEY='fieldbook_test_v713_friendly_device_labels_v1';
 function readDeviceLabels(){
  const stored=safeJSON(localStorage.getItem(FRIENDLY_DEVICES_KEY)||'null');
  return stored&&typeof stored==='object'&&!Array.isArray(stored)?stored:{};
@@ -3591,7 +3649,7 @@ function isolatedPackageMerge(base,local,pkg,marker){
 }
 function appendIsolatedExport(panel,pkg,base,local,marker,filename,report){
  if(!report.established)return;
- const info=document.createElement('div');info.style.cssText='border-top:1px solid #b1cdb8;margin-top:12px;padding-top:10px';
+ const info=document.createElement('div');info.style.cssText='border-top:1px solid #cbb1e0;margin-top:12px;padding-top:10px';
  const heading=document.createElement('strong');heading.textContent='Apply a reviewed change — disposable TEST browser only';info.append(heading);
  const note=document.createElement('p');note.className='tiny';note.textContent='To test a direct change: save a recovery backup, then apply to this disposable TEST browser. No data goes to OneDrive and your regular TEST/LIVE installations are not touched. You can also download a proposed merged file instead, without applying.';info.append(note);
  const backupButton=document.createElement('button');backupButton.className='secondary';backupButton.type='button';backupButton.textContent='1 · Save recovery backup';
@@ -3724,7 +3782,7 @@ function compareRemotePackage(pkg,base,local,marker){
 }
 function showCrossDevicePreview(pkg,base,local,marker,filename){
  const report=compareRemotePackage(pkg,base,local,marker);
- const panel=document.createElement('div');panel.style.cssText='border:2px solid #b1cdb8;border-radius:10px;padding:11px;margin:12px 0';
+ const panel=document.createElement('div');panel.style.cssText='border:2px solid #cbb1e0;border-radius:10px;padding:11px;margin:12px 0';
  const title=document.createElement('h4');title.textContent='Read-only cross-device merge preview';title.style.margin='0 0 8px';panel.append(title);
  const meta=document.createElement('p');meta.className='tiny';meta.textContent='Package: '+filename+' · From: '+deviceLabel(pkg.deviceId)+' · Here: '+deviceLabel(getDeviceId())+' (technical IDs unchanged)';panel.append(meta);
  for(const [label,val] of [['Potentially safe changes',report.totals.safe],['Already present',report.totals.already],['Actual conflicts / ID collisions',report.totals.conflict],['Missing local records',report.totals.missing]])appendDiffRow(panel,label,val);
@@ -3761,7 +3819,7 @@ const workflowStatus=el('syncWorkflowStatus'),workflowSummary=el('syncWorkflowSu
 let workflowPlan=null;
 function workflowClear(){workflowPlan=null;workflowApply.disabled=true;workflowSummary.replaceChildren()}
 function workflowGuard(){
- if(!location.pathname.endsWith('/test/'))throw Error('Guided sync is available only at the /test/ TEST site.');
+ if(!(location.pathname==='/cemetery-fieldbook/test/'||location.pathname==='/cemetery-fieldbook/test/index.html'))throw Error('Automatic sync is available only on the published TEST site.');
  if(autoCheckbox.checked)throw Error('Turn off automatic OneDrive backups before a guided sync test.');
 }
 function workflowLine(s){const p=document.createElement('p');p.style.margin='5px 0';p.textContent=s;workflowSummary.append(p)}
@@ -3833,7 +3891,7 @@ workflowPublish.onclick=async()=>{
   const {marker:newMarker}=await readVerifiedBaselineForDiff();
   if(newMarker.markerId!==marker.markerId||newMarker.hash!==marker.hash)throw Error('Shared baseline changed during review.');
   const payload={...pkg,created:new Date().toISOString()};
-  const name='fieldbook-sync-changes-'+getDeviceId()+'-'+new Date().toISOString().replace(/[:.]/g,'-')+'-'+b64url(randomBytes(5))+'.package.json';
+  const name='fieldbook-test-sync-changes-'+getDeviceId()+'-'+new Date().toISOString().replace(/[:.]/g,'-')+'-'+b64url(randomBytes(5))+'.package.json';
   await ensureAppFolder();const response=await graph('/me/drive/special/approot:/'+encodeURIComponent(name)+':/content',
    {method:'PUT',headers:{'Content-Type':'application/json','If-None-Match':'*'},body:JSON.stringify(payload)});
   const saved=await response.json();if(!saved.id)throw Error('OneDrive did not confirm package creation.');
@@ -3874,8 +3932,8 @@ workflowApply.onclick=async()=>{
 
 // v7.11 opt-in automatic TEST sync. No background service worker or LIVE access.
 // OneDrive is the source for immutable device packages; the shared baseline is read-only.
-const AUTO_DEVICE_KEY='fieldbook_test_auto_device_sync_enabled_v1';
-const AUTO_DEVICE_PUBLISHED_KEY='fieldbook_test_auto_device_sync_last_published_v1';
+const AUTO_DEVICE_KEY='fieldbook_test_v713_auto_device_sync_enabled_v2';
+const AUTO_DEVICE_PUBLISHED_KEY='fieldbook_test_v713_auto_device_sync_last_published_v1';
 const autoDeviceConsent=el('autoDeviceSyncConsent'),autoDeviceEnable=el('autoDeviceSyncEnable');
 const autoDeviceDisable=el('autoDeviceSyncDisable'),autoDeviceNow=el('autoDeviceSyncNow');
 const autoDeviceStatus=el('autoDeviceSyncStatus');
@@ -3905,7 +3963,7 @@ async function autoDevicePublish(base,marker,local,localHash){
   throw e;
  }
  const payload={...pkg,created:new Date().toISOString()};
- const name='fieldbook-sync-changes-'+getDeviceId()+'-'+new Date().toISOString().replace(/[:.]/g,'-')+'-'+b64url(randomBytes(5))+'.package.json';
+ const name='fieldbook-test-sync-changes-'+getDeviceId()+'-'+new Date().toISOString().replace(/[:.]/g,'-')+'-'+b64url(randomBytes(5))+'.package.json';
  await ensureAppFolder();
  const response=await graph('/me/drive/special/approot:/'+encodeURIComponent(name)+':/content',
   {method:'PUT',headers:{'Content-Type':'application/json','If-None-Match':'*'},body:JSON.stringify(payload)});
@@ -3916,7 +3974,7 @@ async function autoDevicePublish(base,marker,local,localHash){
  return pkg.counts.newBurials+pkg.counts.editedFields+pkg.counts.newPhotos+pkg.counts.newHistory;
 }
 async function autoDeviceRecovery(doc){
- const json=JSON.stringify(doc),file='fieldbook-protected-auto-recovery-'+getDeviceId()+'-'+new Date().toISOString().replace(/[:.]/g,'-')+'-'+b64url(randomBytes(5))+'.json';
+ const json=JSON.stringify(doc),file='fieldbook-test-protected-auto-recovery-'+getDeviceId()+'-'+new Date().toISOString().replace(/[:.]/g,'-')+'-'+b64url(randomBytes(5))+'.json';
  const bytes=new TextEncoder().encode(json),digest=await digestBytes(bytes);
  await ensureAppFolder();
  const upload=await graph('/me/drive/special/approot:/'+encodeURIComponent(file)+':/content',
@@ -3975,15 +4033,15 @@ function autoDeviceSchedule(){
  if(autoDeviceOn())autoDeviceTimer=setInterval(()=>{if(Date.now()-autoDeviceLastRun>=110000)autoDeviceCycle()},120000);
 }
 autoDeviceEnable.onclick=()=>{
- if(!location.pathname.endsWith('/test/')){autoDeviceState('Automatic sync is allowed only on the /test/ site.');return;}
- if(!autoDeviceConsent.checked){autoDeviceState('Check the TEST pilot authorization first.');return;}
+ if(!(location.pathname==='/cemetery-fieldbook/test/'||location.pathname==='/cemetery-fieldbook/test/index.html')){autoDeviceState('Automatic sync is available only on the published TEST site.');return;}
+ if(!autoDeviceConsent.checked){autoDeviceState('Check the synchronization authorization first.');return;}
  if(autoCheckbox.checked){autoDeviceState('Turn off the separate automatic OneDrive BACKUP feature first.');return;}
- if(!confirm('Enable automatic TEST device synchronization in THIS browser? Changes may publish and safely merge without further confirmation, with a verified OneDrive recovery file before each merge. Genuine conflicts will pause sync. LIVE is unchanged.'))return;
+ if(!confirm('Enable automatic TEST synchronization on THIS browser? Use only after your TEST baseline and device checkpoint have been verified. Changes may publish and safely merge, with a verified OneDrive recovery file before each merge. Genuine conflicts will pause sync.'))return;
  localStorage.setItem(AUTO_DEVICE_KEY,'yes');autoDeviceConsent.checked=false;
  autoDeviceState('Automatic sync enabled on this TEST browser. Checking OneDrive…');
  autoDeviceSchedule();autoDeviceCycle();
 };
-autoDeviceDisable.onclick=()=>autoDeviceOff('Automatic two-device sync turned OFF on this browser.');
+autoDeviceDisable.onclick=()=>autoDeviceOff('Automatic two-device sync turned OFF on this TEST browser.');
 autoDeviceNow.onclick=()=>{
  if(!autoDeviceOn()){autoDeviceState('Enable automatic sync first. Sync now is available only when automatic sync is enabled.');return;}
  if(autoDeviceRunning){autoDeviceState('Automatic sync is already running.');return;}
@@ -4072,7 +4130,66 @@ finishRedirect();
  // Keep the tool labels and current sync warnings unambiguous.
  const d=$('simpleSyncFold');if(d)d.removeAttribute('open');
  const a=$('simpleAdvancedFold');if(a)a.removeAttribute('open');
- const info=$('simpleHubStatus');if(info)info.textContent='TEST only · OneDrive backup is separate from two-way device sync, which can now be enabled separately in TEST.';
+ const info=$('simpleHubStatus');if(info)info.textContent='OneDrive backups are separate from two-way device sync. Set up a verified TEST baseline before enabling synchronization.';
 })();
 </script>
-</body></html>
+<script id="testHeaderCloud">
+(function(){
+ 'use strict';
+ const cloudButton=document.getElementById('headerCloudStatus');
+ const syncButton=document.getElementById('headerSyncStatus');
+ const cloudLabel=document.getElementById('headerCloudText');
+ const syncLabel=document.getElementById('headerSyncText');
+ const cloudState=document.getElementById('cloudState');
+ const syncState=document.getElementById('autoDeviceSyncStatus');
+ const CLOUD_KEY='fieldbook_cloud_test_v713_refresh_token_v2';
+ const SYNC_KEY='fieldbook_test_v713_auto_device_sync_enabled_v2';
+ function openCloud(){
+  const fold=document.getElementById('simpleBackupFold');if(fold)fold.open=true;
+  document.getElementById('simpleDataHub')?.scrollIntoView({behavior:'smooth',block:'start'});
+ }
+ function openSync(){
+  const fold=document.getElementById('simpleSyncFold');if(fold)fold.open=true;
+  document.getElementById('autoDeviceSyncPanel')?.scrollIntoView({behavior:'smooth',block:'start'});
+ }
+ function status(){
+  const connected=!!localStorage.getItem(CLOUD_KEY);
+  const on=localStorage.getItem(SYNC_KEY)==='yes';
+  const paused=!!syncState&&/PAUSED safely/i.test(syncState.textContent||'');
+  cloudLabel.textContent=connected?'Cloud connected':'Cloud disconnected';
+  cloudButton.classList.toggle('cloud-connected',connected);
+  cloudButton.title=connected?'Disconnect cloud storage':'Connect cloud storage';
+  cloudButton.setAttribute('aria-label',cloudButton.title);
+  syncLabel.textContent=paused?'Sync PAUSED':on?'Sync ON':'Sync OFF';
+  syncButton.classList.toggle('cloud-sync-on',on&&!paused);
+  syncButton.classList.toggle('cloud-sync-paused',paused);
+  syncButton.disabled=!connected&&!on;
+  syncButton.title=!connected?'Connect cloud storage first':paused?'Review the paused synchronization before restarting':on?'Turn synchronization off':'Turn synchronization on';
+ }
+ cloudButton.addEventListener('click',()=>{
+  if(!localStorage.getItem(CLOUD_KEY)){
+   const connect=document.getElementById('cloudConnect');
+   if(connect&&!connect.disabled){connect.click();return;}
+   openCloud();return;
+  }
+  if(confirm('Disconnect cloud storage on this TEST device? Sync will be turned off first. Cloud files will not be deleted.')){
+   document.getElementById('autoDeviceSyncDisable')?.click();
+   document.getElementById('cloudDisconnect')?.click();
+   status();
+  }
+ });
+ syncButton.addEventListener('click',()=>{
+  const on=localStorage.getItem(SYNC_KEY)==='yes';
+  if(on){document.getElementById('autoDeviceSyncDisable')?.click();status();return;}
+  // Preserve existing baseline/checkpoint and conflict safety guards.
+  // Directly enabling without verified setup is intentionally not allowed.
+  openSync();
+  const consent=document.getElementById('autoDeviceSyncConsent');
+  if(consent&&!consent.checked)consent.focus();
+ });
+ if(cloudState)new MutationObserver(status).observe(cloudState,{childList:true,subtree:true,characterData:true});
+ if(syncState)new MutationObserver(status).observe(syncState,{childList:true,subtree:true,characterData:true});
+ window.addEventListener('focus',status);document.addEventListener('visibilitychange',status);
+ status();
+})();
+</script></body></html>
