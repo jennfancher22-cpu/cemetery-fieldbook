@@ -343,7 +343,17 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 #reopenSetup{margin:0 0 12px;display:none}
 @media(max-width:600px){#getStartedPanel{padding:11px}#getStartedPanel .onboard-step>summary{padding:11px 9px}#getStartedPanel .onboard-body{padding:9px}#getStartedPanel .onboard-route button{min-width:145px}}
 </style>
-</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.17 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+<style id="v7171Layout">
+#backupsHubFold{margin:0}
+#backupsHubFold>summary{font-size:17px;font-weight:750;color:#165e50;cursor:pointer;list-style:none;display:flex;align-items:center;gap:7px}
+#backupsHubFold>summary::-webkit-details-marker{display:none}
+#backupsHubFold>summary:before{content:"▸";font-size:14px;color:#306b5d}
+#backupsHubFold[open]>summary:before{content:"▾"}
+#backupsHubFold .backups-hub-body{padding-top:12px}
+#backupsHubFold:not([open]) .backups-hub-body{display:none}
+@media(max-width:600px){#backupsHubFold>summary{font-size:15px;flex-wrap:wrap}}
+</style>
+</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.17.1 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook">
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">A few simple steps to get your family cemetery records ready. Cloud storage and syncing are optional.</p>
@@ -369,7 +379,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 <section class="panel" id="burialPanel"><div class="resulthead"><h2 style="margin:0">Burial records</h2><span class="tiny" id="count"></span></div><div class="burial-list-controls"><span class="hint">Tap a name to view details and edit.</span><div class="inline-controls"><button class="secondary" id="hideResultsTop" type="button">Hide results</button><button class="secondary" id="clearResultsTop" type="button">Clear filters</button></div></div><div id="out"></div><div class="burial-list-controls"><button id="more" class="secondary" hidden>Show more</button><div class="inline-controls"><button class="secondary" id="hideResultsBottom" type="button">Hide results</button><button class="secondary" id="clearResultsBottom" type="button">Clear filters</button></div></div></section>
 <section class="panel" id="changeLogPanel"><div class="resulthead"><h2 style="margin:0">📋 Cemetery change log</h2><span class="tiny" id="changeCount"></span></div><p class="hint">Keep a complete activity history, and review just the discoveries and corrections you still need to enter in your family tree. Tracking starts with edits made in v5. v6 hides reversed and superseded field edits from outstanding tree updates, while preserving their activity history.</p><div class="buttons"><button id="viewTreeChanges">Changes to enter in tree</button><button id="viewHistory" class="secondary">Complete activity history</button></div><div id="changeList" hidden></div><div class="buttons" id="changeTools" hidden style="margin-top:10px"><button id="downloadChangeCsv">Export tree changes (Excel)</button><button class="secondary" id="downloadHistoryCsv">Export full history (Excel)</button><button class="secondary" id="hideChangeLog">Hide reports</button></div></section>
 <section class="panel" id="simpleDataHub" aria-label="Backup and device synchronization">
-<h2>💾 Backups &amp; device sync</h2>
+<details id="backupsHubFold" class="finder-fold"><summary>💾 Backups &amp; device sync <span class="finder-sub">Cloud, sync and recovery settings</span></summary><div class="backups-hub-body">
 <p class="hint" style="margin:6px 0"><a href="#resetFieldbookPanel" id="jumpResetTest" style="font-weight:650">Reset TEST Fieldbook / start over</a></p>
 <p class="hint">Your burial records stay on this device. <strong>Cloud syncing is optional.</strong> Connect cloud storage, then use the guided setup below. Fieldbook verifies the shared starting copy automatically; no manual baseline or checkpoint controls are needed.</p>
 <details class="hub-section" id="simpleBackupFold"><summary>Backups &amp; OneDrive <span class="finder-sub">Save, check, or recover records</span></summary><div class="hub-content" id="simpleBackupContent"><p class="hub-help">Use this for everyday backups or recovery. Restoring replaces this browser's current records; it does not merge devices.</p></div></details>
@@ -393,6 +403,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 </div><details><summary>Previous manual package tools (advanced)</summary><div id="legacyDeviceSyncTools"><p class="hub-help">Package-by-package review for troubleshooting.</p></div></details></div></details>
 <details class="hub-section" id="simpleAdvancedFold"><summary>Developer tools <span class="finder-sub">Only for troubleshooting</span></summary><div class="hub-content" id="advancedToolsContent"><p class="hub-warning">Technical testing tools. Normally leave these closed. They are not needed for ordinary cemetery visits or backups.</p></div></details>
 <div class="hint" id="simpleHubStatus" role="status">TEST mode. Import your GEDCOM, then use guided device setup. Automatic sync stays OFF until enabled.</div>
+</div></details>
 </section>
 <section class="panel" id="dataProtectionPanel">
 <details class="finder-fold" id="protectionFold"><summary>🌳 Family tree (GEDCOM) <span class="finder-sub">Import and update tree records</span></summary>
@@ -569,7 +580,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7.17 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.17.1 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div class="burial-fields-row"><div><label>Burial date</label><input name="burialDate" placeholder="Enter burial date"></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side" maxlength="1" placeholder="M/P"></div></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Burial Notes</label><textarea name="notes" placeholder="FTM burial notes, stone transcription, directions, discoveries…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -4013,6 +4024,7 @@ const AUTO_DEVICE_KEY='fieldbook_test_v713_auto_device_sync_enabled_v2';
 const AUTO_DEVICE_PUBLISHED_KEY='fieldbook_test_v713_auto_device_sync_last_published_v1';
 const AUTO_CHECKED_KEY='fieldbook_test_v713_auto_device_last_checked_v1';
 const AUTO_EXCHANGED_KEY='fieldbook_test_v713_auto_device_last_exchanged_v1';
+const AUTO_PAUSED_KEY='fieldbook_test_v713_auto_device_paused_reason_v1';
 function autoDeviceMarkChecked(exchange){
  const now=new Date().toISOString();
  localStorage.setItem(AUTO_CHECKED_KEY,now);
@@ -4030,6 +4042,9 @@ function autoDeviceState(message){
  if(message)autoDeviceStatus.textContent=message;
 }
 function autoDeviceOff(reason){
+ const wasEnabled=autoDeviceOn();
+ if(wasEnabled&&/^Automatic sync PAUSED safely:/i.test(String(reason||'')))localStorage.setItem(AUTO_PAUSED_KEY,String(reason));
+ else if(!/^Automatic sync PAUSED safely:/i.test(String(reason||'')))localStorage.removeItem(AUTO_PAUSED_KEY);
  localStorage.removeItem(AUTO_DEVICE_KEY);
  if(autoDeviceEditTimer){clearTimeout(autoDeviceEditTimer);autoDeviceEditTimer=null;}
  window.dispatchEvent(new Event('fieldbook-test-sync-status'));
@@ -4127,6 +4142,7 @@ autoDeviceEnable.onclick=()=>{
  if(!autoDeviceConsent.checked){autoDeviceState('Check the synchronization authorization first.');return;}
  if(autoCheckbox.checked){autoDeviceState('Turn off the separate automatic OneDrive BACKUP feature first.');return;}
  if(!confirm('Enable automatic TEST synchronization on THIS browser? A verified starting copy and device checkpoint are required. Changes may publish and safely merge, with a verified OneDrive recovery file before each merge. Genuine conflicts will pause sync.'))return;
+ localStorage.removeItem(AUTO_PAUSED_KEY);
  localStorage.setItem(AUTO_DEVICE_KEY,'yes');autoDeviceConsent.checked=false;
  autoDeviceState('Automatic sync enabled on this TEST browser. Checking OneDrive…');
  autoDeviceSchedule();autoDeviceCycle();
@@ -4143,7 +4159,10 @@ window.addEventListener('pageshow',()=>{if(autoDeviceOn()&&Date.now()-autoDevice
 if(autoDeviceOn()){
  autoDeviceState('Automatic sync ON for this TEST browser. Checking on page load…');autoDeviceSchedule();
  setTimeout(()=>autoDeviceCycle(),6000);
-}else autoDeviceState('Automatic sync OFF on this browser. Existing guided sync remains available below.');
+}else {
+ const pausedReason=localStorage.getItem(AUTO_PAUSED_KEY);
+ autoDeviceState(pausedReason||'Automatic sync OFF on this browser. Existing guided sync remains available below.');
+}
 
 // Upload local edits promptly while this tab is active. Leave the two-minute check as fallback.
 // Defer while another operation is busy, and coalesce multiple record/log/photo writes.
@@ -4347,17 +4366,19 @@ finishRedirect();
  const CLOUD_KEY='fieldbook_cloud_test_v713_refresh_token_v2';
  const SYNC_KEY='fieldbook_test_v713_auto_device_sync_enabled_v2';
  function openCloud(){
+  const hub=document.getElementById('backupsHubFold');if(hub)hub.open=true;
   const fold=document.getElementById('simpleBackupFold');if(fold)fold.open=true;
   document.getElementById('simpleDataHub')?.scrollIntoView({behavior:'smooth',block:'start'});
  }
  function openSync(){
+  const hub=document.getElementById('backupsHubFold');if(hub)hub.open=true;
   const fold=document.getElementById('simpleSyncFold');if(fold)fold.open=true;
   document.getElementById('autoDeviceSyncPanel')?.scrollIntoView({behavior:'smooth',block:'start'});
  }
  function status(){
   const connected=!!localStorage.getItem(CLOUD_KEY);
   const on=localStorage.getItem(SYNC_KEY)==='yes';
-  const paused=!!syncState&&/PAUSED safely/i.test(syncState.textContent||'');
+  const paused=!!localStorage.getItem('fieldbook_test_v713_auto_device_paused_reason_v1')||!!syncState&&/PAUSED safely/i.test(syncState.textContent||'');
   cloudLabel.textContent=connected?'Cloud connected':'Cloud disconnected';
   cloudButton.classList.toggle('cloud-connected',connected);
   cloudButton.title=connected?'Disconnect cloud storage':'Connect cloud storage';
@@ -4435,7 +4456,7 @@ finishRedirect();
  }
  $('onboardNew').onclick=()=>viewRoute('new');$('onboardJoin').onclick=()=>viewRoute('join');
  $('onboardCloudConnect').onclick=()=>{$('cloudConnect')?.click()};
- $('onboardCloudSettings').onclick=()=>{root.open=false;const fold=$('simpleBackupFold');if(fold)fold.open=true;$('simpleDataHub')?.scrollIntoView({behavior:'smooth',block:'start'})};
+ $('onboardCloudSettings').onclick=()=>{const hub=$('backupsHubFold');if(hub)hub.open=true;root.open=false;const fold=$('simpleBackupFold');if(fold)fold.open=true;$('simpleDataHub')?.scrollIntoView({behavior:'smooth',block:'start'})};
  $('onboardFirstDevice').onclick=()=>{$('guidedFirstDevice')?.click()};
  $('onboardJoinDevice').onclick=()=>{$('guidedJoinDevice')?.click()};
  const onboardConsent=$('onboardSyncConsent'),onboardEnable=$('onboardEnableSync'),onboardAction=$('onboardSyncActionStatus');
@@ -4524,9 +4545,19 @@ document.addEventListener('DOMContentLoaded',()=>{
  const link=document.getElementById('jumpResetTest');
  if(!link)return;
  link.addEventListener('click',()=>{
+  const hub=document.getElementById('backupsHubFold');if(hub)hub.open=true;
   const fold=document.getElementById('simpleAdvancedFold');if(fold)fold.open=true;
   const reset=document.getElementById('resetFieldbookPanel');if(reset)reset.scrollIntoView({block:'center'});
  });
 });
+</script>
+<script id="v7171StartAtTop">
+(function(){
+ 'use strict';
+ if('scrollRestoration' in history)history.scrollRestoration='manual';
+ // Only on initial navigation/reload. Do not interfere with manual scrolling afterward.
+ const jumpTop=()=>{if(!location.hash)window.scrollTo({top:0,left:0,behavior:'instant'});};
+ window.addEventListener('pageshow',()=>{jumpTop();requestAnimationFrame(jumpTop);setTimeout(jumpTop,180);},{once:true});
+})();
 </script>
 </body></html>
