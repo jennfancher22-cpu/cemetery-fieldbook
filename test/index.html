@@ -301,19 +301,25 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 #simpleDataHub{border-color:#afdbcb!important;background:#f7fcfa!important}
 #autoDeviceSyncPanel{border-color:#a9d9c6!important}
 @media(max-width:650px){header .wrap{padding-right:0}header .topline{padding-right:0}header .sub{margin-bottom:9px}.header-controls{position:static;justify-content:flex-start;flex-wrap:wrap;margin-top:9px}#headerCloudStatus,#headerSyncStatus{font-size:11px;padding:6px 8px}}
-</style></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.13 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><span class="cloud-dot"></span><span id="headerCloudText">Cloud disconnected</span></button><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><span class="cloud-dot"></span><span id="headerSyncText">Sync OFF</span></button></div></div></header><main>
+</style></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.14 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><span class="cloud-dot"></span><span id="headerCloudText">Cloud disconnected</span></button><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><span class="cloud-dot"></span><span id="headerSyncText">Sync OFF</span></button></div></div></header><main>
 <div class="notice" style="border:2px solid #d0a23f;margin:10px 0;padding:12px;border-radius:12px"><strong>Cloud privacy:</strong> Backups are stored in your personal OneDrive application folder as readable JSON, not encrypted by Fieldbook. Keep your account secure.</div><div class="stats"><div class="stat"><div id="sPeople" class="num">—</div><div class="small">Burial entries</div></div><div class="stat"><div id="sCem" class="num">—</div><div class="small">Cemeteries</div></div><div class="stat"><div id="sVisited" class="num">—</div><div class="small">Visited</div></div></div>
 <section class="panel" id="nearbyPanel"><details class="finder-fold" id="nearbyFold"><summary>📍 Find cemeteries nearby <span class="finder-sub">Search by distance</span></summary><div class="finder-body"><p class="hint">Straight-line distance, not driving distance. Works offline with saved cemetery coordinates. Choose a starting town or try your phone location.</p><div class="filters"><div><label for="startPlace">Starting point</label><select id="startPlace"><option value="39.7684,-86.1581">Indianapolis, IN</option><option value="38.9592,-85.8903" selected>Seymour, IN</option><option value="39.6128,-86.3742">Mooresville, IN</option><option value="39.2014,-85.9214">Columbus, IN</option><option value="custom">Custom coordinates</option></select></div><div><label for="radius">Within</label><select id="radius"><option>10</option><option selected>25</option><option>50</option><option>100</option><option>250</option><option>500</option></select></div><div><label for="startLat">Latitude</label><input id="startLat" type="number" step="any" placeholder="39.123"></div><div><label for="startLon">Longitude</label><input id="startLon" type="number" step="any" placeholder="-86.123"></div></div><div class="buttons" style="margin-top:10px"><button id="nearSearch">Find nearby cemeteries</button><button class="secondary" id="myLocation">Use phone GPS</button></div><div id="geoNote" class="hint" role="status"></div><div id="nearResults"></div></div></details></section><section class="panel" id="relativePanel"><details class="finder-fold" id="relativeFold" open><summary>🔎 Find a relative or cemetery <span class="finder-sub">Search names &amp; filters</span></summary><div class="finder-body"><div class="filters"><div class="wide"><input id="q" type="search" placeholder="Search name, cemetery, town, family line…" aria-label="Search"></div><div><label for="stateFilter">State</label><select id="stateFilter"><option value="">All states</option></select></div><div><label for="county">County</label><select id="county"><option value="">All counties</option></select></div><div><label for="cem">Cemetery</label><select id="cem"><option value="">All cemeteries</option></select></div><div><label for="status">Visit filter</label><select id="status"><option value="">All records</option><option value="unvisited">Not visited</option><option value="nophoto">Photo needed</option><option value="nogps">GPS needed</option></select></div></div><div class="buttons" style="margin-top:12px"><button id="add">+ Add discovery</button><button class="secondary" id="clear">Clear filters</button><button class="outline" id="showAll">Show all records</button><button class="secondary" type="button" id="showMatches">Show filtered results</button></div></div></details></section>
 <section class="panel" id="burialPanel"><div class="resulthead"><h2 style="margin:0">Burial records</h2><span class="tiny" id="count"></span></div><div class="burial-list-controls"><span class="hint">Tap a name to view details and edit.</span><div class="inline-controls"><button class="secondary" id="hideResultsTop" type="button">Hide results</button><button class="secondary" id="clearResultsTop" type="button">Clear filters</button></div></div><div id="out"></div><div class="burial-list-controls"><button id="more" class="secondary" hidden>Show more</button><div class="inline-controls"><button class="secondary" id="hideResultsBottom" type="button">Hide results</button><button class="secondary" id="clearResultsBottom" type="button">Clear filters</button></div></div></section>
 <section class="panel" id="changeLogPanel"><div class="resulthead"><h2 style="margin:0">📋 Cemetery change log</h2><span class="tiny" id="changeCount"></span></div><p class="hint">Keep a complete activity history, and review just the discoveries and corrections you still need to enter in your family tree. Tracking starts with edits made in v5. v6 hides reversed and superseded field edits from outstanding tree updates, while preserving their activity history.</p><div class="buttons"><button id="viewTreeChanges">Changes to enter in tree</button><button id="viewHistory" class="secondary">Complete activity history</button></div><div id="changeList" hidden></div><div class="buttons" id="changeTools" hidden style="margin-top:10px"><button id="downloadChangeCsv">Export tree changes (Excel)</button><button class="secondary" id="downloadHistoryCsv">Export full history (Excel)</button><button class="secondary" id="hideChangeLog">Hide reports</button></div></section>
 <section class="panel" id="simpleDataHub" aria-label="Backup and device synchronization">
 <h2>💾 Backups &amp; device sync</h2>
-<p class="hint">Your burial records stay on this device. <strong>Cloud syncing is optional.</strong> TEST v7.13 still requires an advanced verified baseline; simpler first-time setup is under development.</p>
+<p class="hint">Your burial records stay on this device. <strong>Cloud syncing is optional.</strong> Connect cloud storage, then use the guided setup below. Fieldbook verifies the shared starting copy automatically; no manual baseline or checkpoint controls are needed.</p>
 <details class="hub-section" id="simpleBackupFold"><summary>Backups &amp; OneDrive <span class="finder-sub">Save, check, or recover records</span></summary><div class="hub-content" id="simpleBackupContent"><p class="hub-help">Use this for everyday backups or recovery. Restoring replaces this browser's current records; it does not merge devices.</p></div></details>
-<details class="hub-section" id="simpleSyncFold"><summary>Device synchronization <span class="finder-sub">Optional two-device syncing</span></summary><div class="hub-content" id="deviceSyncContent"><div class="home-panel" id="autoDeviceSyncPanel" style="border:2px solid #c1b1cd;border-radius:12px;padding:13px;margin:10px 0 14px">
+<details class="hub-section" id="simpleSyncFold"><summary>Device synchronization <span class="finder-sub">Optional two-device syncing</span></summary><div class="hub-content" id="deviceSyncContent"><div class="home-panel" id="firstTimeCloudSetup" style="border:2px solid #8fbaa8;border-radius:12px;padding:13px;margin:10px 0 14px">
+<h3 style="margin:0 0 7px">Set up devices (guided)</h3>
+<p class="hint" style="margin:0 0 9px">First import your GEDCOM and choose your Home Person. Connect OneDrive with the Cloud button in the header. Fieldbook checks and verifies the starting copy automatically. Cloud files remain readable JSON.</p>
+<div class="buttons"><button type="button" id="guidedFirstDevice">Set up this as my first device</button><button type="button" class="secondary" id="guidedJoinDevice">Add this device to my existing Fieldbook</button></div>
+<p id="guidedSetupStatus" class="hint" role="status" aria-live="polite" style="margin:10px 0">Not set up yet. Sync remains OFF.</p>
+<p class="tiny">Joining is allowed only when this browser is empty or already identical to the cloud starting copy. Existing records are never silently overwritten. Sync stays OFF until you choose to turn it on.</p>
+</div><div class="home-panel" id="autoDeviceSyncPanel" style="border:2px solid #c1b1cd;border-radius:12px;padding:13px;margin:10px 0 14px">
 <h3 style="margin:0 0 6px">Automatic two-device sync</h3>
-<p class="tiny" style="margin:0 0 10px">When enabled on this browser, Fieldbook checks OneDrive on opening, returning to this tab, and about every 2 minutes while the tab is open. It automatically publishes local changes, saves a verified OneDrive recovery backup before receiving changes, and applies only conflict-free changes. Conflicts stop automatic sync without changing this browser. Sync does not run when Fieldbook is closed.</p>
-<label style="display:flex;gap:8px;align-items:flex-start;margin:8px 0"><input type="checkbox" id="autoDeviceSyncConsent"> I have saved a separate backup, verified the TEST baseline on this browser, and authorize conflict-checked automatic merges with verified OneDrive recovery copies.</label>
+<p class="tiny" style="margin:0 0 10px">After guided device setup, when enabled on this browser, Fieldbook checks OneDrive on opening, returning to this tab, and about every 2 minutes while the tab is open. It automatically publishes local changes, saves a verified OneDrive recovery backup before receiving changes, and applies only conflict-free changes. Conflicts stop automatic sync without changing this browser. Sync does not run when Fieldbook is closed.</p>
+<label style="display:flex;gap:8px;align-items:flex-start;margin:8px 0"><input type="checkbox" id="autoDeviceSyncConsent"> I understand Fieldbook may send local changes to OneDrive and apply conflict-free changes from my other devices. Conflicts pause sync; backups are readable JSON.</label>
 <div class="buttons"><button type="button" id="autoDeviceSyncEnable">Enable automatic sync</button><button type="button" class="secondary" id="autoDeviceSyncDisable">Turn off</button><button type="button" class="secondary" id="autoDeviceSyncNow">Sync now</button></div>
 <p id="autoDeviceSyncStatus" class="hint" role="status" aria-live="polite">Automatic sync OFF on this browser. No changes made.</p>
 </div><div class="home-panel" id="syncWorkflowPanel" style="border:2px solid #c1b1cd;border-radius:12px;padding:13px;margin:10px 0 14px">
@@ -323,7 +329,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 <p id="syncWorkflowStatus" class="hint" role="status" aria-live="polite">No sync check run. Your data has not changed.</p><div id="syncWorkflowSummary" class="tiny"></div>
 </div><details><summary>Previous manual package tools (advanced)</summary><div id="legacyDeviceSyncTools"><p class="hub-help">Package-by-package review for troubleshooting.</p></div></details></div></details>
 <details class="hub-section" id="simpleAdvancedFold"><summary>Developer tools <span class="finder-sub">Only for troubleshooting</span></summary><div class="hub-content" id="advancedToolsContent"><p class="hub-warning">Technical testing tools. Normally leave these closed. They are not needed for ordinary cemetery visits or backups.</p></div></details>
-<div class="hint" id="simpleHubStatus" role="status">TEST mode. Automatic sync is optional and starts OFF. Existing records are unchanged by the interface update.</div>
+<div class="hint" id="simpleHubStatus" role="status">TEST mode. Import your GEDCOM, then use guided device setup. Automatic sync stays OFF until enabled.</div>
 </section>
 <section class="panel" id="dataProtectionPanel">
 <details class="finder-fold" id="protectionFold"><summary>🌳 Family tree (GEDCOM) <span class="finder-sub">Import and update tree records</span></summary>
@@ -500,7 +506,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7.13 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.14 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div class="burial-fields-row"><div><label>Burial date</label><input name="burialDate" placeholder="Enter burial date"></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side" maxlength="1" placeholder="M/P"></div></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Burial Notes</label><textarea name="notes" placeholder="FTM burial notes, stone transcription, directions, discoveries…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -4036,7 +4042,7 @@ autoDeviceEnable.onclick=()=>{
  if(!(location.pathname==='/cemetery-fieldbook/test/'||location.pathname==='/cemetery-fieldbook/test/index.html')){autoDeviceState('Automatic sync is available only on the published TEST site.');return;}
  if(!autoDeviceConsent.checked){autoDeviceState('Check the synchronization authorization first.');return;}
  if(autoCheckbox.checked){autoDeviceState('Turn off the separate automatic OneDrive BACKUP feature first.');return;}
- if(!confirm('Enable automatic TEST synchronization on THIS browser? Use only after your TEST baseline and device checkpoint have been verified. Changes may publish and safely merge, with a verified OneDrive recovery file before each merge. Genuine conflicts will pause sync.'))return;
+ if(!confirm('Enable automatic TEST synchronization on THIS browser? A verified starting copy and device checkpoint are required. Changes may publish and safely merge, with a verified OneDrive recovery file before each merge. Genuine conflicts will pause sync.'))return;
  localStorage.setItem(AUTO_DEVICE_KEY,'yes');autoDeviceConsent.checked=false;
  autoDeviceState('Automatic sync enabled on this TEST browser. Checking OneDrive…');
  autoDeviceSchedule();autoDeviceCycle();
@@ -4054,6 +4060,97 @@ if(autoDeviceOn()){
  autoDeviceState('Automatic sync ON for this TEST browser. Checking on page load…');autoDeviceSchedule();
  setTimeout(()=>autoDeviceCycle(),6000);
 }else autoDeviceState('Automatic sync OFF on this browser. Existing guided sync remains available below.');
+
+
+// v7.14 first-time setup. Reuse the existing verified checkpoint and safe sync engine.
+// This is deliberately NOT automatic authorization to sync.
+const guidedFirst=el('guidedFirstDevice'),guidedJoin=el('guidedJoinDevice'),guidedStatus=el('guidedSetupStatus');
+function guidedMessage(message){guidedStatus.textContent=message;}
+function guidedGuard(){
+ workflowGuard();
+ if(!navigator.onLine)throw Error('Connect to the internet first.');
+ if(autoDeviceOn())throw Error('Turn off synchronization before setting up a starting copy.');
+}
+function guidedCheckPayload(doc){
+ if(doc?.format!=='CemeteryFieldbookBackup'||doc.version!==5||!Array.isArray(doc.seed)||!Array.isArray(doc.extras)||!Array.isArray(doc.photos)||!Array.isArray(doc.changeLog)||!Array.isArray(doc.gedcomPeople)||!doc.updates||typeof doc.updates!=='object'||!doc.geoEdits||typeof doc.geoEdits!=='object')throw Error('Invalid full Fieldbook backup.');
+ const ids=new Set();for(const p of [...doc.seed,...doc.extras]){if(!p?.id||ids.has(p.id))throw Error('Duplicate or missing burial record ID');ids.add(p.id)}
+ const people=new Set();for(const p of doc.gedcomPeople){if(!p?.id||people.has(p.id))throw Error('Duplicate or missing person ID');people.add(p.id)}
+ if(doc.homePersonId&&!people.has(doc.homePersonId))throw Error('Home Person missing from people directory');
+ const photos=new Set();for(const p of doc.photos){if(!p?.id||photos.has(p.id)||!ids.has(p.person))throw Error('Photo missing identity, duplicated, or not associated with a burial');photos.add(p.id)}
+ const events=new Set();for(const p of doc.changeLog){if(!p?.id||events.has(p.id))throw Error('Duplicate or missing history ID');events.add(p.id)}
+ return true;
+}
+async function guidedPostVerified(filename,document){
+ await ensureAppFolder();const contents=JSON.stringify(document),bytes=new TextEncoder().encode(contents);
+ const response=await graph('/me/drive/special/approot:/'+encodeURIComponent(filename)+':/content',{method:'PUT',headers:{'Content-Type':'application/json','If-None-Match':'*'},body:contents});
+ const saved=await response.json();if(!saved.id||saved.size!==bytes.length)throw Error('OneDrive did not confirm the uploaded file.');
+ const returned=await graph('/me/drive/items/'+encodeURIComponent(saved.id)+'/content');const copied=new Uint8Array(await returned.arrayBuffer());
+ if(copied.byteLength!==bytes.length||await digestBytes(copied)!==await digestBytes(bytes))throw Error('Uploaded copy did not pass verification.');
+ return {id:saved.id,name:saved.name||filename,bytes:bytes.length,sha256:await digestBytes(bytes)};
+}
+async function guidedRegisterBrowser(marker,markerId,expectedHash){
+ const currentHash=await syncContentHash(await makePayload());
+ if(expectedHash!==currentHash)throw Error('Local data changed during setup; please try again.');
+ const id=getDeviceId();
+ const payload={format:'CemeteryFieldbookDeviceCheckpoint',schema:1,status:'baseline-aligned-not-synced',
+   deviceId:id,baselineMarkerId:markerId,baselineBackupId:marker.backup.id,
+   baselineSHA256:marker.backup.sha256,contentSHA256:expectedHash,filename:marker.backup.filename,
+   created:new Date().toISOString(),warning:'Verified starting copy only; synchronization requires separate opt-in.'};
+ const filename='fieldbook-test-sync-device-'+id+'-'+new Date().toISOString().replace(/[:.]/g,'-')+'-'+b64url(randomBytes(5))+'.checkpoint.json';
+ await guidedPostVerified(filename,payload);
+ if(await syncContentHash(await makePayload())!==expectedHash)throw Error('Local data changed during checkpoint verification. Please retry.');
+ localStorage.setItem(DEVICECHECKKEY,JSON.stringify({filename:payload.filename,deviceId:id,markerId,hash:expectedHash,created:payload.created}));
+ formatDeviceStatus();return true;
+}
+async function guidedRun(mode){
+ if(busy)return;
+ guidedFirst.disabled=guidedJoin.disabled=true;setBusy(true);
+ try{
+  guidedGuard();await freshToken();
+  const snapshot=await makePayload();guidedCheckPayload(snapshot);
+  const startingHash=await syncContentHash(snapshot),localCount=snapshot.seed.length+snapshot.extras.length;
+  const present=await readCheckpointFiles();
+  if(mode==='first'){
+   if(present.length)throw Error('A shared Fieldbook starting copy already exists in this OneDrive. Use “Add this device” instead; nothing was changed.');
+   if(!localCount||!snapshot.gedcomPeople.length||!snapshot.homePersonId)throw Error('Import your GEDCOM, choose your Home Person and import burials before setting up the first device.');
+   if(!confirm('Create a VERIFIED starting copy of '+localCount.toLocaleString()+' burial records in your OneDrive? This will upload your family tree data and photos as readable JSON. It will NOT turn on sync.')){guidedMessage('Setup cancelled. Nothing changed.');return;}
+   guidedMessage('Saving and verifying a full cloud copy…');
+   const name=uniqueName();const upload=await guidedPostVerified(name,snapshot);
+   if(await syncContentHash(await makePayload())!==startingHash)throw Error('Local records changed during upload. The uploaded backup is safe, but no starting reference was published.');
+   // Refuse to publish over a starting reference created from another device in the meantime.
+   if((await readCheckpointFiles()).length)throw Error('Another device established a starting copy while uploading. Do not create a second one.');
+   const marker={format:'CemeteryFieldbookSyncReference',schema:1,status:'candidate',created:new Date().toISOString(),
+    backup:{id:upload.id,filename:upload.name,bytes:upload.bytes,sha256:upload.sha256},
+    burials:localCount,photos:snapshot.photos.length,history:snapshot.changeLog.length,
+    caution:'Verified starting copy. Devices must separately opt in to sync.'};
+   const cpName='fieldbook-test-sync-reference-'+new Date().toISOString().replace(/[:.]/g,'-')+'-'+b64url(randomBytes(5))+'.checkpoint.json';
+   guidedMessage('Cloud copy verified. Registering this browser…');
+   const reference=await guidedPostVerified(cpName,marker);
+   await guidedRegisterBrowser(marker,reference.id,startingHash);
+   guidedMessage('First device ready: '+localCount.toLocaleString()+' burials and '+snapshot.photos.length+' photos verified in OneDrive. Sync is OFF. You may turn it on with the Sync indicator when ready.');
+  }else{
+   if(!present.length)throw Error('No shared starting copy exists yet. Set up your first device before adding this one.');
+   if(present.length>1)throw Error('More than one starting reference exists. Advanced review is required before joining another device.');
+   guidedMessage('Checking and verifying the existing cloud starting copy…');
+   const {doc,marker}=await readVerifiedBaselineForDiff();guidedCheckPayload(doc);
+   const baselineHash=marker.hash;
+   if(startingHash!==baselineHash){
+    const empty=!localCount&&!snapshot.photos.length&&!snapshot.changeLog.length&&!snapshot.gedcomPeople.length&&!snapshot.homePersonId&&Object.keys(snapshot.updates).length===0&&!Object.keys(snapshot.geoEdits).length;
+    if(!empty)throw Error('This browser already contains different data. To protect it, joining is blocked. Export a backup and review the differences rather than replacing records.');
+    if(!confirm('This browser is empty. Copy '+(doc.seed.length+doc.extras.length).toLocaleString()+' burials and '+doc.photos.length+' photos from your verified OneDrive starting copy? This will replace only this empty TEST browser data. Sync stays OFF.')){guidedMessage('Joining cancelled. Nothing changed.');return;}
+    // Re-check that nothing appeared locally while awaiting confirmation.
+    if(await syncContentHash(await makePayload())!==startingHash)throw Error('Local data changed during setup; nothing was restored.');
+    guidedMessage('Restoring the verified cloud starting copy to this empty browser…');
+    const restored=await window.fieldbookRestoreFromObject(doc,{skipRestoreConfirm:true,silentRestoreSuccess:true});
+    if(!restored||await syncContentHash(await makePayload())!==baselineHash)throw Error('Restored data did not match cloud starting copy. Sync remains OFF; recovery is required.');
+   }
+   await guidedRegisterBrowser(marker,marker.markerId,baselineHash);
+   guidedMessage('This device is ready: '+(doc.seed.length+doc.extras.length).toLocaleString()+' burial records verified. Sync is OFF. Turn it on with the Sync indicator when ready.');
+  }
+ }catch(e){guidedMessage('Setup stopped safely: '+e.message+' Sync remains OFF.');}
+ finally{setBusy(false);guidedFirst.disabled=guidedJoin.disabled=false;}
+}
+guidedFirst.onclick=()=>guidedRun('first');guidedJoin.onclick=()=>guidedRun('join');
 
 el('cloudList').onclick=async()=>{if(busy)return;setBusy(true);try{note('Reading backup list from OneDrive…');await listCloud();note('Cloud backup list updated.')}catch(e){note('Could not list cloud backups: '+e.message,true)}finally{setBusy(false)}};
 finishRedirect();
@@ -4130,7 +4227,7 @@ finishRedirect();
  // Keep the tool labels and current sync warnings unambiguous.
  const d=$('simpleSyncFold');if(d)d.removeAttribute('open');
  const a=$('simpleAdvancedFold');if(a)a.removeAttribute('open');
- const info=$('simpleHubStatus');if(info)info.textContent='OneDrive backups are separate from two-way device sync. Set up a verified TEST baseline before enabling synchronization.';
+ const info=$('simpleHubStatus');if(info)info.textContent='OneDrive backups are separate from two-way device sync. Use “Set up devices (guided)” to establish a verified starting copy before enabling synchronization.';
 })();
 </script>
 <script id="testHeaderCloud">
