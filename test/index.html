@@ -534,7 +534,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 #syncConflictItems .conflict-approve-buttons button{font-size:12px;min-height:36px}
 @media(max-width:680px){#syncConflictItems textarea.conflict-result{height:115px;min-height:115px;font-size:13px}#syncConflictItems .conflict-comparison .conflict-value{font-size:13px;max-height:120px}}
 </style>
-</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.19.17 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.19.18 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook">
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">A few simple steps to get your family cemetery records ready. Cloud storage and syncing are optional.</p>
@@ -786,7 +786,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7.19.17 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.19.18 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div class="burial-fields-row"><div><label>Burial date</label><input name="burialDate" placeholder="Enter burial date"></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side" maxlength="1" placeholder="M/P"></div></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Burial Notes</label><textarea name="notes" placeholder="FTM burial notes, stone transcription, directions, discoveries…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -4292,7 +4292,7 @@ function autoDiagRender(){
  const paused=localStorage.getItem('fieldbook_test_v713_auto_device_paused_reason_v1');
  let previous=null;
  try{previous=JSON.parse(localStorage.getItem(AUTO_DIAG_BOOT_KEY)||'null')}catch(_){}
- const boot={at:new Date().toISOString(),enabled,paused:!!paused,version:'v7.19.17',event:'page-loaded'};
+ const boot={at:new Date().toISOString(),enabled,paused:!!paused,version:'v7.19.18',event:'page-loaded'};
  try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify(boot))}catch(_){}
  const prior=previous&&typeof previous.enabled==='boolean'
   ?' · Previous '+(previous.version||'unknown version')+' '+(previous.enabled?'ON':previous.paused?'PAUSED':'OFF')+(previous.event?' ('+previous.event+')':'')
@@ -4301,7 +4301,7 @@ function autoDiagRender(){
  if(previous&&previous.enabled&&!enabled&&!paused)autoDiagRecord('Unexpected OFF state','Previous snapshot was ON, but saved setting is now OFF. Do not automatically enable; review diagnostics.');
  const copy=document.getElementById('copySyncDiagnostics');
  if(copy)copy.addEventListener('click',async()=>{
-  const text='Cemetery Fieldbook TEST v7.19.17 diagnostics\n'+(document.getElementById('syncDiagnosticsSummary')?.textContent||'')+'\n'+(document.getElementById('syncDiagnosticsHistory')?.textContent||'');
+  const text='Cemetery Fieldbook TEST v7.19.18 diagnostics\n'+(document.getElementById('syncDiagnosticsSummary')?.textContent||'')+'\n'+(document.getElementById('syncDiagnosticsHistory')?.textContent||'');
   try{await navigator.clipboard.writeText(text);copy.textContent='Copied';setTimeout(()=>copy.textContent='Copy diagnostic summary',1800)}
   catch(_){copy.textContent='Copy unavailable; select the text above';}
  });
@@ -4632,7 +4632,7 @@ autoDeviceNow.onclick=()=>{
 };
 // Always retain the exact current status before navigation/reload. No silent auto-enable.
 window.addEventListener('pagehide',()=>{
- try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.19.17',event:'pagehide'}))}catch(_){}
+ try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.19.18',event:'pagehide'}))}catch(_){}
 });
 window.addEventListener('online',()=>{if(autoDeviceOn())autoDeviceCycle()});
 document.addEventListener('visibilitychange',()=>{if(autoDeviceOn()&&document.visibilityState==='visible'&&Date.now()-autoDeviceLastRun>8000)autoDeviceCycle()});
@@ -4646,7 +4646,7 @@ if(autoDeviceOn()){
  autoDeviceState(pausedReason||'Automatic sync OFF on this browser. Existing guided sync remains available below.');
 }
 
-// v7.19 Guided manual resolution for concurrent edits of Burial Notes.
+// v7.19.18 Guided resolution: combine only complete divergent lines of Burial Notes.
 // A resolution is immutable, verified against cloud packages and applied only
 // with a verified OneDrive recovery copy and explicit user approval. Other
 // conflicts continue to block sync. No user field data is logged in diagnostics.
@@ -4667,28 +4667,24 @@ function conflictResolveVisible(){
 }
 window.addEventListener('fieldbook-test-sync-status',conflictResolveVisible);
 function conflictNoteAppend(base,a,b){
- // Only combine text that really is an append-only change on both devices.
- // A historical baseline may predate changes the devices already share, so
- // joining two baseline-based suffixes duplicates identical intermediate notes.
+ // Merge only complete append-only lines. A character-based common prefix may
+ // end inside a line, e.g. "TEST FINAL: W" vs "TEST FINAL: A". Combining the
+ // word suffixes would corrupt the user's notes, so always split at the last
+ // complete line boundary shared by both versions.
  if(typeof base!=='string'||typeof a!=='string'||typeof b!=='string'||
     !a.startsWith(base)||!b.startsWith(base)||a===b)return null;
  let common=0;
  while(common<a.length&&common<b.length&&a[common]===b[common])common++;
  if(common<=base.length)return null;
- // Do not split in the middle of a word: move backward to a safe separator.
- let cut=common;
- while(cut>base.length&&!/\s/.test(a[cut-1]))cut--;
- if(cut<=base.length)return null;
- // Keep a recognizable repeated clause marker with each differing ending,
- // rather than turning "TEST CONFLICT" into an isolated "CONFLICT" fragment.
- const tail=a.slice(cut);
- if(/^CONFL(?:ICT|UCT):/i.test(tail)){
-  const marker=a.slice(base.length,cut).match(/(?:^|\s)(TEST\s+)$/i);
-  if(marker)cut-=marker[1].length;
- }
- const prefix=a.slice(0,cut).trimEnd(),left=a.slice(cut).trim(),right=b.slice(cut).trim();
+ // Find the first character of the divergent line; do not split that line.
+ const lastNewline=a.lastIndexOf('\n',common-1);
+ if(lastNewline<0)return null;
+ const cut=lastNewline+1;
+ if(cut<base.length)return null;
+ const prefix=a.slice(0,cut).replace(/\s+$/,'');
+ const left=a.slice(cut).trim(),right=b.slice(cut).trim();
  if(!left||!right||left===right)return null;
- // Refuse to invent a merge if one branch would already be represented.
+ // Never silently de-duplicate or discard a separate edited line.
  if(prefix.endsWith(left)||prefix.endsWith(right))return null;
  return prefix+'\n\n'+left+'\n\n'+right;
 }
@@ -5550,7 +5546,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   const retrying=on&&!paused&&!!localStorage.getItem(retryKey);
   const attention=paused;
   if(paused){
-   if(recoveryControls)recoveryControls.hidden=!isPackageRace(reason);
+   if(recoveryControls)recoveryControls.hidden=!isPackageRace(reason)||isConflict(reason);
    fold.dataset.state='attention';
    title.textContent=isConflict(reason)?'Sync needs attention — '+((reason.match(/(\d+) conflict\(s\)/i)||[])[1]||'1')+' conflict'+(((reason.match(/(\d+) conflict\(s\)/i)||[])[1]||'1')==='1'?'':'s'):'Sync needs attention';
    icon.textContent='⚠';
