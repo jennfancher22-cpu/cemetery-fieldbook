@@ -478,7 +478,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 #syncConflictItems .conflict-final-approval .conflict-approval{margin:2px 0 4px;padding:8px 10px;font-size:12px;line-height:1.3}
 #syncConflictItems .conflict-final-approval .hint{margin:2px 0 5px;font-size:11px}
 
-/* v7.19.11: compact, correctly aligned approval checkbox. Override global input width/min-height. */
+/* v7.19.12: compact, correctly aligned approval checkbox. Override global input width/min-height. */
 #syncConflictItems .conflict-final-approval label.conflict-approval{
  display:flex!important;flex-direction:row!important;align-items:center!important;
  justify-content:flex-start!important;gap:9px!important;
@@ -503,7 +503,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 #syncConflictItems .conflict-approve-buttons button{font-size:12px;min-height:36px}
 @media(max-width:680px){#syncConflictItems textarea.conflict-result{height:115px;min-height:115px;font-size:13px}#syncConflictItems .conflict-comparison .conflict-value{font-size:13px;max-height:120px}}
 </style>
-</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.19.11 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.19.12 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook">
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">A few simple steps to get your family cemetery records ready. Cloud storage and syncing are optional.</p>
@@ -560,7 +560,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 <p id="autoDeviceSyncStatus" class="hint" role="status" aria-live="polite">Automatic sync OFF on this browser. No changes made.</p>
 <section id="syncConflictPanel" hidden aria-label="Resolve synchronization conflicts">
 <h3 style="margin:0 0 6px">Resolve synchronization conflicts</h3>
-<p class="hint conflict-brief-instructions">Compare the changes, choose a resolution, then review and approve. Apply it on each device to resume sync safely.</p>
+<p class="hint conflict-brief-instructions">Compare the changes, choose a resolution, then review and approve. Fieldbook safely applies it on your devices and resumes sync.</p>
 <div class="buttons"><button id="syncConflictReview" type="button">Review conflicts</button><button id="syncConflictFind" class="secondary" type="button">Find approved resolution</button></div>
 <p id="syncConflictStatus" class="hint" role="status">Synchronization is paused. No records changed.</p>
 <div id="syncConflictItems"></div>
@@ -751,7 +751,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7.19.11 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.19.12 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div class="burial-fields-row"><div><label>Burial date</label><input name="burialDate" placeholder="Enter burial date"></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side" maxlength="1" placeholder="M/P"></div></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Burial Notes</label><textarea name="notes" placeholder="FTM burial notes, stone transcription, directions, discoveries…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -4448,7 +4448,7 @@ autoDeviceNow.onclick=()=>{
 };
 // Always retain the exact current status before navigation/reload. No silent auto-enable.
 window.addEventListener('pagehide',()=>{
- try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.19.7',event:'pagehide'}))}catch(_){}
+ try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.19.12',event:'pagehide'}))}catch(_){}
 });
 window.addEventListener('online',()=>{if(autoDeviceOn())autoDeviceCycle()});
 document.addEventListener('visibilitychange',()=>{if(autoDeviceOn()&&document.visibilityState==='visible'&&Date.now()-autoDeviceLastRun>8000)autoDeviceCycle()});
@@ -4583,18 +4583,41 @@ async function loadResolutionFile(file){
  return result;
 }
 async function verifyResolutionContext(resolution,snap){
- if(resolution.markerId!==snap.marker.markerId||resolution.markerHash!==snap.marker.hash)throw Error('Cloud baseline changed. Resolution is not applicable.');
- const original=resolution.creatorDevice===getDeviceId();
+ // One verified cloud resolution covers both versions of the same conflict.
+ // A source device may already have resumed and published its resolved value;
+ // its original change package is therefore not guaranteed to remain the
+ // newest available one. Never accept a resolution for an unrelated device,
+ // a changed baseline, or new edits on this device.
+ if(resolution.markerId!==snap.marker.markerId||resolution.markerHash!==snap.marker.hash)
+  throw Error('Cloud baseline changed. The approved resolution is not applicable.');
+ const creator=resolution.creatorDevice===getDeviceId();
  for(const field of resolution.fields){
+  if(!creator&&field.remoteDevice!==getDeviceId())
+   throw Error('This resolution was not approved for this device.');
   const val=currentConflictValue(field.id,field.field);
-  const expected=original?field.local:field.remote;
+  const expected=creator?field.local:field.remote;
   const accepted=acceptedConflictMap()[conflictKey(field.id,field.field)];
-  const alreadyApplied=canonicalValue(val)===canonicalValue(field.resolved)&&accepted&&accepted.markerId===resolution.markerId&&canonicalValue(accepted.resolved)===canonicalValue(field.resolved);
-  if(canonicalValue(val)!==canonicalValue(expected)&&!alreadyApplied)throw Error('Local value for '+field.name+' has changed since the conflict. No changes made.');
-  const source= snap.remote.find(x=>x.pkg.deviceId===(original?field.remoteDevice:resolution.creatorDevice));
-  if(!source)throw Error('Other device package is not available for independent verification.');
-  const sourceEdit=source.pkg.fieldEdits.find(e=>e.id===field.id&&e.field===field.field);
-  if(!sourceEdit||canonicalValue(sourceEdit.after)!==canonicalValue(original?field.remote:field.local)||canonicalValue(sourceEdit.before)!==canonicalValue(field.baseline))throw Error('Other device changed its proposed value. Recheck conflict.');
+  const applied=canonicalValue(val)===canonicalValue(field.resolved)&&
+   accepted&&accepted.markerId===resolution.markerId&&
+   canonicalValue(accepted.resolved)===canonicalValue(field.resolved);
+  if(canonicalValue(val)!==canonicalValue(expected)&&!applied)
+   throw Error('Local '+field.name+' differs from the reviewed conflict. No changes made.');
+  const baseRow=sync3RecordMap(snap.base).get(field.id);
+  if(!baseRow||!['notes','burialNotes'].includes(field.field))
+   throw Error('The approved field is not part of the verified baseline.');
+  if(canonicalValue(baseRow[field.field])!==canonicalValue(field.baseline))
+   throw Error('Original cloud value differs from the approved conflict.');
+  // Keep independent evidence of the locally reviewed change when packages
+  // still exist. Do not require a source package that the other device may
+  // have legitimately superseded by applying the resolution first.
+  const expectedOther=creator?field.remote:field.local;
+  const otherDevice=creator?field.remoteDevice:resolution.creatorDevice;
+  const otherEdits=snap.remote.filter(x=>x.pkg.deviceId===otherDevice)
+   .flatMap(x=>x.pkg.fieldEdits||[]).filter(e=>e.id===field.id&&e.field===field.field);
+  if(otherEdits.length&&!otherEdits.some(e=>
+   canonicalValue(e.after)===canonicalValue(expectedOther)||
+   canonicalValue(e.after)===canonicalValue(field.resolved)))
+   throw Error('Another device has unreviewed changes to '+field.name+'.');
  }
 }
 // v7.19.7: Resume only after the approved result is locally verified AND the
@@ -4641,7 +4664,6 @@ async function applyApprovedResolution(resolution,snap){
  await verifyResolutionContext(resolution,snap);
  const before=await makePayload(),beforeHash=await syncContentHash(before);
  if(beforeHash!==snap.localHash)throw Error('Your records changed during review. Try again.');
- if(!confirm('Apply this reviewed conflict resolution to THIS TEST device? Fieldbook will first upload and verify a recovery backup. No data is overwritten until recovery is verified.'))return false;
  conflictStatus.textContent='Saving verified recovery copy before applying…';
  const recovery=await autoDeviceRecovery(before);
  if(await syncContentHash(await makePayload())!==beforeHash)throw Error('Records changed while saving recovery. No resolution applied.');
@@ -4665,7 +4687,7 @@ async function applyApprovedResolution(resolution,snap){
  conflictItems.replaceChildren();conflictDraft=null;
  try{
   await conflictResumeAfterLocalVerification(resolution);
-  conflictStatus.textContent='Resolution applied and verified on this device. Recovery saved: '+recovery+'. Sync is restarting automatically. On your other device, choose Find approved resolution and apply it there; that device will resume after its own verification.';
+  conflictStatus.textContent='Conflict resolved and verified. Synchronization is restarting. Other devices will apply the approved result automatically when online.';
  }catch(resumeError){
   // Do NOT undo the approved note or erase the recovery: only defer automatic sync.
   autoDiagRecord('Restart deferred','Approved resolution saved locally, but safe automatic restart needs attention: '+resumeError.message);
@@ -4729,7 +4751,7 @@ function renderDecision(snapshot,fields){
   box.append(select,preview);selections.push({f,select,result,reviewed,combined,approval,status});conflictItems.append(box);
  }
  const approveStep=document.createElement('div');approveStep.className='conflict-final-step';const approveHeading=document.createElement('h4');approveHeading.className='conflict-step-heading';approveHeading.textContent='3. Approve';approveStep.append(approveHeading);for(const selection of selections){const approvalWrap=document.createElement('div');approvalWrap.className='conflict-final-approval';approvalWrap.append(selection.approval,selection.status);approvalWrap.hidden=true;selection.approvalWrap=approvalWrap;approveStep.append(approvalWrap)}const buttons=document.createElement('div');buttons.className='buttons conflict-approve-buttons';
- const publish=document.createElement('button');publish.type='button';publish.textContent='Approve and share resolution';publish.disabled=true;publish.setAttribute('aria-disabled','true');
+ const publish=document.createElement('button');publish.type='button';publish.textContent='Approve and resolve';publish.disabled=true;publish.setAttribute('aria-disabled','true');
  const ready=()=>selections.every(x=>x.select.value&&x.reviewed.checked&&x.result.value.trim());
  function refreshPublishState(){publish.disabled=!ready()||busy;publish.setAttribute('aria-disabled',String(publish.disabled));}
  publish.onclick=async()=>{
@@ -4743,7 +4765,6 @@ function renderDecision(snapshot,fields){
     return {...x.f,resolved:value};
    });
    const current=await conflictSnapshot();if(current.localHash!==snapshot.localHash||current.marker.markerId!==snapshot.marker.markerId)throw Error('Data changed since review. Start over.');
-   if(!confirm('Share these exact reviewed Burial Notes in your private TEST OneDrive? They include the original text and the approved resolution. No local records will change until you separately approve the apply step.'))return;
    setBusy(true);conflictStatus.textContent='Publishing and verifying the reviewed resolution…';
    const payload={format:'CemeteryFieldbookApprovedConflictResolution',schema:1,created:new Date().toISOString(),creatorDevice:getDeviceId(),markerId:current.marker.markerId,markerHash:current.marker.hash,fields};
    const filename=CONFLICT_RESOLUTION_PREFIX+getDeviceId()+'-'+new Date().toISOString().replace(/[:.]/g,'-')+'-'+b64url(randomBytes(5))+'.resolution.json';
@@ -4753,8 +4774,8 @@ function renderDecision(snapshot,fields){
    const verify=await graph('/me/drive/items/'+encodeURIComponent(saved.id)+'/content');
    if(canonicalValue(await verify.json())!==canonicalValue(payload))throw Error('Resolution read-back verification failed. Do not apply.');
    conflictDraft={payload,snapshot:current};
-   conflictStatus.textContent='Approved resolution verified in OneDrive. Now apply it to this device; then open Find approved resolution on the other device.';
-   conflictItems.replaceChildren();renderApplyButton(payload,current);
+   conflictStatus.textContent='Approved resolution verified in OneDrive. Saving recovery and applying locally…';
+   await applyApprovedResolution(payload,current);
   }catch(e){conflictStatus.textContent='No resolution applied: '+e.message}
   finally{setBusy(false);refreshPublishState()}
  };
@@ -4794,12 +4815,64 @@ document.getElementById('syncConflictFind').onclick=async()=>{
    try{await conflictResumeAfterLocalVerification(chosen);conflictStatus.textContent='Approved resolution already applied and verified. Automatic sync is restarting.'}
    catch(e){conflictStatus.textContent='Approved result is present, but sync remains PAUSED: '+e.message}
   }else{
-   conflictStatus.textContent='Found approved resolution for '+chosen.fields.length+' field(s). Review the complete resolved notes, then apply.';
-   renderApplyButton(chosen,snap);
+   conflictStatus.textContent='Approved resolution found and verified. Saving recovery and applying automatically…';
+   await applyApprovedResolution(chosen,snap);
   }
  }catch(e){conflictStatus.textContent='No resolution applied: '+e.message}
  finally{setBusy(false)}
 };
+// v7.19.12: Once either device approves a resolution, the other paused
+// device discovers it automatically. No second approval or manual apply.
+// The cloud document is read back from OneDrive, local version and baseline
+// are checked, and a verified recovery copy precedes every local write.
+let conflictAutoApplying=false,conflictAutoTriedFailure=false;
+async function autoApplySharedResolution(){
+ if(conflictAutoApplying||conflictAutoTriedFailure||busy||autoDeviceRunning||
+    !localStorage.getItem(AUTO_PAUSED_KEY)||document.visibilityState!=='visible'||!navigator.onLine)return;
+ const reason=localStorage.getItem(AUTO_PAUSED_KEY)||'';
+ if(!/conflict\(s\)|Manual review needed/i.test(reason))return;
+ conflictAutoApplying=true;
+ try{
+  const snap=await conflictSnapshot();
+  const files=await latestResolutionFiles();
+  for(const file of files.slice(0,24)){
+   let resolution;
+   try{
+    resolution=await loadResolutionFile(file);
+    if(resolution.creatorDevice===getDeviceId())continue;
+    await verifyResolutionContext(resolution,snap);
+   }catch(_){continue;}
+   // Verify once again just before a potential write. No silent merge if the
+   // user changed a note, the baseline moved, or another operation is active.
+   if(busy||autoDeviceRunning)return;
+   setBusy(true);
+   try{
+    conflictStatus.textContent='Approved resolution found. Verifying recovery backup and applying safely…';
+    const latest=await conflictSnapshot();
+    await verifyResolutionContext(resolution,latest);
+    await applyApprovedResolution(resolution,latest);
+    autoDiagRecord('Shared conflict resolved','Approved resolution applied after verified recovery; sync restart checked.');
+   }catch(error){
+    conflictAutoTriedFailure=true; // Do not repeatedly attempt a possibly partial operation.
+    autoDiagRecord('Shared resolution needs review',String(error.message||error));
+    conflictStatus.textContent='Automatic conflict recovery needs attention: '+error.message+'. Your records remain protected.';
+   }finally{setBusy(false)}
+   return;
+  }
+ }catch(error){
+  // No change is made if OneDrive cannot be read; retry on the next visible check.
+  autoDiagRecord('Shared resolution check deferred',String(error.message||error));
+ }finally{conflictAutoApplying=false}
+}
+function scheduleApprovedResolutionCheck(){
+ if(!localStorage.getItem(AUTO_PAUSED_KEY))return;
+ setTimeout(()=>autoApplySharedResolution(),1600);
+}
+setTimeout(scheduleApprovedResolutionCheck,4500);
+setInterval(()=>{if(localStorage.getItem(AUTO_PAUSED_KEY))autoApplySharedResolution()},45000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')scheduleApprovedResolutionCheck()});
+window.addEventListener('online',scheduleApprovedResolutionCheck);
+window.addEventListener('pageshow',scheduleApprovedResolutionCheck);
 // Supersede ONLY the exact obsolete field versions covered by a locally approved
 // resolution. Other package fields and genuine conflicts remain fully checked.
 const originalCompareRemotePackage=compareRemotePackage;
