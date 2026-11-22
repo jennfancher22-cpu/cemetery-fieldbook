@@ -415,8 +415,8 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 #syncConflictItems>.buttons button{min-height:41px}
 @media(max-width:600px){#syncConflictItems textarea.conflict-result{font-size:14px;line-height:1.45;height:150px;min-height:150px}#syncConflictItems textarea.conflict-result.preview-expanded{height:350px}}
 </style>
-<style id="v7198ConflictLayout">
-/* v7.19.8 - one-row collapsed controls, full-width opened sync review. */
+<style id="v7199ConflictLayout">
+/* v7.19.9 - one-row collapsed controls, full-width opened sync review. */
 .fieldbook-top-actions{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:12px;width:100%}
 .fieldbook-top-actions #reopenSetup{grid-column:1;grid-row:1;justify-self:start}
 .fieldbook-top-actions .sync-quick-fold{grid-column:2;grid-row:1;justify-self:end;margin:0;width:max-content;max-width:100%;min-width:0}
@@ -434,7 +434,25 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 @media(min-width:900px){#syncConflictItems .conflict-comparison{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){.fieldbook-top-actions{grid-template-columns:minmax(0,1fr)}.fieldbook-top-actions #reopenSetup{grid-column:1;grid-row:1}.fieldbook-top-actions .sync-quick-fold{grid-column:1;grid-row:2;justify-self:stretch;width:100%}.fieldbook-top-actions .sync-quick-fold[open]{grid-column:1;grid-row:2}.sync-quick-fold .sync-quick-body{max-height:none}#syncConflictItems .conflict-comparison .conflict-value{font-size:13px;line-height:1.28}#syncConflictItems textarea.conflict-result{font-size:13px;line-height:1.25;height:145px;min-height:145px}}
 </style>
-</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.19.8 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+
+<style id="v7199FlexibleConflictHeights">
+/* Preserve literal line breaks and note values; change presentation only. */
+#syncConflictItems textarea.conflict-result.preview-expanded{
+  min-height:0!important;max-height:none!important;overflow-y:hidden!important;
+  resize:vertical;
+}
+#syncConflictItems .conflict-comparison .conflict-value.comparison-expanded{
+  max-height:none!important;overflow-y:visible!important;
+  padding-bottom:1.24em;
+}
+#syncConflictItems .conflict-compare-toggle{
+  display:inline-block;margin-top:8px;padding:5px 10px;min-height:32px;
+  font-size:12px;border:1px solid #b6d6c9;border-radius:8px;
+  background:#e7f2ee;color:#165747;cursor:pointer;
+}
+#syncConflictItems .conflict-compare-toggle[hidden]{display:none!important}
+</style>
+</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.19.9 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook">
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">A few simple steps to get your family cemetery records ready. Cloud storage and syncing are optional.</p>
@@ -682,7 +700,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7.19.8 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.19.9 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div class="burial-fields-row"><div><label>Burial date</label><input name="burialDate" placeholder="Enter burial date"></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side" maxlength="1" placeholder="M/P"></div></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Burial Notes</label><textarea name="notes" placeholder="FTM burial notes, stone transcription, directions, discoveries…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -4439,7 +4457,24 @@ function conflictNoteAppend(base,a,b){
  if(prefix.endsWith(left)||prefix.endsWith(right))return null;
  return prefix+'\n\n'+left+'\n\n'+right;
 }
-function conflictChoiceRow(label,value){const wrap=document.createElement('div');const h=document.createElement('div');h.style.cssText='font-weight:700;margin:9px 0 4px';h.textContent=label;const body=document.createElement('div');body.className='conflict-value';body.textContent=textValue(value);wrap.append(h,body);return wrap}
+function conflictChoiceRow(label,value){
+ const wrap=document.createElement('div');
+ const h=document.createElement('div');h.style.cssText='font-weight:700;margin:9px 0 4px';h.textContent=label;
+ const body=document.createElement('div');body.className='conflict-value';body.textContent=textValue(value);
+ const toggle=document.createElement('button');toggle.type='button';toggle.className='conflict-compare-toggle';toggle.textContent='Expand version';toggle.hidden=true;toggle.setAttribute('aria-expanded','false');
+ const update=()=>{
+  if(!wrap.isConnected)return;
+  const expanded=body.classList.contains('comparison-expanded');
+  toggle.hidden=!expanded && body.scrollHeight<=body.clientHeight+3;
+  toggle.textContent=expanded?'Collapse version':'Expand version';
+  toggle.setAttribute('aria-expanded',String(expanded));
+ };
+ toggle.addEventListener('click',()=>{body.classList.toggle('comparison-expanded');update()});
+ wrap.append(h,body,toggle);
+ requestAnimationFrame(()=>requestAnimationFrame(update));
+ window.addEventListener('resize',()=>requestAnimationFrame(update));
+ return wrap;
+}
 async function conflictSnapshot(){
  workflowGuard();await largeDataReady;
  const {doc:base,marker}=await readVerifiedBaselineForDiff();
@@ -4604,15 +4639,22 @@ function renderDecision(snapshot,fields){
   const sizeToggle=document.createElement('button');sizeToggle.type='button';sizeToggle.className='preview-size-toggle';sizeToggle.textContent='Expand preview';sizeToggle.setAttribute('aria-expanded','false');sizeToggle.hidden=true;
   // Check the actual rendered overflow; never alter the proposed text or its line breaks.
   const previewSize=()=>{
-   if(preview.hidden)return;
+   if(preview.hidden||!result.isConnected)return;
    const expanded=result.classList.contains('preview-expanded');
-   if(expanded){sizeToggle.hidden=false;sizeToggle.textContent='Collapse preview';sizeToggle.setAttribute('aria-expanded','true');return;}
+   if(expanded){
+    // Autosize to the full unchanged text plus approximately one visual line.
+    // Remove inline height before measuring so shortening the text also shrinks the box.
+    result.style.height='auto';
+    const lineHeight=parseFloat(getComputedStyle(result).lineHeight)||17;
+    result.style.height=Math.ceil(result.scrollHeight+lineHeight+2)+'px';
+    sizeToggle.hidden=false;sizeToggle.textContent='Collapse preview';sizeToggle.setAttribute('aria-expanded','true');return;
+   }
+   result.style.removeProperty('height');
    sizeToggle.hidden=!(result.scrollHeight>result.clientHeight+3);
    sizeToggle.textContent='Expand preview';sizeToggle.setAttribute('aria-expanded','false');
   };
   const checkPreviewSize=()=>requestAnimationFrame(()=>requestAnimationFrame(previewSize));
-  sizeToggle.addEventListener('click',()=>{const expanded=result.classList.toggle('preview-expanded');sizeToggle.textContent=expanded?'Collapse preview':'Expand preview';sizeToggle.setAttribute('aria-expanded',String(expanded));checkPreviewSize();});
-  if(typeof ResizeObserver!=='undefined')new ResizeObserver(checkPreviewSize).observe(result);
+  sizeToggle.addEventListener('click',()=>{const expanded=result.classList.toggle('preview-expanded');if(!expanded)result.style.removeProperty('height');checkPreviewSize();});
   window.addEventListener('resize',checkPreviewSize);
   const approval=document.createElement('label');approval.className='conflict-approval';
   const reviewed=document.createElement('input');reviewed.type='checkbox';reviewed.setAttribute('aria-label','I reviewed the complete proposed notes for '+f.name);
@@ -4625,7 +4667,7 @@ function renderDecision(snapshot,fields){
   select.addEventListener('change',()=>{
    const proposed=choiceValue();preview.hidden=proposed===null;
    result.value=proposed===null?'':proposed;
-   result.classList.remove('preview-expanded');sizeToggle.hidden=true;sizeToggle.textContent='Expand preview';sizeToggle.setAttribute('aria-expanded','false');
+   result.classList.remove('preview-expanded');result.style.removeProperty('height');sizeToggle.hidden=true;sizeToggle.textContent='Expand preview';sizeToggle.setAttribute('aria-expanded','false');
    if(proposed!==null)checkPreviewSize();
    reviewed.checked=false;
    if(proposed!==null)status.textContent='Review the complete proposed result below before approving.';
