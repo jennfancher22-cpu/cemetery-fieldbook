@@ -338,6 +338,22 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
   .sync-timestamps{font-size:9px}
 }
 
+
+/* v7.19.14: mobile title and small version badge on one row; subtitle snug below. */
+@media(max-width:650px){
+  header .topline{display:flex;flex-wrap:nowrap;align-items:center;gap:5px;min-width:0}
+  header .topline h1{font-size:clamp(17px,4.7vw,21px);line-height:1.13;letter-spacing:-.65px;margin:0;white-space:nowrap;flex:0 1 auto;min-width:0}
+  header .topline .badge{flex:0 0 auto;font-size:9px;line-height:1.15;padding:3px 5px;white-space:nowrap;border-radius:6px}
+  header .sub{margin-top:1px;margin-bottom:0;font-size:11.5px;line-height:1.25}
+  header .header-controls{margin-top:15px}
+}
+@media(max-width:370px){
+  header .topline{gap:4px}
+  header .topline h1{font-size:16.5px;letter-spacing:-.7px}
+  header .topline .badge{font-size:8px;padding:2px 4px}
+  header .sub{font-size:10.5px}
+}
+
 </style>
 <style id="onboardingStyles">
 #getStartedPanel{border:2px solid #8ac8ad;background:#f8fffb;padding:16px;margin-bottom:16px}
@@ -518,7 +534,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 #syncConflictItems .conflict-approve-buttons button{font-size:12px;min-height:36px}
 @media(max-width:680px){#syncConflictItems textarea.conflict-result{height:115px;min-height:115px;font-size:13px}#syncConflictItems .conflict-comparison .conflict-value{font-size:13px;max-height:120px}}
 </style>
-</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.19.13 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.19.14 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook">
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">A few simple steps to get your family cemetery records ready. Cloud storage and syncing are optional.</p>
