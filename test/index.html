@@ -534,7 +534,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 #syncConflictItems .conflict-approve-buttons button{font-size:12px;min-height:36px}
 @media(max-width:680px){#syncConflictItems textarea.conflict-result{height:115px;min-height:115px;font-size:13px}#syncConflictItems .conflict-comparison .conflict-value{font-size:13px;max-height:120px}}
 </style>
-</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.19.14 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.19.15 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook">
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">A few simple steps to get your family cemetery records ready. Cloud storage and syncing are optional.</p>
@@ -782,7 +782,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7.19.12 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.19.15 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div class="burial-fields-row"><div><label>Burial date</label><input name="burialDate" placeholder="Enter burial date"></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side" maxlength="1" placeholder="M/P"></div></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Burial Notes</label><textarea name="notes" placeholder="FTM burial notes, stone transcription, directions, discoveries…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -4401,22 +4401,49 @@ async function autoDeviceCycle(force=false){
   autoDeviceStage='read local data';const before=await makePayload(),beforeHash=await syncContentHash(before);
   // Publishing BEFORE receiving ensures local edits aren't lost or silently subsumed.
   autoDeviceStage='publish/verify outgoing changes';const sent=await autoDevicePublish(base,marker,before,beforeHash);
-  autoDeviceStage='find incoming change packages';const {found,skipped}=await workflowPackages(base,marker);
-  let running=structuredClone(before),received=0,already=0;
-  for(const item of found){
-   autoDeviceStage='check incoming package safety';const report=compareRemotePackage(item.pkg,base,running,marker);
-   if(!report.established||report.mismatch.length||report.totals.conflict||report.totals.missing)
-    throw Error('Manual review needed: '+item.file.name+' ('+report.totals.conflict+' conflict(s), '+report.totals.missing+' missing record(s), '+report.mismatch.length+' protected difference(s)).');
-   already+=report.totals.already;
-   if(report.totals.safe){running=isolatedPackageMerge(base,running,item.pkg,marker).backup;received+=report.totals.safe}
+  // v7.19.15: A second device may publish while we are reading packages.
+  // No local change is made during this loop, and outgoing publication above is
+  // NOT repeated. Rebuild the proposed incoming merge from the newest complete
+  // list; never apply a merge calculated from a stale package set.
+  let running=structuredClone(before),received=0,already=0,skipped=0;
+  let incomingStable=false;
+  const maxIncomingScans=4; // initial scan plus up to three bounded rechecks
+  for(let scan=1;scan<=maxIncomingScans;scan++){
+   autoDeviceStage='find incoming change packages';
+   const current=await workflowPackages(base,marker);
+   autoDeviceStage='check incoming package safety';
+   let proposed=structuredClone(before),proposedReceived=0,proposedAlready=0;
+   for(const item of current.found){
+    const report=compareRemotePackage(item.pkg,base,proposed,marker);
+    if(!report.established||report.mismatch.length||report.totals.conflict||report.totals.missing)
+     throw Error('Manual review needed: '+item.file.name+' ('+report.totals.conflict+' conflict(s), '+report.totals.missing+' missing record(s), '+report.mismatch.length+' protected difference(s)).');
+    proposedAlready+=report.totals.already;
+    if(report.totals.safe){proposed=isolatedPackageMerge(base,proposed,item.pkg,marker).backup;proposedReceived+=report.totals.safe}
+   }
+   if(proposedReceived){
+    // Before any local apply, check that both local records and the baseline
+    // still match the exact inputs used to construct this candidate.
+    autoDeviceStage='recheck local and shared baseline';
+    if(await syncContentHash(await makePayload())!==beforeHash)throw Error('Local records changed during sync; no merge applied.');
+    const {marker:marker2}=await readVerifiedBaselineForDiff();
+    if(marker2.markerId!==marker.markerId||marker2.hash!==marker.hash)throw Error('Shared baseline changed during sync; no merge applied.');
+    autoDeviceStage='recheck incoming package list';
+    const latest=await workflowPackages(base,marker);
+    const listed=current.found.map(x=>x.file.id+'|'+x.file.name);
+    const rechecked=latest.found.map(x=>x.file.id+'|'+x.file.name);
+    if(canonicalValue(listed)!==canonicalValue(rechecked)){
+     autoDiagRecord('Incoming packages changed','Package list changed during read-only verification (scan '+scan+'/'+maxIncomingScans+'); rebuilding from latest packages. No local merge applied.');
+     if(scan===maxIncomingScans)throw Error('Incoming packages kept changing during '+maxIncomingScans+' safe checks; no merge applied. Review before enabling again.');
+     continue;
+    }
+   }
+   running=proposed;received=proposedReceived;already=proposedAlready;skipped=current.skipped;
+   incomingStable=true;
+   if(scan>1)autoDiagRecord('Incoming packages stabilized','Fresh packages and baseline verified on scan '+scan+'; continuing protected merge.');
+   break;
   }
+  if(!incomingStable)throw Error('Incoming packages were not stable; no merge applied.');
   if(received){
-   // Re-evaluate local snapshot and the newest package list, then preserve a recoverable cloud copy.
-   if(await syncContentHash(await makePayload())!==beforeHash)throw Error('Local records changed during sync; no merge applied.');
-   const {marker:marker2}=await readVerifiedBaselineForDiff();
-   if(marker2.markerId!==marker.markerId||marker2.hash!==marker.hash)throw Error('Shared baseline changed during sync; no merge applied.');
-   const newer=await workflowPackages(base,marker);
-   if(canonicalValue(newer.found.map(x=>x.file.name))!==canonicalValue(found.map(x=>x.file.name)))throw Error('Incoming packages changed during sync; no merge applied.');
    const outputHash=await syncContentHash(running);
    autoDeviceStage='upload/verify protected recovery';const recovery=await autoDeviceRecovery(before);
    if(await syncContentHash(await makePayload())!==beforeHash)throw Error('Local records changed after saving recovery; no merge applied.');
@@ -4479,7 +4506,7 @@ autoDeviceNow.onclick=()=>{
 };
 // Always retain the exact current status before navigation/reload. No silent auto-enable.
 window.addEventListener('pagehide',()=>{
- try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.19.12',event:'pagehide'}))}catch(_){}
+ try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.19.15',event:'pagehide'}))}catch(_){}
 });
 window.addEventListener('online',()=>{if(autoDeviceOn())autoDeviceCycle()});
 document.addEventListener('visibilitychange',()=>{if(autoDeviceOn()&&document.visibilityState==='visible'&&Date.now()-autoDeviceLastRun>8000)autoDeviceCycle()});
