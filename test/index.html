@@ -534,7 +534,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 #syncConflictItems .conflict-approve-buttons button{font-size:12px;min-height:36px}
 @media(max-width:680px){#syncConflictItems textarea.conflict-result{height:115px;min-height:115px;font-size:13px}#syncConflictItems .conflict-comparison .conflict-value{font-size:13px;max-height:120px}}
 </style>
-</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.19.15 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.19.16 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook">
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">A few simple steps to get your family cemetery records ready. Cloud storage and syncing are optional.</p>
@@ -559,6 +559,10 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
  <div class="sync-quick-body">
   <div id="syncQuickSummaryText" class="sync-quick-message" role="status">Checking synchronization status…</div>
   <div id="syncQuickStatus" class="sync-quick-technical"></div>
+  <div class="buttons" id="syncSafetyRecoveryControls" hidden style="margin:12px 0">
+    <button type="button" id="syncSafetyRecoveryButton">Verify and resume sync</button>
+  </div>
+  <p id="syncSafetyRecoveryStatus" class="hint" role="status" aria-live="polite" hidden></p>
   <div id="syncQuickConflictSlot"></div>
   <div class="sync-quick-actions"><button type="button" class="secondary" id="syncQuickSettings">Advanced sync settings</button></div>
  </div>
@@ -782,7 +786,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7.19.15 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.19.16 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div class="burial-fields-row"><div><label>Burial date</label><input name="burialDate" placeholder="Enter burial date"></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side" maxlength="1" placeholder="M/P"></div></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Burial Notes</label><textarea name="notes" placeholder="FTM burial notes, stone transcription, directions, discoveries…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -4401,7 +4405,7 @@ async function autoDeviceCycle(force=false){
   autoDeviceStage='read local data';const before=await makePayload(),beforeHash=await syncContentHash(before);
   // Publishing BEFORE receiving ensures local edits aren't lost or silently subsumed.
   autoDeviceStage='publish/verify outgoing changes';const sent=await autoDevicePublish(base,marker,before,beforeHash);
-  // v7.19.15: A second device may publish while we are reading packages.
+  // v7.19.16: A second device may publish while we are reading packages.
   // No local change is made during this loop, and outgoing publication above is
   // NOT repeated. Rebuild the proposed incoming merge from the newest complete
   // list; never apply a merge calculated from a stale package set.
@@ -4488,6 +4492,96 @@ function autoDeviceSchedule(){
  if(autoDeviceTimer){clearInterval(autoDeviceTimer);autoDeviceTimer=null;}
  if(autoDeviceOn())autoDeviceTimer=setInterval(()=>{if(document.visibilityState==='visible'&&Date.now()-autoDeviceLastRun>=27000)autoDeviceCycle()},30000);
 }
+// v7.19.16: Read-only recovery for the specific "incoming packages changed" pause.
+// An old safety pause is NEVER cleared just because the current notes look equal.
+// We require a verified baseline, the published hash, two stable cloud inventories,
+// and zero unreceived or conflicting changes before re-authorizing checks.
+function packageRacePause(reason){return /Incoming packages changed during sync; no merge applied/i.test(String(reason||''))}
+const syncSafetyRecoveryButton=document.getElementById('syncSafetyRecoveryButton');
+const syncSafetyRecoveryStatus=document.getElementById('syncSafetyRecoveryStatus');
+let syncSafetyRecoveryRunning=false;
+function syncSafetyRecoveryMessage(message){
+ syncSafetyRecoveryStatus.hidden=false;syncSafetyRecoveryStatus.textContent=message;
+}
+async function syncSafetyRecoveryAudit(){
+ workflowGuard();
+ const {doc:base,marker}=await readVerifiedBaselineForDiff();
+ const cp=safeJSON(localStorage.getItem(DEVICECHECKKEY)||'null');
+ if(!cp||cp.deviceId!==getDeviceId()||cp.markerId!==marker.markerId||cp.hash!==marker.hash)
+  throw Error('Your local starting checkpoint does not match the verified cloud baseline. Sync remains paused.');
+ const local=await makePayload(),localHash=await syncContentHash(local);
+ const published=autoDevicePublished();
+ if(!published||published.markerId!==marker.markerId||published.deviceId!==getDeviceId()||published.hash!==localHash)
+  throw Error('Local records differ from the last verified published state. No changes were applied. Review the unpublished changes before resuming.');
+ const protectedKeys=['gedcomPeople','homePersonId','geoEdits'];
+ for(const key of protectedKeys)if(canonicalValue(base[key])!==canonicalValue(local[key]))
+  throw Error('Protected family-tree information differs from the shared starting copy ('+key+'). Sync remains paused.');
+ const inventory=async()=>{
+  const list=(await allCloudFiles()).filter(f=>f.file&&PACKAGE_FILE.test(f.name));
+  if(list.length>60)throw Error('Too many cloud change packages to verify safely. Sync remains paused.');
+  // Read every matching file. Older packages must not be silently ignored when
+  // verifying an earlier uncertain upload: a failed read aborts the audit.
+  const fingerprint=list.map(f=>f.id+'|'+f.name+'|'+(f.eTag||'')).sort().join('\n');
+  const latest=new Map();
+  list.sort((a,b)=>String(b.createdDateTime||'').localeCompare(String(a.createdDateTime||'')));
+  for(const file of list){
+   const response=await graph('/me/drive/items/'+encodeURIComponent(file.id)+'/content');
+   const pkg=await response.json();
+   checkedDevicePackage(pkg,base,marker);
+   if(!latest.has(pkg.deviceId))latest.set(pkg.deviceId,{pkg,file});
+  }
+  return {fingerprint,latest};
+ };
+ const first=await inventory();
+ const second=await inventory();
+ if(first.fingerprint!==second.fingerprint)throw Error('Cloud packages changed again during verification. Sync remains paused; try again after activity settles.');
+ const assess=(snapshot)=>{
+  let checked=0;
+  for(const {pkg,file} of snapshot.latest.values()){
+   const report=compareRemotePackage(pkg,base,local,marker);
+   if(!report.established||report.mismatch.length||report.totals.conflict||report.totals.missing||report.totals.safe)
+    throw Error('A cloud change still needs review ('+report.totals.safe+' unapplied, '+report.totals.conflict+' conflicting, '+report.totals.missing+' missing). Sync remains paused.');
+   checked++;
+  }
+  return checked;
+ };
+ const checked=assess(second);
+ if(await syncContentHash(await makePayload())!==localHash)
+  throw Error('Local records changed during verification. Sync remains paused.');
+ const checkBaseline=await readVerifiedBaselineForDiff();
+ if(checkBaseline.marker.markerId!==marker.markerId||checkBaseline.marker.hash!==marker.hash)
+  throw Error('The cloud baseline changed during verification. Sync remains paused.');
+ // A final listing guards the window between complete package readback and enable.
+ const finalFiles=(await allCloudFiles()).filter(f=>f.file&&PACKAGE_FILE.test(f.name));
+ const finalFingerprint=finalFiles.map(f=>f.id+'|'+f.name+'|'+(f.eTag||'')).sort().join('\n');
+ if(finalFingerprint!==second.fingerprint)throw Error('Cloud packages changed during the final safety check. Sync remains paused.');
+ return checked;
+}
+if(syncSafetyRecoveryButton)syncSafetyRecoveryButton.onclick=async()=>{
+ if(syncSafetyRecoveryRunning||busy)return;
+ const originalPause=localStorage.getItem(AUTO_PAUSED_KEY)||'';
+ if(!packageRacePause(originalPause)||autoDeviceOn())return;
+ syncSafetyRecoveryRunning=true;syncSafetyRecoveryButton.disabled=true;
+ syncSafetyRecoveryMessage('Verifying the cloud baseline and existing change packages. No records will be changed.');
+ try{
+  const checked=await syncSafetyRecoveryAudit();
+  if(localStorage.getItem(AUTO_PAUSED_KEY)!==originalPause||autoDeviceOn())throw Error('Sync status changed during verification. No recovery action was taken.');
+  // No local writes, no outgoing uploads, no merges occurred in the audit.
+  // Restore authorization only after read-back and local safety checks succeed.
+  localStorage.removeItem(AUTO_PAUSED_KEY);autoRetryClear();
+  localStorage.setItem(AUTO_DEVICE_KEY,'yes');
+  autoDiagRecord('Safety pause recovered','Read-only verification passed: stable cloud package inventory, matching published local hash, '+checked+' latest device package(s) fully present. No records changed.');
+  autoDeviceMarkChecked(false);
+  autoDeviceState('Automatic sync ON · Previous package-change pause verified safe. No records were modified. Checking OneDrive…');
+  window.dispatchEvent(new Event('fieldbook-test-sync-status'));
+  syncSafetyRecoveryMessage('Verified. Your records were unchanged and synchronization is ON.');
+  autoDeviceSchedule();autoDeviceCycle();
+ }catch(e){
+  const reason=String(e?.message||e);
+  autoDiagRecord('Safety recovery blocked',reason);
+  syncSafetyRecoveryMessage('Sync remains PAUSED. '+reason);
+ }finally{syncSafetyRecoveryRunning=false;syncSafetyRecoveryButton.disabled=false;}
+};
 autoDeviceEnable.onclick=()=>{
  if(!(location.pathname==='/cemetery-fieldbook/test/'||location.pathname==='/cemetery-fieldbook/test/index.html')){autoDeviceState('Automatic sync is available only on the published TEST site.');return;}
  if(!autoDeviceConsent.checked){autoDeviceState('Check the synchronization authorization first.');return;}
@@ -4506,7 +4600,7 @@ autoDeviceNow.onclick=()=>{
 };
 // Always retain the exact current status before navigation/reload. No silent auto-enable.
 window.addEventListener('pagehide',()=>{
- try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.19.15',event:'pagehide'}))}catch(_){}
+ try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.19.16',event:'pagehide'}))}catch(_){}
 });
 window.addEventListener('online',()=>{if(autoDeviceOn())autoDeviceCycle()});
 document.addEventListener('visibilitychange',()=>{if(autoDeviceOn()&&document.visibilityState==='visible'&&Date.now()-autoDeviceLastRun>8000)autoDeviceCycle()});
@@ -5409,6 +5503,9 @@ document.addEventListener('DOMContentLoaded',()=>{
  const enabledKey='fieldbook_test_v713_auto_device_sync_enabled_v2';
  const retryKey='fieldbook_test_v713_auto_device_transient_retry_v1';
  const isConflict=reason=>/conflict\(s\)|Manual review needed/i.test(reason||'');
+ const isPackageRace=reason=>/Incoming packages changed during sync; no merge applied/i.test(reason||'');
+ const recoveryControls=document.getElementById('syncSafetyRecoveryControls');
+ const recoveryStatus=document.getElementById('syncSafetyRecoveryStatus');
  // Keep one real resolution form, rather than duplicating controls or listeners.
  if(conflict)slot.append(conflict);
  let previousAttention=!!localStorage.getItem(pauseKey);
@@ -5421,16 +5518,20 @@ document.addEventListener('DOMContentLoaded',()=>{
   const retrying=on&&!paused&&!!localStorage.getItem(retryKey);
   const attention=paused;
   if(paused){
+   if(recoveryControls)recoveryControls.hidden=!isPackageRace(reason);
    fold.dataset.state='attention';
    title.textContent=isConflict(reason)?'Sync needs attention — '+((reason.match(/(\d+) conflict\(s\)/i)||[])[1]||'1')+' conflict'+(((reason.match(/(\d+) conflict\(s\)/i)||[])[1]||'1')==='1'?'':'s'):'Sync needs attention';
    icon.textContent='⚠';
-   message.textContent=isConflict(reason)?'Conflicting edits were detected. Both versions are protected. Review and resolve the conflict below to resume synchronization safely.':'Sync is paused to protect your records. The reason is shown below.';
-   technical.textContent=isConflict(reason)?'Synchronization stopped to protect competing edits. Review the complete versions below.':'Synchronization was paused for safety. Open Advanced sync settings for details.';
+   message.textContent=isConflict(reason)?'Conflicting edits were detected. Both versions are protected. Review and resolve the conflict below to resume synchronization safely.':isPackageRace(reason)?'OneDrive packages changed during an earlier check. No merge was applied. Verify the cloud state to resume safely.':'Sync is paused to protect your records. Open Advanced sync settings to see the reason.';
+   technical.textContent=isConflict(reason)?'Synchronization stopped to protect competing edits. Review the complete versions below.':isPackageRace(reason)?'Use Verify and resume sync below. Fieldbook will compare the verified packages and your unchanged local records before proceeding.':'Synchronization was paused for safety. Open Advanced sync settings for details.';
   }else if(retrying){
+   if(recoveryControls)recoveryControls.hidden=true;
    fold.dataset.state='retrying';title.textContent='Sync retrying';icon.textContent='↻';
    message.textContent='A temporary connection problem occurred. Fieldbook is retrying automatically.';
    technical.textContent=autoStatus?.textContent||'';
   }else{
+   if(recoveryControls)recoveryControls.hidden=true;
+   if(recoveryStatus)recoveryStatus.hidden=true;
    fold.dataset.state='normal';title.textContent='Review sync status';icon.textContent=on?'✓':'↻';
    message.textContent=on?'Synchronization is ON. Fieldbook is checking for changes.':'Synchronization is OFF on this device.';
    technical.textContent=autoStatus?.textContent||'';
@@ -5438,7 +5539,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   // Collapse after a successful resolution, but never auto-open for a problem.
   if(!attention&&previousAttention)fold.open=false;
   previousAttention=attention;
-  if(conflict)conflict.hidden=!paused;
+  if(conflict)conflict.hidden=!paused||isPackageRace(reason);
  }
  // Show the attention label while leaving the panel collapsed on load.
  render();
