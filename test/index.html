@@ -231,7 +231,7 @@
 #simpleDataHub button {max-width:100%}
 @media(max-width:600px){#simpleDataHub .hub-content {padding:3px 9px 10px}#simpleDataHub .compact-fold>.compact-inner {padding:4px 8px 10px}}
 
-/* v7.19.3: visible, editable, reviewed conflict preview. */
+/* v7.19.5: visible, editable, reviewed conflict preview. */
 .conflict-preview{border:1px solid #b8cfc4;background:#f5fbf7;border-radius:10px;padding:12px;margin:12px 0}
 .conflict-preview label{font-weight:700;display:block;margin:0 0 7px}
 .conflict-preview textarea.conflict-result{min-height:190px;max-height:440px;resize:vertical;white-space:pre-wrap;font-size:14px;line-height:1.5}
@@ -363,8 +363,40 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 #backupsHubFold .backups-hub-body{padding-top:12px}
 #backupsHubFold:not([open]) .backups-hub-body{display:none}
 @media(max-width:600px){#backupsHubFold>summary{font-size:15px;flex-wrap:wrap}}
+</style><style id="syncAttentionStyles">
+.sync-attention{margin:13px 0 12px;padding:13px 15px;border:2px solid #d8ac5e;border-radius:13px;background:#fff8e9;color:#4d3518}
+.sync-attention[hidden]{display:none!important}
+.sync-attention-inner{display:flex;gap:11px;align-items:flex-start}
+.sync-attention-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 25px;width:25px;height:25px;border-radius:50%;background:#f2dbab;color:#754a08;font-size:19px;font-weight:900}
+.sync-attention-copy{flex:1;min-width:0}.sync-attention-copy strong{font-size:15px}.sync-attention-copy p{margin:4px 0 11px;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.sync-attention .buttons{margin-left:36px}.sync-attention button{background:#80500c}
+#syncConflictPanel{scroll-margin-top:15px}
+@media(max-width:540px){.sync-attention{padding:11px}.sync-attention .buttons{margin-left:0}.sync-attention .buttons button{width:100%}}
 </style>
-</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.19.3 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+<style id="v7195QuickSyncStyles">
+.fieldbook-top-actions{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:0 0 12px;flex-wrap:wrap}
+#reopenSetup{margin:0!important;align-self:flex-start}
+.sync-quick-fold{width:min(100%,580px);margin-left:auto;min-width:260px;border:1px solid #b8d9cd;border-radius:12px;background:#f8fcfa;overflow:hidden}
+.sync-quick-fold>summary{list-style:none;display:flex;gap:9px;align-items:center;justify-content:center;padding:10px 13px;cursor:pointer;font-weight:750;color:#145a4b;font-size:13px;min-height:43px}
+.sync-quick-fold>summary::-webkit-details-marker{display:none}
+.sync-quick-fold>summary:focus-visible{outline:3px solid #3b9785;outline-offset:-3px}
+.sync-quick-arrow{margin-left:5px;transition:transform .12s}
+.sync-quick-fold[open] .sync-quick-arrow{transform:rotate(180deg)}
+.sync-quick-fold[data-state="attention"]{border-color:#d3a351;background:#fff7e7}
+.sync-quick-fold[data-state="attention"]>summary{color:#81500a}
+.sync-quick-fold[data-state="retrying"]{border-color:#d3b67d;background:#fffaf1}
+.sync-quick-fold .sync-quick-body{background:white;border-top:1px solid #d9e5e0;padding:14px;max-height:75vh;overflow:auto}
+.sync-quick-message{font-size:13px;line-height:1.5;font-weight:600;margin:0 0 8px;color:#324b42}
+.sync-quick-technical{font-size:12px;line-height:1.5;color:#644d75;overflow-wrap:anywhere;white-space:pre-wrap}
+.sync-quick-fold #syncConflictPanel{padding-top:10px;scroll-margin-top:18px}
+.sync-quick-fold #syncConflictPanel h3{margin:7px 0 8px}
+.sync-quick-fold #syncConflictItems{max-width:100%;min-width:0;overflow-wrap:anywhere}
+.sync-quick-fold #syncConflictItems textarea{width:100%;min-height:175px}
+.sync-quick-actions{margin-top:12px;display:flex;justify-content:flex-end}
+.sync-quick-actions button{font-size:12px;min-height:34px}
+#syncAttention{display:none!important}
+@media(max-width:680px){.fieldbook-top-actions{display:flex;flex-direction:column;align-items:stretch}.sync-quick-fold{margin:0;width:100%;min-width:0}.sync-quick-fold .sync-quick-body{padding:10px;max-height:none}}
+</style></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#ede0ff;color:#4d2674">V7.19.5 · TEST · GREEN</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook">
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">A few simple steps to get your family cemetery records ready. Cloud storage and syncing are optional.</p>
@@ -383,7 +415,20 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
  </div><p class="onboard-help">Sync is always OFF until you explicitly enable it. Conflicting edits pause sync rather than overwriting either device.</p></div></details>
  <div class="onboard-bottom"><span class="onboard-message" id="onboardSummary" role="status">Choose how you want to get started.</span><div class="buttons"><button type="button" id="onboardFinish" class="secondary" hidden>Finish setup</button></div></div>
 </section>
-<button id="reopenSetup" class="secondary" type="button">🌱 Open Get Started</button>
+<div class="fieldbook-top-actions"><button id="reopenSetup" class="secondary" type="button">🌱 Open Get Started</button>
+<details id="syncQuickFold" class="sync-quick-fold" aria-label="Synchronization status and conflict resolution">
+ <summary id="syncQuickSummary"><span id="syncQuickIcon" aria-hidden="true">↻</span><span id="syncQuickTitle">Review sync status</span><span class="sync-quick-arrow" aria-hidden="true">▾</span></summary>
+ <div class="sync-quick-body">
+  <div id="syncQuickSummaryText" class="sync-quick-message" role="status">Checking synchronization status…</div>
+  <div id="syncQuickStatus" class="sync-quick-technical"></div>
+  <div id="syncQuickConflictSlot"></div>
+  <div class="sync-quick-actions"><button type="button" class="secondary" id="syncQuickSettings">Advanced sync settings</button></div>
+ </div>
+</details></div>
+<section id="syncAttention" class="sync-attention" role="status" aria-live="polite" hidden>
+ <div class="sync-attention-inner"><span class="sync-attention-icon" aria-hidden="true">⚠</span><div class="sync-attention-copy"><strong id="syncAttentionTitle">Synchronization needs your attention</strong><p id="syncAttentionMessage">Your records are protected while synchronization is paused.</p></div></div>
+ <div class="buttons"><button id="syncAttentionAction" type="button">Review conflict</button></div>
+</section>
 
 <div class="notice" style="border:2px solid #d0a23f;margin:10px 0;padding:12px;border-radius:12px"><strong>Cloud privacy:</strong> Backups are stored in your personal OneDrive application folder as readable JSON, not encrypted by Fieldbook. Keep your account secure.</div><div class="stats"><div class="stat"><div id="sPeople" class="num">—</div><div class="small">Burial entries</div></div><div class="stat"><div id="sCem" class="num">—</div><div class="small">Cemeteries</div></div><div class="stat"><div id="sVisited" class="num">—</div><div class="small">Visited</div></div></div>
 <section class="panel" id="nearbyPanel"><details class="finder-fold" id="nearbyFold"><summary>📍 Find cemeteries nearby <span class="finder-sub">Search by distance</span></summary><div class="finder-body"><p class="hint">Straight-line distance, not driving distance. Works offline with saved cemetery coordinates. Choose a starting town or try your phone location.</p><div class="filters"><div><label for="startPlace">Starting point</label><select id="startPlace"><option value="39.7684,-86.1581">Indianapolis, IN</option><option value="38.9592,-85.8903" selected>Seymour, IN</option><option value="39.6128,-86.3742">Mooresville, IN</option><option value="39.2014,-85.9214">Columbus, IN</option><option value="custom">Custom coordinates</option></select></div><div><label for="radius">Within</label><select id="radius"><option>10</option><option selected>25</option><option>50</option><option>100</option><option>250</option><option>500</option></select></div><div><label for="startLat">Latitude</label><input id="startLat" type="number" step="any" placeholder="39.123"></div><div><label for="startLon">Longitude</label><input id="startLon" type="number" step="any" placeholder="-86.123"></div></div><div class="buttons" style="margin-top:10px"><button id="nearSearch">Find nearby cemeteries</button><button class="secondary" id="myLocation">Use phone GPS</button></div><div id="geoNote" class="hint" role="status"></div><div id="nearResults"></div></div></details></section><section class="panel" id="relativePanel"><details class="finder-fold" id="relativeFold" open><summary>🔎 Find a relative or cemetery <span class="finder-sub">Search names &amp; filters</span></summary><div class="finder-body"><div class="filters"><div class="wide"><input id="q" type="search" placeholder="Search name, cemetery, town, family line…" aria-label="Search"></div><div><label for="stateFilter">State</label><select id="stateFilter"><option value="">All states</option></select></div><div><label for="county">County</label><select id="county"><option value="">All counties</option></select></div><div><label for="cem">Cemetery</label><select id="cem"><option value="">All cemeteries</option></select></div><div><label for="status">Visit filter</label><select id="status"><option value="">All records</option><option value="unvisited">Not visited</option><option value="nophoto">Photo needed</option><option value="nogps">GPS needed</option></select></div></div><div class="buttons" style="margin-top:12px"><button id="add">+ Add discovery</button><button class="secondary" id="clear">Clear filters</button><button class="outline" id="showAll">Show all records</button><button class="secondary" type="button" id="showMatches">Show filtered results</button></div></div></details></section>
@@ -408,7 +453,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 <p id="autoDeviceSyncStatus" class="hint" role="status" aria-live="polite">Automatic sync OFF on this browser. No changes made.</p>
 <section id="syncConflictPanel" hidden aria-label="Resolve synchronization conflicts">
 <h3 style="margin:0 0 8px">Resolve synchronization conflicts</h3>
-<p class="hint">Both versions are protected. Review the complete notes, approve a shared resolution, then apply it on each device. No changes are made until you explicitly approve them.</p>
+<p class="hint">Both versions are protected. Review the complete notes, approve a shared resolution, then safely apply it on each device. After local verification, Fieldbook will attempt to resume synchronization automatically. The other device must still apply the same approved resolution.</p>
 <div class="buttons"><button id="syncConflictReview" type="button">Review conflicts</button><button id="syncConflictFind" class="secondary" type="button">Find approved resolution</button></div>
 <p id="syncConflictStatus" class="hint" role="status">Synchronization is paused. No records changed.</p>
 <div id="syncConflictItems"></div>
@@ -599,7 +644,7 @@ button.outline{color:#185b4e;border-color:#a4cbbc}a{color:#176b5d}
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7.19.3 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.19.5 TEST · Green edition · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog"><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div class="burial-fields-row"><div><label>Burial date</label><input name="burialDate" placeholder="Enter burial date"></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side" maxlength="1" placeholder="M/P"></div></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Burial Notes</label><textarea name="notes" placeholder="FTM burial notes, stone transcription, directions, discoveries…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -4075,7 +4120,7 @@ function autoDiagRecord(kind,message){
  try{localStorage.setItem(AUTO_DIAG_KEY,JSON.stringify(items.slice(0,24)));localStorage.setItem(AUTO_DIAG_LAST_KEY,JSON.stringify(items[0]))}catch(_){/* diagnostics must never block sync */}
  autoDiagRender();
 }
-// v7.19.3 migration: old versions misclassified 'PAUSED safely during ...' as OFF.
+// v7.19.5 migration: old versions misclassified 'PAUSED safely during ...' as OFF.
 // Recover ONLY the latest documented conflict pause. Never turn synchronization ON.
 (function recoverRecordedConflictPause(){
  const enabledKey='fieldbook_test_v713_auto_device_sync_enabled_v2';
@@ -4105,7 +4150,7 @@ function autoDiagRender(){
  const paused=localStorage.getItem('fieldbook_test_v713_auto_device_paused_reason_v1');
  let previous=null;
  try{previous=JSON.parse(localStorage.getItem(AUTO_DIAG_BOOT_KEY)||'null')}catch(_){}
- const boot={at:new Date().toISOString(),enabled,paused:!!paused,version:'v7.19.3',event:'page-loaded'};
+ const boot={at:new Date().toISOString(),enabled,paused:!!paused,version:'v7.19.5',event:'page-loaded'};
  try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify(boot))}catch(_){}
  const prior=previous&&typeof previous.enabled==='boolean'
   ?' · Previous '+(previous.version||'unknown version')+' '+(previous.enabled?'ON':previous.paused?'PAUSED':'OFF')+(previous.event?' ('+previous.event+')':'')
@@ -4114,7 +4159,7 @@ function autoDiagRender(){
  if(previous&&previous.enabled&&!enabled&&!paused)autoDiagRecord('Unexpected OFF state','Previous snapshot was ON, but saved setting is now OFF. Do not automatically enable; review diagnostics.');
  const copy=document.getElementById('copySyncDiagnostics');
  if(copy)copy.addEventListener('click',async()=>{
-  const text='Cemetery Fieldbook TEST v7.19.3 diagnostics\n'+(document.getElementById('syncDiagnosticsSummary')?.textContent||'')+'\n'+(document.getElementById('syncDiagnosticsHistory')?.textContent||'');
+  const text='Cemetery Fieldbook TEST v7.19.5 diagnostics\n'+(document.getElementById('syncDiagnosticsSummary')?.textContent||'')+'\n'+(document.getElementById('syncDiagnosticsHistory')?.textContent||'');
   try{await navigator.clipboard.writeText(text);copy.textContent='Copied';setTimeout(()=>copy.textContent='Copy diagnostic summary',1800)}
   catch(_){copy.textContent='Copy unavailable; select the text above';}
  });
@@ -4296,7 +4341,7 @@ autoDeviceNow.onclick=()=>{
 };
 // Always retain the exact current status before navigation/reload. No silent auto-enable.
 window.addEventListener('pagehide',()=>{
- try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.19.3',event:'pagehide'}))}catch(_){}
+ try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.19.5',event:'pagehide'}))}catch(_){}
 });
 window.addEventListener('online',()=>{if(autoDeviceOn())autoDeviceCycle()});
 document.addEventListener('visibilitychange',()=>{if(autoDeviceOn()&&document.visibilityState==='visible'&&Date.now()-autoDeviceLastRun>8000)autoDeviceCycle()});
@@ -4419,12 +4464,54 @@ async function verifyResolutionContext(resolution,snap){
  for(const field of resolution.fields){
   const val=currentConflictValue(field.id,field.field);
   const expected=original?field.local:field.remote;
-  if(canonicalValue(val)!==canonicalValue(expected))throw Error('Local value for '+field.name+' has changed since the conflict. No changes made.');
+  const accepted=acceptedConflictMap()[conflictKey(field.id,field.field)];
+  const alreadyApplied=canonicalValue(val)===canonicalValue(field.resolved)&&accepted&&accepted.markerId===resolution.markerId&&canonicalValue(accepted.resolved)===canonicalValue(field.resolved);
+  if(canonicalValue(val)!==canonicalValue(expected)&&!alreadyApplied)throw Error('Local value for '+field.name+' has changed since the conflict. No changes made.');
   const source= snap.remote.find(x=>x.pkg.deviceId===(original?field.remoteDevice:resolution.creatorDevice));
   if(!source)throw Error('Other device package is not available for independent verification.');
   const sourceEdit=source.pkg.fieldEdits.find(e=>e.id===field.id&&e.field===field.field);
   if(!sourceEdit||canonicalValue(sourceEdit.after)!==canonicalValue(original?field.remote:field.local)||canonicalValue(sourceEdit.before)!==canonicalValue(field.baseline))throw Error('Other device changed its proposed value. Recheck conflict.');
  }
+}
+// v7.19.5: Resume only after the approved result is locally verified AND the
+// remaining cloud packages pass a fresh, read-only safety check. Each device
+// must apply the approved resolution independently; another device is never
+// remotely modified or authorized by this one.
+async function conflictResumeAfterLocalVerification(resolution){
+ const existingPause=localStorage.getItem(AUTO_PAUSED_KEY);
+ if(!existingPause||!/conflict\(s\)|Manual review needed/i.test(existingPause))throw Error('Automatic restart requires the original verified conflict pause; sync stays PAUSED.');
+ if(autoDeviceOn()||autoDeviceRunning)throw Error('Another synchronization operation is active.');
+ if(!navigator.onLine)throw Error('Internet is unavailable. The approved resolution is saved locally; sync remains PAUSED.');
+ workflowGuard();
+ const {doc:base,marker}=await readVerifiedBaselineForDiff();
+ const cp=safeJSON(localStorage.getItem(DEVICECHECKKEY)||'null');
+ if(!cp||cp.deviceId!==getDeviceId()||cp.markerId!==marker.markerId||cp.hash!==marker.hash)throw Error('Original device checkpoint is no longer verified.');
+ if(marker.markerId!==resolution.markerId||marker.hash!==resolution.markerHash)throw Error('Shared baseline has changed since conflict approval.');
+ const local=await makePayload();
+ for(const f of resolution.fields){
+  if(canonicalValue(sync3RecordMap(local).get(f.id)?.[f.field])!==canonicalValue(f.resolved))throw Error('Approved Burial Notes are not present on this device.');
+  if(!acceptedConflictMap()[conflictKey(f.id,f.field)])throw Error('Approved resolution safety record is missing.');
+ }
+ const initialHash=await syncContentHash(local);
+ const list=await workflowPackages(base,marker);
+ let working=structuredClone(local);
+ for(const item of list.found){
+  const report=compareRemotePackage(item.pkg,base,working,marker);
+  if(!report.established||report.mismatch.length||report.totals.conflict||report.totals.missing)throw Error('An unresolved change still needs review in '+item.file.name+'.');
+  if(report.totals.safe)working=isolatedPackageMerge(base,working,item.pkg,marker).backup;
+ }
+ if(await syncContentHash(await makePayload())!==initialHash)throw Error('Local data changed during verification.');
+ // Only now clear the specific pause and resume the previously authorized sync.
+ localStorage.removeItem(AUTO_PAUSED_KEY);
+ autoRetryClear();
+ localStorage.setItem(AUTO_DEVICE_KEY,'yes');
+ autoDiagRecord('Sync resumed','Approved conflict applied, verified, and all existing cloud change packages passed read-only safety checks. Automatic sync restarting.');
+ autoDeviceState('Approved conflict verified. Automatic synchronization restarting and checking cloud changes…');
+ autoDeviceSchedule();
+ window.dispatchEvent(new Event('fieldbook-test-sync-status'));
+ // This function runs within a cloud-busy apply operation. Defer until it ends.
+ setTimeout(()=>autoDeviceCycle(true),350);
+ return true;
 }
 async function applyApprovedResolution(resolution,snap){
  await verifyResolutionContext(resolution,snap);
@@ -4450,9 +4537,16 @@ async function applyApprovedResolution(resolution,snap){
  localStorage.setItem(CONFLICT_RESOLVED_KEY,JSON.stringify(accepted));
  const after=await makePayload();
  if(resolution.fields.some(f=>canonicalValue(sync3RecordMap(after).get(f.id)?.[f.field])!==canonicalValue(f.resolved)))throw Error('Post-apply verification failed. Use recovery backup '+recovery);
- autoDiagRecord('Conflict resolved','Approved '+resolution.fields.length+' text field(s); verified recovery '+recovery+'. Sync remains PAUSED until explicitly reenabled.');
- conflictStatus.textContent='Resolution applied and verified on this device. Recovery saved: '+recovery+'. Repeat on your other device, then reenable sync on each device.';
+ autoDiagRecord('Conflict resolved','Approved '+resolution.fields.length+' text field(s), verified recovery '+recovery+'. Checking whether automatic sync can safely resume.');
  conflictItems.replaceChildren();conflictDraft=null;
+ try{
+  await conflictResumeAfterLocalVerification(resolution);
+  conflictStatus.textContent='Resolution applied and verified on this device. Recovery saved: '+recovery+'. Sync is restarting automatically. On your other device, choose Find approved resolution and apply it there; that device will resume after its own verification.';
+ }catch(resumeError){
+  // Do NOT undo the approved note or erase the recovery: only defer automatic sync.
+  autoDiagRecord('Restart deferred','Approved resolution saved locally, but safe automatic restart needs attention: '+resumeError.message);
+  conflictStatus.textContent='Resolution safely applied and recovery verified ('+recovery+'). Sync remains PAUSED: '+resumeError.message+' Use Find approved resolution to retry verification; do not enable sync manually.';
+ }
  return true;
 }
 function renderDecision(snapshot,fields){
@@ -4548,8 +4642,15 @@ document.getElementById('syncConflictFind').onclick=async()=>{
    try{const r=await loadResolutionFile(f);await verifyResolutionContext(r,snap);chosen=r;break}catch(_){/* ignore unrelated/obsolete resolutions */}
   }
   if(!chosen)throw Error('No resolution matches this device’s exact original notes and current cloud packages.');
-  conflictStatus.textContent='Found approved resolution for '+chosen.fields.length+' field(s). Review the complete resolved notes, then apply.';
-  renderApplyButton(chosen,snap);
+  const alreadyApplied=chosen.fields.every(f=>canonicalValue(currentConflictValue(f.id,f.field))===canonicalValue(f.resolved));
+  if(alreadyApplied){
+   conflictStatus.textContent='This approved resolution is already applied locally. Verifying cloud safety before restarting sync…';
+   try{await conflictResumeAfterLocalVerification(chosen);conflictStatus.textContent='Approved resolution already applied and verified. Automatic sync is restarting.'}
+   catch(e){conflictStatus.textContent='Approved result is present, but sync remains PAUSED: '+e.message}
+  }else{
+   conflictStatus.textContent='Found approved resolution for '+chosen.fields.length+' field(s). Review the complete resolved notes, then apply.';
+   renderApplyButton(chosen,snap);
+  }
  }catch(e){conflictStatus.textContent='No resolution applied: '+e.message}
  finally{setBusy(false)}
 };
@@ -4578,6 +4679,44 @@ isolatedPackageMerge=function(base,local,pkg,marker){
  return originalIsolatedPackageMerge(base,local,filtered,marker);
 };
 conflictResolveVisible();
+
+// v7.19.5: actionable pause notification with exact, user-safe explanation.
+(function setupSyncAttention(){
+ const panel=document.getElementById('syncAttention'),title=document.getElementById('syncAttentionTitle');
+ const message=document.getElementById('syncAttentionMessage'),action=document.getElementById('syncAttentionAction');
+ const pauseKey=AUTO_PAUSED_KEY;
+ function conflictPause(reason){return /conflict\(s\)|Manual review needed/i.test(reason||'');}
+ function goToIssue(){
+  const quick=document.getElementById('syncQuickFold');
+  if(quick){quick.open=true;quick.scrollIntoView({block:'nearest',behavior:'smooth'});}
+  const reason=localStorage.getItem(pauseKey)||'';
+  if(conflictPause(reason)){
+   const review=document.getElementById('syncConflictReview');
+   if(review&&!review.disabled)review.click();
+  }
+ }
+ function refresh(){
+  const reason=localStorage.getItem(pauseKey)||'';
+  panel.hidden=true;
+  if(!reason)return;
+  const hasConflict=conflictPause(reason);
+  title.textContent=hasConflict?'Synchronization paused — conflicting edits':'Synchronization paused — attention needed';
+  message.textContent=hasConflict?'Your devices saved different versions of the same information. Both versions are protected. Review and approve a resolution to resume safely.':('No records were overwritten. '+reason.slice(0,320));
+  action.textContent=hasConflict?'Review conflict':'Review sync issue';
+ }
+ action.addEventListener('click',goToIssue);
+ const headerSync=document.getElementById('headerSyncStatus');
+ // Capture PAUSED clicks before the existing generic-settings handler executes.
+ headerSync?.addEventListener('click',e=>{
+  if(localStorage.getItem(pauseKey)){
+   e.stopImmediatePropagation();e.preventDefault();goToIssue();
+  }
+ },true);
+ window.addEventListener('fieldbook-test-sync-status',refresh);
+ const original=window.fieldbookUpdateConflictAttention;
+ window.fieldbookUpdateConflictAttention=refresh;
+ refresh();
+})();
 
 // Upload local edits promptly while this tab is active; also check incoming packages every 30 seconds in foreground.
 // Defer while another operation is busy, and coalesce multiple record/log/photo writes.
@@ -4974,6 +5113,75 @@ document.addEventListener('DOMContentLoaded',()=>{
  // Only on initial navigation/reload. Do not interfere with manual scrolling afterward.
  const jumpTop=()=>{if(!location.hash)window.scrollTo({top:0,left:0,behavior:'instant'});};
  window.addEventListener('pageshow',()=>{jumpTop();requestAnimationFrame(jumpTop);setTimeout(jumpTop,180);},{once:true});
+})();
+</script>
+<script id="v7195QuickSync">
+(function(){
+ 'use strict';
+ const fold=document.getElementById('syncQuickFold');
+ const title=document.getElementById('syncQuickTitle');
+ const icon=document.getElementById('syncQuickIcon');
+ const message=document.getElementById('syncQuickSummaryText');
+ const technical=document.getElementById('syncQuickStatus');
+ const slot=document.getElementById('syncQuickConflictSlot');
+ const conflict=document.getElementById('syncConflictPanel');
+ const autoStatus=document.getElementById('autoDeviceSyncStatus');
+ const syncHeader=document.getElementById('headerSyncText');
+ const pauseKey='fieldbook_test_v713_auto_device_paused_reason_v1';
+ const enabledKey='fieldbook_test_v713_auto_device_sync_enabled_v2';
+ const retryKey='fieldbook_test_v713_auto_device_transient_retry_v1';
+ const isConflict=reason=>/conflict\(s\)|Manual review needed/i.test(reason||'');
+ // Keep one real resolution form, rather than duplicating controls or listeners.
+ if(conflict)slot.append(conflict);
+ const startPaused=!!localStorage.getItem(pauseKey);
+ let previousAttention=false;
+ function render(){
+  const reason=localStorage.getItem(pauseKey)||'';
+  const paused=!!reason;
+  const on=localStorage.getItem(enabledKey)==='yes';
+  const retrying=on&&!paused&&!!localStorage.getItem(retryKey);
+  const attention=paused;
+  if(paused){
+   fold.dataset.state='attention';
+   title.textContent=isConflict(reason)?'⚠ Sync needs attention — review conflict':'⚠ Sync needs attention';
+   icon.textContent='⚠';
+   message.textContent=isConflict(reason)?'Conflicting edits were detected. Both versions are protected. Review and resolve the conflict below to resume synchronization safely.':'Sync is paused to protect your records. The reason is shown below.';
+   technical.textContent=reason;
+  }else if(retrying){
+   fold.dataset.state='retrying';title.textContent='↻ Sync retrying';icon.textContent='↻';
+   message.textContent='A temporary connection problem occurred. Fieldbook is retrying automatically.';
+   technical.textContent=autoStatus?.textContent||'';
+  }else{
+   fold.dataset.state='normal';title.textContent='Review sync status';icon.textContent=on?'✓':'↻';
+   message.textContent=on?'Synchronization is ON. Fieldbook is checking for changes.':'Synchronization is OFF on this device.';
+   technical.textContent=autoStatus?.textContent||'';
+  }
+  if(attention&&!previousAttention)fold.open=true;
+  if(!attention&&previousAttention)fold.open=false;
+  previousAttention=attention;
+  if(conflict)conflict.hidden=!paused;
+ }
+ // On a page load with a previously recorded conflict, open the status panel.
+ render();
+ const settings=document.getElementById('syncQuickSettings');
+ settings?.addEventListener('click',()=>{
+  const hub=document.getElementById('backupsHubFold');if(hub)hub.open=true;
+  const inner=document.getElementById('simpleSyncFold');if(inner)inner.open=true;
+  document.getElementById('autoDeviceSyncPanel')?.scrollIntoView({block:'start',behavior:'smooth'});
+ });
+ // Reuse the header status control as a shortcut to the same panel on any state.
+ // Earlier PAUSED handler already points here; capture other states before generic navigation.
+ document.getElementById('headerSyncStatus')?.addEventListener('click',event=>{
+  if(!localStorage.getItem(pauseKey)){
+   event.preventDefault();event.stopImmediatePropagation();fold.open=true;
+   fold.scrollIntoView({block:'nearest',behavior:'smooth'});
+  }
+ },true);
+ window.addEventListener('fieldbook-test-sync-status',render);
+ window.addEventListener('storage',e=>{if([pauseKey,enabledKey,retryKey].includes(e.key))render()});
+ if(autoStatus)new MutationObserver(render).observe(autoStatus,{childList:true,subtree:true,characterData:true});
+ document.getElementById('syncConflictStatus')&&new MutationObserver(render).observe(document.getElementById('syncConflictStatus'),{childList:true,subtree:true,characterData:true});
+ window.addEventListener('pageshow',render);
 })();
 </script>
 </body></html>
