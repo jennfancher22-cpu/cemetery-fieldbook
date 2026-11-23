@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Cemetery Fieldbook">
+<rect width="512" height="512" rx="110" fill="#3e2856"/>
+<path d="M124 378h264" fill="none" stroke="#dbbffa" stroke-width="22" stroke-linecap="round"/>
+<path d="M162 378V203c0-54 42-97 94-97s94 43 94 97v175z" fill="#f4edfa" stroke="#bf9bdf" stroke-width="12" stroke-linejoin="round"/>
+<path d="M220 206h72M256 170v82" stroke="#69418e" stroke-width="17" stroke-linecap="round"/>
+<path d="M140 392c-20-17-27-36-21-54 19 1 34 11 43 28" fill="#c5a4e1"/>
+<path d="M372 392c20-17 27-36 21-54-19 1-34 11-43 28" fill="#c5a4e1"/>
+</svg>

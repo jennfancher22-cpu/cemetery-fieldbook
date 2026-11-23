@@ -1,0 +1,30 @@
+{
+  "name": "Cemetery Fieldbook",
+  "short_name": "Fieldbook",
+  "description": "Find family graves, capture discoveries, and track cemetery visits.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f2f9",
+  "theme_color": "#3e2856",
+  "icons": [
+    {
+      "src": "icon-live-purple-v71930.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-live-purple-v71930-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-live-purple-v71930-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
