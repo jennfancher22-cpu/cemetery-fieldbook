@@ -576,7 +576,8 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 .sync-quick-fold:not([data-state="paused"]):not([data-state="retrying"]){border-color:#ceb7e3!important;background:#f8f2fd!important}
 .sync-quick-fold:not([data-state="paused"]):not([data-state="retrying"])>summary{color:#56367b!important}
 .sync-quick-fold:not([data-state="paused"]):not([data-state="retrying"]) .sync-quick-icon{color:#69418e!important}
-</style><link rel="apple-touch-icon" href="icon-live-purple-v71930-192.png"></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.19.31 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+.sync-quick-diagnostics{display:grid;gap:9px;margin-top:14px}.sync-quick-diagnostics .data-subfold{margin:0!important;border:1px solid #dac9e9;border-radius:10px;background:#fcf9ff}.sync-quick-diagnostics .data-subfold>summary{padding:10px 12px;color:#57317d;font-weight:700;cursor:pointer}.sync-quick-diagnostics .data-subbody{padding:9px 12px;max-height:40vh;overflow:auto}
+</style><link rel="apple-touch-icon" href="icon-live-purple-v71930-192.png"></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.19.32 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook">
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">A few simple steps to get your family cemetery records ready. Cloud storage and syncing are optional.</p>
@@ -601,14 +602,18 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
  <div class="sync-quick-body">
   <div id="syncQuickSummaryText" class="sync-quick-message" role="status">Checking synchronization status…</div>
   <div id="syncQuickStatus" class="sync-quick-technical"></div>
-  <div class="buttons" id="syncStartControls" hidden style="margin:12px 0"><button type="button" id="syncStartButton">Turn on automatic sync</button></div>
+  <div class="buttons" id="syncStartControls" hidden style="display:none!important;margin:12px 0"><button type="button" id="syncStartButton">Turn on automatic sync</button></div>
   <p id="syncStartStatus" class="hint" role="status" aria-live="polite" hidden></p>
-  <div class="buttons" id="syncSafetyRecoveryControls" hidden style="margin:12px 0">
+  <div class="buttons" id="syncSafetyRecoveryControls" hidden style="display:none!important;margin:12px 0">
     <button type="button" id="syncSafetyRecoveryButton">Verify and resume sync</button>
   </div>
   <p id="syncSafetyRecoveryStatus" class="hint" role="status" aria-live="polite" hidden></p>
   <div id="syncQuickConflictSlot"></div>
-  <div class="sync-quick-actions"><button type="button" class="secondary" id="syncQuickSettings">Advanced sync settings</button></div>
+  <div id="syncQuickDiagnostics" class="sync-quick-diagnostics" aria-label="Synchronization details">
+    <details id="syncQuickActivityFold" class="data-subfold"><summary>Recent synchronization activity</summary><div class="data-subbody"><p id="syncQuickActivityText" class="hint" role="status">Open Sync diagnostics below for the full event history.</p></div></details>
+    <div id="syncQuickDiagnosticSlot"></div>
+    <details id="syncQuickBaselineFold" class="data-subfold"><summary>Cloud baseline and device checkpoint</summary><div class="data-subbody"><p id="syncQuickBaselineText" class="hint" role="status">Baseline information will appear when expanded.</p></div></details>
+  </div>
  </div>
 </details></div>
 <section id="syncAttention" class="sync-attention" role="status" aria-live="polite" hidden>
@@ -4450,7 +4455,7 @@ function autoDiagRender(){
  if(previous&&previous.enabled&&!enabled&&!paused)autoDiagRecord('Unexpected OFF state','Previous snapshot was ON, but saved setting is now OFF. Do not automatically enable; review diagnostics.');
  const copy=document.getElementById('copySyncDiagnostics');
  if(copy)copy.addEventListener('click',async()=>{
-  const text='Cemetery Fieldbook LIVE v7.19.31 diagnostics\n'+(document.getElementById('syncDiagnosticsSummary')?.textContent||'')+'\n'+(document.getElementById('syncDiagnosticsHistory')?.textContent||'');
+  const text='Cemetery Fieldbook LIVE v7.19.32 diagnostics\n'+(document.getElementById('syncDiagnosticsSummary')?.textContent||'')+'\n'+(document.getElementById('syncDiagnosticsHistory')?.textContent||'');
   try{await navigator.clipboard.writeText(text);copy.textContent='Copied';setTimeout(()=>copy.textContent='Copy diagnostic summary',1800)}
   catch(_){copy.textContent='Copy unavailable; select the text above';}
  });
@@ -5409,11 +5414,7 @@ conflictResolveVisible();
  action.addEventListener('click',goToIssue);
  const headerSync=document.getElementById('headerSyncStatus');
  // Capture PAUSED clicks before the existing generic-settings handler executes.
- headerSync?.addEventListener('click',e=>{
-  if(localStorage.getItem(pauseKey)){
-   e.stopImmediatePropagation();e.preventDefault();goToIssue();
-  }
- },true);
+ // Header state actions are handled centrally; this attention banner remains informational.
  window.addEventListener('fieldbook-live-sync-status',refresh);
  const original=window.fieldbookUpdateConflictAttention;
  window.fieldbookUpdateConflictAttention=refresh;
@@ -5709,8 +5710,8 @@ finishRedirect();
   const compactTimes=window.matchMedia('(max-width: 650px)').matches;
   if(checkedLabel)checkedLabel.textContent=(compactTimes?'Checked ':'Last checked: ')+readableWhen(localStorage.getItem(checkKey));
   if(exchangedLabel)exchangedLabel.textContent=(compactTimes?'Synced ':'Last synced: ')+readableWhen(localStorage.getItem(exchangeKey));
-  syncButton.disabled=!connected&&!on;
-  syncButton.title=!connected?'Connect cloud storage first':paused?'Review the paused synchronization before restarting':retrying?'Temporary OneDrive error; retrying automatically':on?'Turn synchronization off':'Turn synchronization on';
+  syncButton.disabled=false;
+  syncButton.title=!connected?'Connect OneDrive to enable synchronization':paused?'Attempt verified recovery':retrying?'Fieldbook is retrying automatically':on?'Synchronization is on':'Verify and turn on synchronization';
  }
  cloudButton.addEventListener('click',()=>{
   if(!localStorage.getItem(CLOUD_KEY)){
@@ -5724,14 +5725,19 @@ finishRedirect();
    status();
   }
  });
+ // The header is a one-click action control; status details are separate.
  syncButton.addEventListener('click',()=>{
+  const paused=!!localStorage.getItem('fieldbook_live_auto_device_paused_reason_v1');
   const on=localStorage.getItem(SYNC_KEY)==='yes';
-  if(on){document.getElementById('autoDeviceSyncDisable')?.click();status();return;}
-  // Preserve existing baseline/checkpoint and conflict safety guards.
-  // Directly enabling without verified setup is intentionally not allowed.
-  openSync();
-  const consent=document.getElementById('autoDeviceSyncConsent');
-  if(consent&&!consent.checked)consent.focus();
+  const retrying=on&&!!localStorage.getItem('fieldbook_live_auto_device_transient_retry_v1');
+  if(paused){document.getElementById('syncSafetyRecoveryButton')?.click();return;}
+  if(on||retrying)return; // ON never turns sync OFF accidentally.
+  if(!localStorage.getItem(CLOUD_KEY)){
+   document.getElementById('syncStartStatus').hidden=false;
+   document.getElementById('syncStartStatus').textContent='Connect OneDrive using Cloud disconnected, then tap Sync OFF again.';
+   return;
+  }
+  document.getElementById('syncStartButton')?.click();
  });
  if(cloudState)new MutationObserver(status).observe(cloudState,{childList:true,subtree:true,characterData:true});
  if(syncState)new MutationObserver(status).observe(syncState,{childList:true,subtree:true,characterData:true});
@@ -5902,6 +5908,28 @@ document.addEventListener('DOMContentLoaded',()=>{
  const recoveryStatus=document.getElementById('syncSafetyRecoveryStatus');
  const startControls=document.getElementById('syncStartControls');
  const startButton=document.getElementById('syncStartButton');
+ // Show the existing diagnostics exactly once near the top, not buried in advanced tools.
+ const diag=document.getElementById('syncDiagnosticsFold');
+ const slotDiag=document.getElementById('syncQuickDiagnosticSlot');
+ if(diag&&slotDiag){diag.open=false;slotDiag.appendChild(diag);}
+ const activityFold=document.getElementById('syncQuickActivityFold');
+ const activityText=document.getElementById('syncQuickActivityText');
+ activityFold?.addEventListener('toggle',()=>{
+  if(activityFold.open&&activityText){
+   const lines=(document.getElementById('syncDiagnosticsHistory')?.textContent||'').split('\n').filter(Boolean).slice(0,6);
+   activityText.textContent=lines.length?lines.join('\n'):'No synchronization events recorded yet.';
+   activityText.style.whiteSpace='pre-wrap';
+  }
+ });
+ const baselineFold=document.getElementById('syncQuickBaselineFold');
+ baselineFold?.addEventListener('toggle',()=>{
+  if(!baselineFold.open)return;
+  const info=document.getElementById('deviceCheckpointInfo')?.textContent?.trim()||'No local device checkpoint available.';
+  const other=document.getElementById('baselineChangesStatus')?.textContent?.trim()||'';
+  const target=document.getElementById('syncQuickBaselineText');
+  if(target)target.textContent=info+(other?'\n'+other:'');
+  if(target)target.style.whiteSpace='pre-wrap';
+ });
  // Keep one real resolution form, rather than duplicating controls or listeners.
  if(conflict)slot.append(conflict);
  let previousAttention=!!localStorage.getItem(pauseKey);
@@ -5924,8 +5952,8 @@ document.addEventListener('DOMContentLoaded',()=>{
    fold.dataset.state='attention';
    title.textContent=isConflict(reason)?'Sync needs attention — '+((reason.match(/(\d+) conflict\(s\)/i)||[])[1]||'1')+' conflict'+(((reason.match(/(\d+) conflict\(s\)/i)||[])[1]||'1')==='1'?'':'s'):'Sync needs attention';
    icon.textContent='⚠';
-   message.textContent=isConflict(reason)?'Conflicting edits were detected. Both versions are protected. Review and resolve the conflict below to resume synchronization safely.':isPackageRace(reason)?'OneDrive packages changed during an earlier check. No merge was applied. Verify the cloud state to resume safely.':'Sync is paused to protect your records. Verify and resume sync will check whether safe recovery is possible.';
-   technical.textContent=isConflict(reason)?'Synchronization stopped to protect competing edits. Review the complete versions below.':isPackageRace(reason)?'Select Verify and resume sync. Fieldbook will verify incoming changes, save a recovery backup, and safely apply any conflict-free updates before resuming.':'The recovery button will verify recoverable pauses or explain the required next action. It never overrides competing edits.';
+   message.textContent=isConflict(reason)?'Conflicting edits were detected. Both versions are protected. Review and resolve the conflict below to resume synchronization safely.':isPackageRace(reason)?'OneDrive packages changed during an earlier check. No merge was applied. Verify the cloud state to resume safely.':'Sync is paused to protect your records. Tap Sync PAUSED in the header for safe recovery.';
+   technical.textContent=isConflict(reason)?'Synchronization stopped to protect competing edits. Review the complete versions below.':isPackageRace(reason)?'Tap Sync PAUSED in the header to verify incoming changes, preserve a recovery backup, and resume if safe.':'Tap Sync PAUSED in the header to attempt verified recovery. Competing edits always require review and approval.';
   }else if(retrying){
    if(recoveryControls)recoveryControls.hidden=true;
    fold.dataset.state='retrying';title.textContent='Sync retrying';icon.textContent='↻';
@@ -5934,8 +5962,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   }else{
    if(recoveryControls)recoveryControls.hidden=true;
    if(recoveryStatus)recoveryStatus.hidden=true;
-   fold.dataset.state='normal';title.textContent='Review sync status';icon.textContent=on?'✓':'↻';
-   message.textContent=on?'Synchronization is ON. Fieldbook is checking for changes.':'Synchronization is OFF. Use Turn on automatic sync to verify your existing cloud starting copy and activate this device.';
+   fold.dataset.state='normal';title.textContent=on?'Review sync status':'Sync off';icon.textContent=on?'✓':'↻';
+   message.textContent=on?'Synchronization is ON. Fieldbook is checking for changes.':'Synchronization is OFF. Tap Sync OFF in the header to verify and activate synchronization.';
    technical.textContent=autoStatus?.textContent||'';
   }
   // Background checks must never open or keep an incidental status panel open.
@@ -5954,12 +5982,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  });
  // Reuse the header status control as a shortcut to the same panel on any state.
  // Earlier PAUSED handler already points here; capture other states before generic navigation.
- document.getElementById('headerSyncStatus')?.addEventListener('click',event=>{
-  if(!localStorage.getItem(pauseKey)){
-   event.preventDefault();event.stopImmediatePropagation();manuallyOpened=true;fold.open=true;
-   fold.scrollIntoView({block:'nearest',behavior:'smooth'});
-  }
- },true);
+ // The header button acts on sync state. This panel opens only via its own summary.
  window.addEventListener('fieldbook-live-sync-status',render);
  window.addEventListener('storage',e=>{if([pauseKey,enabledKey,retryKey].includes(e.key))render()});
  if(autoStatus)new MutationObserver(render).observe(autoStatus,{childList:true,subtree:true,characterData:true});
