@@ -241,6 +241,25 @@
 
 /* Clearly indicate that publishing requires review. */
 #syncConflictPanel button:disabled, #syncConflictPanel button[aria-disabled="true"], .conflict-record~.buttons button:disabled {opacity:.45!important;cursor:not-allowed!important;filter:grayscale(.35)}
+
+/* v7.19.37: compact second-device review, controls sized independently of global inputs */
+.join-review{margin:10px 0;padding:12px;border:1px solid #d6c5e3;border-radius:12px;background:#fff}
+.join-review h3{font-size:16px;line-height:1.3;margin:0 0 4px;color:#39204f}
+.join-review .join-intro{margin:0 0 11px;font-size:13px;line-height:1.4;color:#614b74}
+.join-review .join-field{margin:10px 0;border:1px solid #d9cee2;border-radius:10px;padding:10px;background:#fff;min-width:0}
+.join-review .join-field-title{margin:0 0 8px;font-weight:700;font-size:14px;line-height:1.3;color:#39204f}
+.join-review .join-option{display:flex;align-items:flex-start;gap:10px;margin:6px 0;padding:9px 10px;border:1px solid #ddd4e5;border-radius:9px;cursor:pointer;font-size:13px;font-weight:400;line-height:1.35;background:#fff;min-width:0}
+.join-review .join-option:has(input:checked){border-color:#714396;background:#f7f0fc;box-shadow:inset 0 0 0 1px #714396}
+.join-review input.join-radio[type=radio]{appearance:auto!important;-webkit-appearance:radio!important;display:block!important;flex:0 0 17px!important;width:17px!important;max-width:17px!important;height:17px!important;min-height:17px!important;margin:1px 0 0!important;padding:0!important;accent-color:#633487;border:0!important;border-radius:50%!important}
+.join-review .join-option-text{display:block;flex:1;min-width:0}
+.join-review .join-option-title{display:block;font-weight:700;margin-bottom:3px}
+.join-review .join-option-value{white-space:pre-wrap;overflow-wrap:anywhere;display:block;color:#594866;font-size:12px;line-height:1.38;max-height:105px;overflow:auto}
+.join-review .join-reassurance{margin:10px 0;font-size:12px;line-height:1.5;color:#665378}
+.join-review #syncJoinMerge{width:100%;min-height:41px;font-size:14px;padding:9px 12px;white-space:normal}
+.join-review #syncJoinMerge:disabled{opacity:.5;cursor:not-allowed}
+.join-review .join-technical{margin:10px 0 0;background:#fcf9ff}
+.join-review .join-technical > summary{padding:9px 11px;font-size:12px;font-weight:600}
+.join-review .join-technical .data-subbody{padding:10px}
 </style><link rel="manifest" href="manifest-live-purple-v71930.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="icon" type="image/svg+xml" href="icon-live-purple-v71930.svg"><style>
 /* v7 read-only relationship verification */
 .relationship-results{display:grid;gap:8px;margin-top:9px}
@@ -577,7 +596,7 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 .sync-quick-fold:not([data-state="paused"]):not([data-state="retrying"])>summary{color:#56367b!important}
 .sync-quick-fold:not([data-state="paused"]):not([data-state="retrying"]) .sync-quick-icon{color:#69418e!important}
 .sync-quick-diagnostics{display:grid;gap:9px;margin-top:14px}.sync-quick-diagnostics .data-subfold{margin:0!important;border:1px solid #dac9e9;border-radius:10px;background:#fcf9ff}.sync-quick-diagnostics .data-subfold>summary{padding:10px 12px;color:#57317d;font-weight:700;cursor:pointer}.sync-quick-diagnostics .data-subbody{padding:9px 12px;max-height:40vh;overflow:auto}
-</style><link rel="apple-touch-icon" href="icon-live-purple-v71930-192.png"><!-- LIVE v7.19.36 consolidated onboarding: opt-in wizard, reviewed second-device merge, verified recovery and history preservation. --></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.19.36 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+</style><link rel="apple-touch-icon" href="icon-live-purple-v71930-192.png"><!-- LIVE v7.19.37 compact guided second-device review; verified recovery and history preservation unchanged. --></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.19.37 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook" hidden>
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">A few simple steps to get your family cemetery records ready. Cloud storage and syncing are optional.</p>
@@ -604,21 +623,18 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
   <div id="syncQuickStatus" class="sync-quick-technical"></div>
   <div class="buttons" id="syncStartControls" hidden style="display:none!important;margin:12px 0"><button type="button" id="syncStartButton">Turn on automatic sync</button></div>
   <p id="syncStartStatus" class="hint" role="status" aria-live="polite" hidden></p>
-  <div id="syncJoinReview" hidden style="margin:10px 0;padding:12px;border:1px solid #c9b2df;border-radius:12px">
-   <strong>Second-device data review</strong>
-   <p id="syncJoinDiffSummary" class="hint" role="status"></p>
-   <details id="syncJoinDiffDetails" class="data-subfold"><summary>Review differences before joining</summary><div id="syncJoinDiffList" class="data-subbody"></div></details>
-   <p class="hint">Only if you approve: a complete, verified recovery copy of this device will be saved in OneDrive before the local data is replaced by the verified LIVE cloud starting copy. No existing OneDrive copy will be overwritten.</p>
+  <div id="syncJoinReview" hidden class="join-review">
    <div id="syncJoinChoices" class="guided-sync-choices" hidden>
-    <p><strong>Keep your information from both devices</strong></p>
-    <p class="hint">Unique activity history will be preserved. For each field that differs, choose which value to retain. Neither device will be changed until you approve and a verified recovery copy is saved.</p>
+    <h3 id="syncJoinTitle">Resolve your device differences</h3>
+    <p class="join-intro">Choose which version to keep for each changed field.</p>
     <div id="syncJoinChoiceRows"></div>
-    <p id="syncJoinChoiceMessage" class="hint" role="status" aria-live="polite"></p>
-    <button type="button" id="syncJoinMerge" disabled>Save recovery copy and join with my choices</button>
+    <p id="syncJoinChoiceMessage" class="join-reassurance" role="status" aria-live="polite"></p>
+    <button type="button" id="syncJoinMerge" disabled>Save choices &amp; start sync</button>
    </div>
-   <details class="data-subfold" id="syncJoinCloudFallback"><summary>Other recovery option: use the verified cloud copy</summary>
-    <div class="data-subbody"><p class="hint">Use this only if you prefer the cloud version of every record. A verified backup of this device will be retained in OneDrive. Its unique entries will not appear in the active data unless imported later.</p>
-     <button type="button" id="syncJoinApprove" class="secondary">Back up this device and use verified cloud copy</button></div>
+   <details id="syncJoinDiffDetails" class="data-subfold join-technical"><summary>View comparison details</summary><div class="data-subbody"><p id="syncJoinDiffSummary" class="hint" role="status"></p><div id="syncJoinDiffList"></div></div></details>
+   <details class="data-subfold join-technical" id="syncJoinCloudFallback"><summary>Other recovery options</summary>
+    <div class="data-subbody"><p class="hint">Use the verified cloud copy for every record. A verified backup of this device will be saved. Unique local history may not appear in your active data with this option.</p>
+     <button type="button" id="syncJoinApprove" class="secondary">Back up device &amp; use cloud copy</button></div>
    </details>
   </div>
   <div class="buttons" id="syncSafetyRecoveryControls" hidden style="display:none!important;margin:12px 0">
@@ -5031,29 +5047,38 @@ function secondDeviceJoinPlan(base,local,choices){
 function drawJoinFieldChoices(base,local){
  joinFieldChoices.clear();joinFieldDetails=[];syncJoinChoiceRows.replaceChildren();
  const original=sync3RecordMap(base),device=sync3RecordMap(local);
+ const localOnly=local.changeLog.filter(x=>!base.changeLog.some(y=>y.id===x.id)).length;
+ const setJoinChoiceStatus=()=>{
+  const remaining=joinFieldDetails.length-joinFieldChoices.size;
+  syncJoinMerge.disabled=remaining!==0;
+  const backupMessage='A verified recovery backup will be saved automatically.';
+  syncJoinChoiceMessage.textContent=(localOnly?localOnly+' unique activity event(s) will be kept. ':'')+backupMessage+(remaining?' Choose '+remaining+' more '+(remaining===1?'field':'fields')+' to continue.':' Ready to save your choices.');
+ };
  for(const [id,row] of device){
   const cloud=original.get(id);if(!cloud)continue;
   for(const field of [...new Set([...Object.keys(row),...Object.keys(cloud)])].filter(f=>f!=='id').sort()){
    if(canonicalValue(row[field])===canonicalValue(cloud[field]))continue;
    const key=JSON.stringify([id,field]);joinFieldDetails.push({key,id,field});
-   const section=document.createElement('fieldset');section.style.cssText='margin:12px 0;padding:12px;border:1px solid #cfb9e0;border-radius:9px;min-width:0';
-   const heading=document.createElement('legend');heading.style.fontWeight='700';heading.textContent=(row.name||cloud.name||id)+' — '+field;section.append(heading);
-   const pair=document.createElement('div');pair.style.cssText='display:flex;gap:9px;flex-wrap:wrap';
-   syncJoinValueBlock(pair,'On this device',row[field],Object.hasOwn(row,field));
-   syncJoinValueBlock(pair,'Verified cloud',cloud[field],Object.hasOwn(cloud,field));section.append(pair);
-   for(const [value,label] of [['device','Keep this device’s value'],['cloud','Keep verified cloud value']]){
-    const item=document.createElement('label');item.style.cssText='display:flex;align-items:center;gap:7px;margin:9px 0';
-    const radio=document.createElement('input');radio.type='radio';radio.name='join_'+joinFieldDetails.length;radio.value=value;
-    radio.addEventListener('change',()=>{joinFieldChoices.set(key,value);syncJoinMerge.disabled=joinFieldChoices.size!==joinFieldDetails.length;syncJoinChoiceMessage.textContent=joinFieldChoices.size+' of '+joinFieldDetails.length+' field choices completed.'});
-    item.append(radio,document.createTextNode(label));section.append(item);
+   const section=document.createElement('section');section.className='join-field';
+   const heading=document.createElement('h4');heading.className='join-field-title';heading.textContent=(row.name||cloud.name||id)+' — '+(field==='notes'?'Burial Notes':field);section.append(heading);
+   for(const [value,title,fieldValue,present] of [
+    ['device','This device (Android)',row[field],Object.hasOwn(row,field)],
+    ['cloud','Verified cloud copy',cloud[field],Object.hasOwn(cloud,field)]]){
+    const item=document.createElement('label');item.className='join-option';
+    const radio=document.createElement('input');radio.type='radio';radio.className='join-radio';radio.name='join_'+joinFieldDetails.length;radio.value=value;
+    radio.setAttribute('aria-label',title+' for '+(row.name||cloud.name||id)+' '+field);
+    radio.addEventListener('change',()=>{joinFieldChoices.set(key,value);setJoinChoiceStatus()});
+    const content=document.createElement('span');content.className='join-option-text';
+    const label=document.createElement('span');label.className='join-option-title';label.textContent=title;
+    const preview=document.createElement('span');preview.className='join-option-value';preview.textContent=syncJoinValueText(fieldValue,present);
+    content.append(label,preview);item.append(radio,content);section.append(item);
    }
    syncJoinChoiceRows.append(section);
   }
  }
- syncJoinMerge.disabled=joinFieldDetails.length>0;
  syncJoinChoices.hidden=false;
- const localOnly=local.changeLog.filter(x=>!base.changeLog.some(y=>y.id===x.id)).length;
- syncJoinChoiceMessage.textContent=joinFieldDetails.length+' field(s) need a choice. '+localOnly+' unique local history event(s) will be preserved automatically. No changes until approval.';
+ el('syncJoinTitle').textContent='Resolve '+joinFieldDetails.length+' '+(joinFieldDetails.length===1?'difference':'differences');
+ setJoinChoiceStatus();
 }
 function renderSecondDeviceExactDifferences(base,local,container){
  const baseRows=indexById([...(base.seed||[]),...(base.extras||[])]).result;
@@ -5118,7 +5143,7 @@ function showSecondDeviceReview(base,local,marker){
  renderSecondDeviceExactDifferences(base,local,syncJoinDiffList);
  drawJoinFieldChoices(base,local);
  const count=local.seed.length+local.extras.length,remoteCount=base.seed.length+base.extras.length;
- syncJoinDiffSummary.textContent='This device has '+count.toLocaleString()+' burials; the verified cloud copy has '+remoteCount.toLocaleString()+'. The full data does not match. You can review the differences and explicitly choose the cloud copy, or leave synchronization OFF and keep this device unchanged.';
+ syncJoinDiffSummary.textContent='This device: '+count.toLocaleString()+' burials. Cloud: '+remoteCount.toLocaleString()+' burials. Technical differences are listed below; no data changes until approved.';
  pendingSyncJoin={markerId:marker.markerId,baselineHash:marker.hash,localHash:null};
  syncJoinReview.hidden=false;
  return diff;
@@ -5137,7 +5162,6 @@ syncJoinMerge.addEventListener('click',async()=>{
    throw Error('Records changed since your review. Tap Sync OFF again to review the current values.');
   if(joinFieldChoices.size!==joinFieldDetails.length)throw Error('Review each changed field first.');
   const plan=secondDeviceJoinPlan(base,local,joinFieldChoices);
-  if(!confirm('Keep your selected values and '+plan.counts.extraHistory+' unique history event(s)? Fieldbook will verify a full recovery backup before changing this device. Continue?'))return;
   syncStartSay('Saving and verifying a complete recovery backup of this device…');
   recovery=await autoDeviceRecovery(local);
   if(await syncContentHash(await makePayload())!==pendingSyncJoin.localHash)throw Error('Local records changed after recovery backup. No changes applied.');
