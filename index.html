@@ -597,7 +597,7 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 .sync-quick-fold:not([data-state="paused"]):not([data-state="retrying"]) .sync-quick-icon{color:#69418e!important}
 .sync-quick-diagnostics{display:grid;gap:9px;margin-top:14px}.sync-quick-diagnostics .data-subfold{margin:0!important;border:1px solid #dac9e9;border-radius:10px;background:#fcf9ff}.sync-quick-diagnostics .data-subfold>summary{padding:10px 12px;color:#57317d;font-weight:700;cursor:pointer}.sync-quick-diagnostics .data-subbody{padding:9px 12px;max-height:40vh;overflow:auto}
 
-/* v7.19.42: Make live synchronization messages distinct from explanatory text. */
+/* v7.19.43: Make live synchronization messages distinct from explanatory text. */
 .sync-activity-box{margin:12px 0 16px;padding:13px 15px;border:1px solid #bda1df;border-left:5px solid #7544a3;border-radius:12px;background:#f2e9fa;box-shadow:0 1px 3px rgba(68,32,108,.07)}
 .sync-activity-label{display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.065em;font-weight:800;color:#543078;margin-bottom:7px}
 .sync-activity-dot{width:10px;height:10px;border-radius:100%;background:#7544a3;flex-shrink:0}
@@ -607,7 +607,7 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 .sync-quick-fold[data-state="attention"] .sync-activity-dot{background:#aa6f1e}
 .sync-quick-fold[data-state="retrying"] .sync-activity-box{border-color:#c8b5e3;border-left-color:#7550ab;background:#f5f0fc}
 @media(max-width:680px){.sync-activity-box{padding:12px;margin:12px 0 15px}}
-</style><link rel="apple-touch-icon" href="icon-live-purple-v71930-192.png"><!-- LIVE v7.19.42 compact guided second-device review; verified recovery and history preservation unchanged. --></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.19.42 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+</style><link rel="apple-touch-icon" href="icon-live-purple-v71930-192.png"><!-- LIVE v7.19.43 compact guided second-device review; verified recovery and history preservation unchanged. --></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.19.42 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook" hidden>
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">A few simple steps to get your family cemetery records ready. Cloud storage and syncing are optional.</p>
@@ -688,7 +688,7 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 <p id="autoDeviceSyncStatus" class="hint" role="status" aria-live="polite">Automatic sync OFF on this browser. No changes made.</p>
 <section id="syncConflictPanel" hidden aria-label="Resolve synchronization conflicts">
 <h3 style="margin:0 0 6px">Resolve synchronization conflicts</h3>
-<p class="hint conflict-brief-instructions">If another device already resolved and synced the changes, select Find approved resolution. Otherwise choose Review conflicts. Nothing is overwritten without verification.</p>
+<p class="hint conflict-brief-instructions">Fieldbook checks automatically for safe changes from other devices. Use these options only if a conflict still needs attention.</p>
 <div class="buttons"><button id="syncConflictFind" type="button">Find approved resolution</button><button id="syncConflictReview" class="secondary" type="button">Review unresolved conflicts</button></div>
 <p id="syncConflictStatus" class="hint" role="status">Synchronization is paused. No records changed.</p>
 <div id="syncConflictItems"></div>
@@ -879,7 +879,7 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7.19.42 LIVE · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.19.43 LIVE · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog" novalidate><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div><div class="filters"><div class="wide"><label>Name</label><input name="name" required></div><div><label>Years</label><input name="dates" placeholder="1800–1880"></div><div><label>Relationship</label><input name="relation"></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div><div class="wide"><label>Cemetery</label><input name="cemetery" required></div><div class="burial-fields-row"><div><label>Burial date</label><input name="burialDate" placeholder="Enter burial date"></div><div><label>Plot</label><input name="plot"></div><div><label>Side (M/P)</label><input name="side" maxlength="1" placeholder="M/P"></div></div><div class="wide"><label>Family line / MRCA</label><input name="line"></div><div class="wide"><label>Find a Grave URL</label><input name="findagrave" type="url"></div><div class="wide"><label>Burial Notes</label><textarea name="notes" placeholder="FTM burial notes, stone transcription, directions, discoveries…"></textarea></div></div><div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="stone"> Stone found</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div><h2>Field photographs</h2><input id="photoFile" type="file" accept="image/*" capture="environment" multiple><p class="hint">Use your phone camera or select saved pictures. Photos are compressed for offline storage.</p><div id="photos" class="photos"></div><div class="buttons" style="margin-top:15px"><button type="submit">Save entry</button><button type="button" id="cancel" class="secondary">Cancel</button><button type="button" id="delete" class="danger" hidden>Delete discovery</button></div><p id="editNote" class="tiny"></p></div></form></dialog>
 <script id="seed" type="application/json">[]</script><script>
 'use strict';
@@ -4847,18 +4847,18 @@ async function syncSafetyRecoveryAudit(){
  await verifyInventory();
  return {base,marker,local,localHash,proposed,resultHash,received,already,checked,verifyInventory,pending,pendingPackage};
 }
-if(syncSafetyRecoveryButton)syncSafetyRecoveryButton.onclick=async()=>{
+async function runVerifiedPauseRecovery(automatic=false){
  if(syncSafetyRecoveryRunning){syncSafetyRecoveryMessage('Verification is already running. Please do not tap again.');return;}
  if(busy){syncSafetyRecoveryMessage('Another operation is in progress. Try again when it finishes.');return;}
  const originalPause=localStorage.getItem(AUTO_PAUSED_KEY)||'';
  if(autoDeviceOn()){syncSafetyRecoveryMessage('Synchronization is already ON. No changes were made.');return;}
  if(!originalPause){syncSafetyRecoveryMessage('There is no saved safety pause to recover. No changes were made.');return;}
- if(/conflict\(s\)|Manual review needed/i.test(originalPause)){
+ if(!automatic&&/conflict\(s\)|Manual review needed/i.test(originalPause)){
   syncSafetyRecoveryMessage('The pause involves competing edits. Select Review conflicts, then approve the correct resolution. No records were changed.');return;
  }
  // Every pause gets an explanation. Only known recoverable conditions can resume
  // after the existing full verification audit, which never bypasses conflicts.
- if(!packageRacePause(originalPause)&&!/Could not open the OneDrive application folder|OneDrive sign-in is required|read verified baseline/i.test(originalPause)){
+ if(!automatic&&!packageRacePause(originalPause)&&!/Could not open the OneDrive application folder|OneDrive sign-in is required|read verified baseline/i.test(originalPause)){
   syncSafetyRecoveryMessage('This pause requires review before automatic recovery: '+originalPause+' No records were changed.');return;
  }
  syncSafetyRecoveryRunning=true;syncSafetyRecoveryButton.disabled=true;syncSafetyRecoveryButton.textContent='Verifying…';setBusy(true);
@@ -4898,6 +4898,7 @@ if(syncSafetyRecoveryButton)syncSafetyRecoveryButton.onclick=async()=>{
   autoDeviceMarkChecked(audit.received>0);
   autoDeviceState('Automatic sync ON · '+audit.received+' incoming change(s) safely recovered · '+audit.already+' already present.'+(audit.pending?' Local changes saved and awaiting verified publication.':'')+(recovery?' Verified recovery: '+recovery+'.':'') );
   window.dispatchEvent(new Event('fieldbook-live-sync-status'));
+  if(automatic)autoDiagRecord('Automatic recovery completed','Verified cloud state, safe incoming packages, recovery backup if needed and preserved pending local edits.');
   syncSafetyRecoveryMessage('Recovery verified. '+audit.received+' incoming change(s) safely applied.'+(audit.pending?' Unpublished local changes preserved; publication will be verified on the next sync check.':'')+' Sync is ON.');
   autoDeviceSchedule();
   // Run a new verified check after this handler releases its busy guard.
@@ -4905,11 +4906,13 @@ if(syncSafetyRecoveryButton)syncSafetyRecoveryButton.onclick=async()=>{
  }catch(e){
   const reason=String(e?.message||e);
   autoDiagRecord('Safety recovery blocked',reason);
+  if(automatic&&recovery)autoPausedRecoveryHardFailure=true;
   syncSafetyRecoveryMessage('Sync remains PAUSED. '+reason);
  }finally{
   setBusy(false);syncSafetyRecoveryRunning=false;syncSafetyRecoveryButton.disabled=false;syncSafetyRecoveryButton.textContent='Verify and resume sync';
  }
-};
+}
+if(syncSafetyRecoveryButton)syncSafetyRecoveryButton.onclick=()=>runVerifiedPauseRecovery(false);
 // v7.19.31 — Explicit OFF-state entry point. Starting sync is not safety-pause recovery.
 // A checkpoint is registered only when this device exactly matches the verified
 // shared baseline. Divergent data is never overwritten, implicitly adopted, or
@@ -5394,7 +5397,7 @@ function currentConflictValue(id,field){const row=all().find(x=>x.id===id);retur
 function conflictResolveVisible(){
  const paused=!!localStorage.getItem(AUTO_PAUSED_KEY);
  conflictPanel.hidden=!paused;
- if(paused&&!conflictDraft&&!conflictItems.childElementCount)conflictStatus.textContent='Sync is paused. If Android already approved and published the change, select Find approved resolution. Otherwise review unresolved conflicts. Do not enable sync manually.';
+ if(paused&&!conflictDraft&&!conflictItems.childElementCount)conflictStatus.textContent='Sync is paused. Fieldbook will automatically check for an approved resolution or conflict-free cloud changes. Review only if attention is still needed.';
 }
 window.addEventListener('fieldbook-live-sync-status',conflictResolveVisible);
 function conflictNoteAppend(base,a,b){
@@ -5788,6 +5791,35 @@ setInterval(()=>{if(localStorage.getItem(AUTO_PAUSED_KEY))autoApplySharedResolut
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')scheduleApprovedResolutionCheck()});
 window.addEventListener('online',scheduleApprovedResolutionCheck);
 window.addEventListener('pageshow',scheduleApprovedResolutionCheck);
+// v7.19.43: A PAUSED browser must independently discover a now-safe cloud state.
+// The existing approved-resolution check runs first. When a second device joined
+ // through the guided comparison (which does not emit a conflict-resolution file),
+ // reuse the rigorous safety audit instead of leaving the first device paused.
+ // Never infer consent for conflicting fields; the audit rejects every conflict,
+ // missing record, unverified baseline, or unstable cloud inventory.
+let autoPausedRecoveryHardFailure=false,autoPausedRecoveryLastTry=0;
+async function autoRecoverSafelyPausedBrowser(){
+ if(autoPausedRecoveryHardFailure||syncSafetyRecoveryRunning||conflictAutoApplying||
+    conflictAutoTriedFailure||busy||autoDeviceRunning||autoDeviceOn()||
+    !localStorage.getItem(AUTO_PAUSED_KEY)||document.visibilityState!=='visible'||
+    !navigator.onLine||!localStorage.getItem('fieldbook_cloud_live_refresh_token_v2'))return;
+ if(Date.now()-autoPausedRecoveryLastTry<55000)return;
+ autoPausedRecoveryLastTry=Date.now();
+ await runVerifiedPauseRecovery(true);
+}
+function schedulePausedVerification(){
+ if(!localStorage.getItem(AUTO_PAUSED_KEY))return;
+ // Give the specific approved-resolution handler first opportunity.
+ setTimeout(()=>{autoRecoverSafelyPausedBrowser()},6500);
+}
+setTimeout(schedulePausedVerification,5000);
+setInterval(()=>{if(localStorage.getItem(AUTO_PAUSED_KEY))autoRecoverSafelyPausedBrowser()},60000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')schedulePausedVerification()});
+window.addEventListener('online',schedulePausedVerification);
+window.addEventListener('pageshow',schedulePausedVerification);
+window.addEventListener('fieldbook-live-sync-status',()=>{
+ if(localStorage.getItem(AUTO_PAUSED_KEY))schedulePausedVerification();
+});
 // Supersede ONLY the exact obsolete field versions covered by a locally approved
 // resolution. Other package fields and genuine conflicts remain fully checked.
 const originalCompareRemotePackage=compareRemotePackage;
