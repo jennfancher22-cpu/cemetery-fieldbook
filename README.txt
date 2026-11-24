@@ -25,3 +25,5 @@ WARNINGS
 GitHub Pages serves public app code; personal data belongs in local device storage and private backups.
 There is no automatic synchronization between devices. Restoring a backup replaces local data on the target device.
 Do not uninstall the Android app or clear browser storage during update testing.
+
+Temp change to force a build
