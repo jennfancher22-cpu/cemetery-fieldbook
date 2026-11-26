@@ -1,29 +1,23 @@
-Cemetery Fieldbook v6.1 — public application files
+Cemetery Fieldbook v7.23.0 LIVE — Interface Cleanup
 
-Upload these five files to the ROOT of the cemetery-fieldbook GitHub Pages repository:
-index.html
-service-worker.js
-manifest.webmanifest
-icon.svg
-README.txt
+Deployment: unzip and replace index.html in the existing LIVE GitHub repository.
+This package does not include user data or OneDrive data.
 
-Do not upload GEDCOMs, private burial JSON files, full backups, or photographs.
+Changes:
+- More compact cemetery distance search controls, no default active search action
+- Local-only welcome flow clarified; Get Started can be collapsed without finishing
+- Sync status manually opened stays open; opening panel shows latest state
+- Cloud privacy notice hidden until storage connected
+- Cemetery Change Log reorganized into two collapsible report sections; person review with before/after and Entered in Tree checkboxes; PDF and XLSX retained
+- Backups separated from Data Tools with Local Backups, Cloud Backups, Data Integrity Audit, Update from GEDCOM and Start Over
+- Legacy technical sync panels hidden from everyday interface; automatic sync engine and safeguards retained
+- Full GEDCOM dates remain in editor; result titles show years; temporary refresh-date button hidden
+- Editor help icons smaller
 
-WHAT CHANGED
-- Data Loading and Protection collapses and expands.
-- New version 4 full backups include the complete original burial list, edits, added discoveries, photos, coordinates, and change history.
-- Existing backups (versions 1–3) remain importable but do not include the original burial list.
-- Local storage keys are unchanged from the live Fieldbook v6.
+Validation performed:
+- All 14 executable JavaScript blocks pass Node syntax parsing
+- HTML has no duplicate element IDs
+- ZIP CRC integrity verified
+- Browser-level interaction and actual OneDrive round trip NOT verified in this environment
 
-FIRST TEST AFTER DEPLOYMENT
-1. Confirm your original relatives are present without importing anything.
-2. Verify the collapsible Data Loading and Protection section.
-3. Export a full backup; retain older backups.
-4. To verify a clean restore, use a separate private/incognito window and restore that new backup.
-
-WARNINGS
-GitHub Pages serves public app code; personal data belongs in local device storage and private backups.
-There is no automatic synchronization between devices. Restoring a backup replaces local data on the target device.
-Do not uninstall the Android app or clear browser storage during update testing.
-
-Temp change to force a build
+IMPORTANT: Do not reset or reimport GEDCOM to deploy the update. Preserve your current synced data; inspect the new UI and tests first.
