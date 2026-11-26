@@ -708,7 +708,18 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 .gedcom-update-review .person-review-heading{font-weight:650}
 #v723BackupsPanel #cloudConnect,#v723BackupsPanel #cloudDisconnect{display:none!important}
 </style>
-</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.23.2 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+<style id="v7233Corrections">
+/* Mobile editor: aligned labels and three compact fieldwork controls. */
+#editor .relationship-fields .side-field .field-label-line,
+#editor .relationship-fields .line-field .field-label-line{min-height:24px;align-items:center;white-space:nowrap}
+#editor .relationship-fields .side-field input,
+#editor .relationship-fields .line-field input{width:100%;box-sizing:border-box}
+#editor .checkrow{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+#editor .checkrow label{min-width:0;padding:8px 4px;font-size:clamp(10px,2.7vw,12px);gap:4px}
+#editor .checkrow input{flex:0 0 auto;width:17px;height:17px;min-height:17px}
+@media(max-width:480px){#editor .checkrow{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.23.3 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook" hidden>
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">Import your family tree or join an existing Fieldbook. Complete the steps below.</p>
@@ -985,14 +996,14 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7.23.2 LIVE · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.23.3 LIVE · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog" novalidate><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div>
 <div class="edit-section-title">Person &amp; burial</div><div class="filters edit-fields">
 <div class="wide"><label for="fieldbookEditName">Name <span class="required-mark" aria-label="required">*</span></label><input id="fieldbookEditName" name="name" required><small class="field-inline-error" id="nameRequiredError" hidden>Name is required.</small></div>
 <div><span class="field-label-line"><label>Birth date</label><button type="button" class="field-help-toggle" aria-label="Help: Birth date" aria-expanded="false" title="Help">?</button></span><div class="field-help-text" hidden>Full birth date from the GEDCOM when available. Full dates are brought in during a new GEDCOM import.</div><input name="birthDate" placeholder="e.g. 10 Apr 1788"></div><div><span class="field-label-line"><label>Death date</label><button type="button" class="field-help-toggle" aria-label="Help: Death date" aria-expanded="false" title="Help">?</button></span><div class="field-help-text" hidden>Full death date from the GEDCOM when available. Full dates are brought in during a new GEDCOM import.</div><input name="deathDate" placeholder="e.g. 2 Jan 1856"></div>
 <div><span class="field-label-line"><label>Burial date</label><button type="button" class="field-help-toggle" aria-label="Help: Burial date" aria-expanded="false" title="Help">?</button></span><div class="field-help-text" hidden>The burial date is separate from the death date. Enter it only when known.</div><input name="burialDate" placeholder="Burial date"></div><div class="wide editor-date-refresh" hidden style="display:none!important"><button type="button" class="secondary" id="editRefreshDates">Refresh dates from GEDCOM</button><input type="file" id="editDateGedcomFile" accept=".ged,.gedcom,text/plain" hidden><span class="hint">Optional for existing imports that contain years only; updates this form, not the tree, until Save Entry.</span><p id="editDateRefreshStatus" role="status" class="hint" aria-live="polite"></p></div><div><label>State</label><input name="state"></div><div><label>County</label><input name="county"></div><div><label>Town</label><input name="town"></div>
 <div class="wide"><label for="fieldbookEditCemetery">Cemetery <span class="required-mark" aria-label="required">*</span></label><input id="fieldbookEditCemetery" name="cemetery" required><small class="field-inline-error" id="cemeteryRequiredError" hidden>Cemetery is required for a new discovery.</small></div></div>
-<div class="edit-section-title">Family relationship</div><div class="filters edit-fields relationship-fields"><div class="wide"><span class="field-label-line"><label>Relationship</label><button type="button" class="field-help-toggle" aria-label="Help: Relationship" aria-expanded="false" title="Help">?</button></span><div class="field-help-text" hidden>Relationship to the Home Person selected during setup. Derived relationship suggestions come from the imported family tree.</div><input name="relation"></div><div class="side-field"><span class="field-label-line"><label>Side (M/P)</label><button type="button" class="field-help-toggle" aria-label="Help: Side (M/P)" aria-expanded="false" title="Help">?</button></span><div class="field-help-text" hidden>M = maternal side; P = paternal side. A person may have more than one connection in your family tree.</div><input name="side" maxlength="1" placeholder="M/P"></div><div class="line-field"><span class="field-label-line"><label>Family line / MRCA</label><button type="button" class="field-help-toggle" aria-label="Help: Family line / MRCA" aria-expanded="false" title="Help">?</button></span><div class="field-help-text" hidden>MRCA means Most Recent Common Ancestor: the shared ancestor that connects this person to your Home Person. Long values stay on this row.</div><input name="line"></div></div>
+<div class="edit-section-title">Family relationship</div><div class="filters edit-fields relationship-fields"><div class="wide"><span class="field-label-line"><label>Relationship</label><button type="button" class="field-help-toggle" aria-label="Help: Relationship" aria-expanded="false" title="Help">?</button></span><div class="field-help-text" hidden>Relationship to the Home Person selected during setup. Derived relationship suggestions come from the imported family tree.</div><input name="relation"></div><div class="side-field"><span class="field-label-line"><label>Side</label><button type="button" class="field-help-toggle" aria-label="Help: Side (M/P)" aria-expanded="false" title="Help">?</button></span><div class="field-help-text" hidden>M = maternal side; P = paternal side. A person may have more than one connection in your family tree.</div><input name="side" maxlength="1" placeholder="M/P"></div><div class="line-field"><span class="field-label-line"><label>Family line / MRCA</label><button type="button" class="field-help-toggle" aria-label="Help: Family line / MRCA" aria-expanded="false" title="Help">?</button></span><div class="field-help-text" hidden>MRCA means Most Recent Common Ancestor: the shared ancestor that connects this person to your Home Person. Long values stay on this row.</div><input name="line"></div></div>
 <div class="edit-section-title">Cemetery fieldwork</div><div class="filters edit-fields"><div class="wide"><span class="field-label-line"><label>Plot</label><button type="button" class="field-help-toggle" aria-label="Help: Plot" aria-expanded="false" title="Help">?</button></span><div class="field-help-text" hidden>Grave or plot location: section, lot, row, and grave number, if known. A change will also add a dated fieldwork entry to Burial Notes.</div><input name="plot" placeholder="Section, lot, row or grave"></div></div>
 <div class="checkrow"><label><input type="checkbox" name="visited"> Visited</label><label><input type="checkbox" name="photo"> Photo done</label><label><input type="checkbox" name="gps"> GPS recorded</label></div>
 <div class="editor-help-row"><button type="button" class="field-help-toggle" aria-label="Help with fieldwork checkboxes" aria-expanded="false">?</button><span>What do these checkboxes mean?</span><div class="field-help-text" hidden><strong>Visited:</strong> you have visited this grave, not necessarily today. <strong>Photo done:</strong> you have photographed it, whether or not a photo is attached here. <strong>GPS recorded:</strong> you have documented grave-level coordinates; cemetery coordinates alone do not count. Saving changed statuses adds a timestamped entry to Burial Notes.</div></div>
@@ -2592,6 +2603,7 @@ async function compareCurrentGedcom(file){
   const summary=textNode('div','guided-status',newBurials.length+' new burial'+(newBurials.length===1?'':'s')+' · '+individualReview.size+' existing people with '+totalFields+' proposed fields · '+ambiguous.length+' conflicting burial people held for review');
   const safetyMessage=textNode('p','hint',idSafetyOK?'Person ID safety check passed: '+overlap+' matched IDs; '+mismatches+' name differences (review names before approval).':'MERGE DISABLED: GEDCOM ID safety check failed ('+overlap+' matching IDs; '+mismatches+' name differences). No merge can be applied.');
   mergeBody.replaceChildren(reviewStep,approvalStep);
+  if(!personCards.length){reviewStep.hidden=true;approvalStep.hidden=true;}
   if(!idSafetyOK||legacyUnlinked.length)mergeBody.insertBefore(safetyMessage,mergeBody.firstChild);
   mergeBox.replaceChildren(mergeBody);
   if(legacyUnlinked.length){
@@ -5966,7 +5978,7 @@ autoDeviceNow.onclick=()=>{
 };
 // Always retain the exact current status before navigation/reload. No silent auto-enable.
 window.addEventListener('pagehide',()=>{
- try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.23.0',event:'pagehide'}))}catch(_){}
+ try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.23.3',event:'pagehide'}))}catch(_){}
 });
 window.addEventListener('online',()=>{if(autoDeviceOn())autoDeviceCycle()});
 document.addEventListener('visibilitychange',()=>{if(autoDeviceOn()&&document.visibilityState==='visible'&&Date.now()-autoDeviceLastRun>8000)autoDeviceCycle()});
@@ -6932,7 +6944,7 @@ finishRedirect();
   if(checkedLabel)checkedLabel.textContent=(compactTimes?'Checked ':'Last checked: ')+readableWhen(localStorage.getItem(checkKey));
   if(exchangedLabel)exchangedLabel.textContent=(compactTimes?'Synced ':'Last synced: ')+readableWhen(localStorage.getItem(exchangeKey));
   syncButton.disabled=false;
-  syncButton.title=paused?'Review paused synchronization':retrying?'Fieldbook is retrying automatically':on?'Synchronization is on':'Open synchronization setup and review';
+  syncButton.title=paused?'Review paused synchronization':retrying?'Fieldbook is retrying automatically':on?'Turn synchronization off':'Turn synchronization on';
   syncButton.setAttribute('aria-label',syncButton.title);
  }
  cloudButton.addEventListener('click',()=>{
@@ -6947,29 +6959,38 @@ finishRedirect();
    status();
   }
  });
- // Header navigation: only OFF and PAUSED open the review panel.
- // ON and RETRYING must leave it collapsed, without changing sync state.
+ // The header is the single ON/OFF control; opening the status panel is separate.
+ // Never collapse a panel that the user deliberately opened.
  syncButton.addEventListener('click',()=>{
   const paused=!!localStorage.getItem('fieldbook_live_auto_device_paused_reason_v1')||!!syncState&&/PAUSED safely/i.test(syncState.textContent||'');
   const on=localStorage.getItem(SYNC_KEY)==='yes';
   const retrying=on&&!paused&&!!localStorage.getItem('fieldbook_live_auto_device_transient_retry_v1');
   const quick=document.getElementById('syncQuickFold');
-  if(!quick)return;
-  if(retrying||on&&!paused){
-   quick.open=false;
+  if(on&&!paused&&!retrying){
+   // Use the existing sync-engine disable handler: it stops timers and persists OFF.
+   const disable=document.getElementById('autoDeviceSyncDisable');
+   if(disable&&!disable.disabled)disable.click();
+   else {const out=document.getElementById('syncQuickStatus');if(out)out.textContent='Unable to turn off sync. Open Sync Status for details.';}
+   status();
    return;
   }
+  if(retrying){
+   // Retry is an active recovery operation; do not interrupt it or toggle the panel.
+   return;
+  }
+  if(!quick)return;
+  if(paused){
+   quick.dispatchEvent(new CustomEvent('fieldbook-user-open'));
+   quick.open=true;
+   quick.scrollIntoView({behavior:'smooth',block:'start'});
+   return;
+  }
+  // OFF: verify the stored baseline/checkpoint using the existing safe enable path.
   quick.dispatchEvent(new CustomEvent('fieldbook-user-open'));
   quick.open=true;
-  quick.scrollIntoView({behavior:'smooth',block:'start'});
-  // OFF is an explicit user request to verify and begin safe synchronization.
-  // Reuse the established first/second-device verification routine. It stops
-  // at the guided comparison if device records differ, without altering data.
-  // PAUSED displays the available recovery actions; never automatically approve or resume recovery.
-  if(!paused){
-   const start=document.getElementById('syncStartButton');
-   if(start&&!start.disabled)start.click();
-  }
+  const start=document.getElementById('syncStartButton');
+  if(start&&!start.disabled)start.click();
+  status();
  });
  if(cloudState)new MutationObserver(status).observe(cloudState,{childList:true,subtree:true,characterData:true});
  if(syncState)new MutationObserver(status).observe(syncState,{childList:true,subtree:true,characterData:true});
@@ -7200,9 +7221,16 @@ document.addEventListener('DOMContentLoaded',()=>{
   const on=localStorage.getItem(enabledKey)==='yes';
   const retrying=on&&!paused&&!!localStorage.getItem(retryKey);
   const attention=paused;
+  const connected=!!localStorage.getItem('fieldbook_cloud_live_refresh_token_v2');
   if(startControls)startControls.hidden=paused||on;
   if(startButton)startButton.disabled=on;
-  if(paused){
+  if(!connected){
+   if(recoveryControls)recoveryControls.hidden=true;
+   if(recoveryStatus)recoveryStatus.hidden=true;
+   fold.dataset.state='attention';title.textContent='Cloud storage disconnected';icon.textContent='☁';
+   message.textContent='Cloud storage is disconnected. Click Cloud disconnected in the header to reconnect. Your records remain available on this device.';
+   technical.textContent='Synchronization is not available until cloud storage is reconnected.';
+  }else if(paused){
    if(recoveryControls)recoveryControls.hidden=false;
    fold.dataset.state='attention';
    title.textContent=isConflict(reason)?'Sync needs attention — '+((reason.match(/(\d+) conflict(?:\(s\)|ing)/i)||[])[1]||'1')+' conflict'+(((reason.match(/(\d+) conflict(?:\(s\)|ing)/i)||[])[1]||'1')==='1'?'':'s'):'Sync needs attention';
@@ -7218,14 +7246,14 @@ document.addEventListener('DOMContentLoaded',()=>{
    if(recoveryControls)recoveryControls.hidden=true;
    if(recoveryStatus)recoveryStatus.hidden=true;
    fold.dataset.state='normal';title.textContent=on?'Review sync status':'Sync off';icon.textContent=on?'✓':'↻';
-   message.textContent=on?'Synchronization is ON. Fieldbook is checking for changes.':'Synchronization is OFF. Tap Sync OFF in the header to verify and activate synchronization.';
-   technical.textContent=autoStatus?.textContent||'Checking sync status…';
+   message.textContent=on?'Synchronization is on. Your local records are available and automatic checks continue in the background.':'Synchronization is off. Click Sync OFF in the header to enable it.';
+   technical.textContent=on?'Latest check: '+(document.getElementById('headerLastChecked')?.textContent||'not yet available'):(autoStatus?.textContent||'Sync is currently off.');
   }
   // Background checks must never open or keep an incidental status panel open.
   // Keep it open only when the person explicitly opened it.
   if(!manuallyOpened){fold.open=false;}
   previousAttention=attention;
-  if(conflict)conflict.hidden=!paused||isPackageRace(reason);
+  if(conflict)conflict.hidden=!connected||!paused||isPackageRace(reason);
  }
  // Show the attention label while leaving the panel collapsed on load.
  render();
@@ -7239,6 +7267,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  // Earlier PAUSED handler already points here; capture other states before generic navigation.
  // The header button acts on sync state. This panel opens only via its own summary.
  window.addEventListener('fieldbook-live-sync-status',render);
+ window.addEventListener('fieldbook-live-cloud-status',render);
  window.addEventListener('fieldbook-live-sync-complete',()=>{
   // A successful verified check finishes the user's open review. Do not reopen it
   // during subsequent background checks; PAUSED and conflict paths never emit this.
@@ -7473,11 +7502,24 @@ choose.onchange=async ev=>{
   const index=new Map(),seen=new Set();let duplicates=0;
   for(const rec of saved){const key=findKey(rec);if(key){if(index.has(key))duplicates++;else index.set(key,rec)}if(seen.has(rec.id))add(rec.name||'', 'Fieldbook record ID',rec.id,rec.id,'Duplicate');seen.add(rec.id)}
   const fields=[['Name','name'],['Birth date','birthDate'],['Death date','deathDate'],['Burial date','burialDate'],['State','state'],['County','county'],['Town','town'],['Cemetery','cemetery'],['Find a Grave URL','findagrave']];
-  let sourceNotes=0,notePresent=0,checked=0,differences=0,missing=0;
+  let sourceNotes=0,notePresent=0,checked=0,differences=0,missing=0,legacyDateFields=0,unknownCemeteries=0;
   for(const item of source){
    checked++;const current=index.get(findKey(item));
    if(!current){missing++;add(item.name,'Burial record',item.cemetery,'Missing','Record missing');continue}
-   for(const [label,key] of fields){const a=clean(item[key]),b=clean(current[key]);if(a!==b){differences++;add(item.name,label,a,b,'Different — review')}}
+   for(const [label,key] of fields){
+    const expected=clean(item[key]),actual=clean(current[key]);
+    // Legacy imports kept birth/death years in the combined dates field.
+    // This is less precise storage, not evidence of GEDCOM data loss.
+    if((key==='birthDate'||key==='deathDate')&&!actual&&expected){
+     const years=String(current.dates||'').match(/(?:1[5-9]\d{2}|20\d{2})/g)||[];
+     const position=key==='birthDate'?0:1;
+     const sourceYear=(expected.match(/(?:1[5-9]\d{2}|20\d{2})/)||[])[0];
+     if(sourceYear&&years[position]===sourceYear){legacyDateFields++;continue}
+    }
+    // A GEDCOM burial place without a named cemetery is valid. Never call it missing.
+    if(key==='cemetery'&&!expected&&!actual){unknownCemeteries++;continue}
+    if(expected!==actual){differences++;add(item.name,label,expected,actual,key==='cemetery'?'Burial place mapping differs — review':'Different — review')}
+   }
    const note=clean(item.gedcomNoteText);
    if(note){sourceNotes++;if(clean(current.notes).includes(note))notePresent++;else{differences++;add(item.name,'Original GEDCOM burial note',note,current.notes||'','Missing or revised — review')}}
    // These fields may not exist in a GEDCOM. Validate their Fieldbook state without calling it missing genealogical data.
@@ -7485,13 +7527,13 @@ choose.onchange=async ev=>{
    if(current.plot!=null&&typeof current.plot!=='string')add(item.name,'Plot','Text',typeof current.plot,'Unusual type');
    for(const field of ['relation','side','line','notes','findagrave'])if(current[field]!=null&&typeof current[field]!=='string')add(item.name,'Fieldbook '+field,'Text',typeof current[field],'Unusual type');
   }
-  for(const rec of saved){if(!clean(rec.name))add('(unnamed)','Required name','Nonempty',rec.name,'Missing');if(!clean(rec.cemetery))add(rec.name,'Required cemetery','Nonempty',rec.cemetery,'Missing');if(rec.findagrave&& !/^https?:\/\//i.test(String(rec.findagrave)))add(rec.name,'Find a Grave URL','HTTP(S) URL',rec.findagrave,'Unusual format')}
+  for(const rec of saved){if(!clean(rec.name))add('(unnamed)','Required name','Nonempty',rec.name,'Missing');/* Unknown cemetery is permitted for GEDCOM imports; field discoveries are validated on save. */if(rec.source==='Field discovery'&&!clean(rec.cemetery))add(rec.name,'Discovery cemetery','Nonempty',rec.cemetery,'Missing');if(rec.findagrave&& !/^https?:\/\//i.test(String(rec.findagrave)))add(rec.name,'Find a Grave URL','HTTP(S) URL',rec.findagrave,'Unusual format')}
   const photoRows=await getPhotos();const photoIds=new Set(),personIds=new Set(saved.map(r=>r.id));
   for(const photo of photoRows){if(photoIds.has(photo.id))add('Photo','Photo ID','Unique',photo.id,'Duplicate');photoIds.add(photo.id);if(!personIds.has(photo.person))add('Photo','Linked burial','Existing record',photo.person,'Orphaned attachment');if(!photo.data)add('Photo','Image data','Present','Missing','Missing data')}
   if(typeof geoEdits==='object'&&geoEdits)for(const [key,coords] of Object.entries(geoEdits))if(!Array.isArray(coords)||coords.length!==2||!coords.every((v,i)=>Number.isFinite(v)&&Math.abs(v)<=(i===0?90:180)))add(key,'Cemetery GPS','Valid coordinates',JSON.stringify(coords),'Invalid coordinates');
   if(typeof changeLog!=='undefined')for(const event of changeLog){if(!event.id||!event.at)add(event.person||'History','Activity history','ID and timestamp',JSON.stringify(event).slice(0,150),'Incomplete event')}
   const issues=rows.length;
-  status.textContent=`Read-only audit complete: ${checked} GEDCOM burials compared; ${notePresent}/${sourceNotes} original burial source notes present; ${saved.length} saved burials and ${photoRows.length} photographs checked; ${issues} item(s) to review. No records changed.`;
+  status.textContent=`Read-only audit complete: ${checked} GEDCOM burials compared; ${notePresent}/${sourceNotes} original burial source notes present; ${saved.length} saved burials and ${photoRows.length} photographs checked; ${issues} item(s) to review. ${legacyDateFields} older year-only date fields and ${unknownCemeteries} GEDCOM burials without named cemeteries are informational, not errors. No records changed.`;
   if(issues){const heading=document.createElement('p');heading.textContent=`Showing ${Math.min(40,issues)} of ${issues} findings. Differences may be intentional; review before correcting anything.`;details.append(heading);for(const r of rows.slice(0,40)){const row=document.createElement('p');row.textContent=`${r.name} — ${r.field}: ${r.result}`;details.append(row)}}
   else{const message=document.createElement('p');message.textContent='No inconsistencies found in the checks performed.';details.append(message)}
   if(exportBtn){exportBtn.disabled=!rows.length;exportBtn.hidden=!rows.length;exportBtn.textContent='Export audit findings (CSV)'}
