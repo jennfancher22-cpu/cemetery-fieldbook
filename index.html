@@ -260,6 +260,7 @@
 .join-review .join-technical{margin:10px 0 0;background:#fcf9ff}
 .join-review .join-technical > summary{padding:9px 11px;font-size:12px;font-weight:600}
 .join-review .join-technical .data-subbody{padding:10px}
+#getStartedPanel[hidden], .gedcom-update-review [hidden], .guided-step[hidden]{display:none!important}
 </style><link rel="manifest" href="manifest-live-purple-v71930.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="icon" type="image/svg+xml" href="icon-live-purple-v71930.svg"><style>
 /* v7 read-only relationship verification */
 .relationship-results{display:grid;gap:8px;margin-top:9px}
@@ -719,7 +720,7 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 #editor .checkrow input{flex:0 0 auto;width:17px;height:17px;min-height:17px}
 @media(max-width:480px){#editor .checkrow{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
-</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.23.3 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.23.4 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook" hidden>
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">Import your family tree or join an existing Fieldbook. Complete the steps below.</p>
@@ -996,7 +997,7 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7.23.3 LIVE · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.23.4 LIVE · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog" novalidate><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div>
 <div class="edit-section-title">Person &amp; burial</div><div class="filters edit-fields">
 <div class="wide"><label for="fieldbookEditName">Name <span class="required-mark" aria-label="required">*</span></label><input id="fieldbookEditName" name="name" required><small class="field-inline-error" id="nameRequiredError" hidden>Name is required.</small></div>
@@ -1557,7 +1558,7 @@ function fieldbookDates(record){
  const raw=String(record?.dates||'');const parts=raw.split(/[–—]/);
  return {birth:record?.birthDate||String(parts[0]||'').trim(),death:record?.deathDate||String(parts[1]||'').trim()};
 }
-function openEditor(id){current=id;const r=all().find(x=>x.id===id)||{id:'new',name:'',dates:'',relation:'',side:'',line:'',state:'Indiana',county:'',town:'',cemetery:'',burialDate:'',plot:'',findagrave:'',notes:'',visited:false,stone:false,photo:false,gps:false};$('editTitle').textContent=id?'Edit burial record':'New cemetery discovery';for(const e of $('editForm').querySelectorAll('[name]')){e.type==='checkbox'?e.checked=!!r[e.name]:e.value=e.name==='notes'?editableBurialNotes(r):e.name==='burialDate'?effectiveBurialDate(r):e.name==='birthDate'?fieldbookDates(r).birth:e.name==='deathDate'?fieldbookDates(r).death:(r[e.name]||'')}$('delete').hidden=!id||!id.startsWith('new-');$('editNote').textContent='';$('editNote').hidden=true;$('editDateRefreshStatus').textContent='';
+function openEditor(id){current=id;const r=all().find(x=>x.id===id)||{id:'new',name:'',dates:'',relation:'',side:'',line:'',state:'',county:'',town:'',cemetery:'',burialDate:'',plot:'',findagrave:'',notes:'',visited:false,stone:false,photo:false,gps:false};$('editTitle').textContent=id?'Edit burial record':'New cemetery discovery';for(const e of $('editForm').querySelectorAll('[name]')){e.type==='checkbox'?e.checked=!!r[e.name]:e.value=e.name==='notes'?editableBurialNotes(r):e.name==='burialDate'?effectiveBurialDate(r):e.name==='birthDate'?fieldbookDates(r).birth:e.name==='deathDate'?fieldbookDates(r).death:(r[e.name]||'')}$('delete').hidden=!id||!id.startsWith('new-');$('editNote').textContent='';$('editNote').hidden=true;$('editDateRefreshStatus').textContent='';
  const previous=$('gedcomSourceNotes');if(previous)previous.remove();
  // The source note text now appears in the editable Burial Notes field, rather
  // than in a separate read-only box. Preserve source identifiers as metadata.
@@ -1813,7 +1814,12 @@ if(data.version>=4){await saveLargeData(data.seed,data.version===5?data.gedcomPe
  if(homePersonId)localStorage.setItem(HOME_PERSON_KEY,homePersonId);else localStorage.removeItem(HOME_PERSON_KEY);
  refreshHomeDisplay();searchHomePeople();
 }
-refreshOptions();render();renderChangeLog();nearbySearch();$('privateSeedStatus').textContent=seed.length+' private burial records loaded on this device';if(!opts.silentRestoreSuccess)alert(data.version>=4?'Complete backup restored: '+(seed.length+extras.length).toLocaleString()+' total burial records ('+seed.length.toLocaleString()+' original + '+extras.length.toLocaleString()+' added) and '+(data.photos?.length||0).toLocaleString()+' photos.':'Older backup restored. If original burials are missing, load the private burial list separately.');return true;}
+// Only data-store writes above determine whether the restore completed. Optional
+// UI sections can be absent after an interface upgrade; never throw AFTER a
+// successful multi-store restore simply because a status element was removed.
+try{refreshOptions();render();renderChangeLog();nearbySearch();const seedStatus=document.getElementById('privateSeedStatus');if(seedStatus)seedStatus.textContent=seed.length+' private burial records loaded on this device';}
+catch(uiError){console.warn('Backup restored; a nonessential screen refresh failed:',uiError);}
+if(!opts.silentRestoreSuccess)alert(data.version>=4?'Complete backup restored: '+(seed.length+extras.length).toLocaleString()+' total burial records ('+seed.length.toLocaleString()+' original + '+extras.length.toLocaleString()+' added) and '+(data.photos?.length||0).toLocaleString()+' photos.':'Older backup restored. If original burials are missing, load the private burial list separately.');return true;}
 window.fieldbookRestoreFromObject=restoreBackupObject;
 $('restoreFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{await restoreBackupObject(JSON.parse(await f.text()))}catch(err){alert('Restore failed: '+err.message)}finally{e.target.value=''}};
 renderChangeLog();$('nearResults').append(textNode('p','hint','Choose a starting point and tap Find nearby cemeteries to see results.'));
@@ -2603,7 +2609,7 @@ async function compareCurrentGedcom(file){
   const summary=textNode('div','guided-status',newBurials.length+' new burial'+(newBurials.length===1?'':'s')+' · '+individualReview.size+' existing people with '+totalFields+' proposed fields · '+ambiguous.length+' conflicting burial people held for review');
   const safetyMessage=textNode('p','hint',idSafetyOK?'Person ID safety check passed: '+overlap+' matched IDs; '+mismatches+' name differences (review names before approval).':'MERGE DISABLED: GEDCOM ID safety check failed ('+overlap+' matching IDs; '+mismatches+' name differences). No merge can be applied.');
   mergeBody.replaceChildren(reviewStep,approvalStep);
-  if(!personCards.length){reviewStep.hidden=true;approvalStep.hidden=true;}
+  if(!personCards.length){reviewStep.hidden=true;approvalStep.hidden=true;reviewStep.style.display='none';approvalStep.style.display='none';}
   if(!idSafetyOK||legacyUnlinked.length)mergeBody.insertBefore(safetyMessage,mergeBody.firstChild);
   mergeBox.replaceChildren(mergeBody);
   if(legacyUnlinked.length){
@@ -5178,6 +5184,22 @@ async function finishSyncMutation(expectedFields){
  }
  localStorage.removeItem(SYNC_RESTORE_JOURNAL_KEY);
 }
+async function verifyCompletedIncomingRestoreJournal(){
+ const journal=syncRestoreJournal();
+ if(!journal||!journal.targetHash||!journal.recoveryFile||journal.deviceId!==getDeviceId())return false;
+ // A hash match proves ALL of the synchronized data stores already contain
+ // exactly the proposed snapshot. Cloud reconciliation still occurs separately.
+ let actual;
+ try{actual=await syncContentHash(await makePayload())}catch(error){
+  autoDiagRecord('Restore verification unavailable',String(error?.message||error));return false;
+ }
+ if(actual!==journal.targetHash){
+  autoDiagRecord('Restore remains incomplete','Stored data differs from the exact approved restore hash; automatic recovery blocked.');return false;
+ }
+ localStorage.removeItem(SYNC_RESTORE_JOURNAL_KEY);
+ autoDiagRecord('Completed restore verified','An interrupted acknowledgement was recovered after verifying the entire stored snapshot. Cloud baseline and packages must still be independently verified.');
+ return true;
+}
 function blockInterruptedSyncRestore(){
  const journal=syncRestoreJournal();
  if(!journal)return false;
@@ -5455,7 +5477,9 @@ async function runVerifiedPauseRecovery(automatic=false){
  return withFieldbookSyncLock('runVerifiedPauseRecovery',()=>runVerifiedPauseRecoveryUnlocked(automatic));
 }
 async function runVerifiedPauseRecoveryUnlocked(automatic=false){
- if(syncRestoreJournal()){syncSafetyRecoveryMessage('An interrupted local restore requires recovery from the verified backup before synchronization can resume.');return;}
+ if(syncRestoreJournal()&&!await verifyCompletedIncomingRestoreJournal()){
+  syncSafetyRecoveryMessage('The interrupted restore does not match its verified expected data. Restore from the protected recovery backup before synchronization can resume.');return;
+ }
  if(syncSafetyRecoveryRunning){syncSafetyRecoveryMessage('Verification is already running. Please do not tap again.');return;}
  if(busy){syncSafetyRecoveryMessage('Another operation is in progress. Try again when it finishes.');return;}
  const originalPause=localStorage.getItem(AUTO_PAUSED_KEY)||'';
@@ -5978,7 +6002,7 @@ autoDeviceNow.onclick=()=>{
 };
 // Always retain the exact current status before navigation/reload. No silent auto-enable.
 window.addEventListener('pagehide',()=>{
- try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.23.3',event:'pagehide'}))}catch(_){}
+ try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.23.4',event:'pagehide'}))}catch(_){}
 });
 window.addEventListener('online',()=>{if(autoDeviceOn())autoDeviceCycle()});
 document.addEventListener('visibilitychange',()=>{if(autoDeviceOn()&&document.visibilityState==='visible'&&Date.now()-autoDeviceLastRun>8000)autoDeviceCycle()});
@@ -6500,7 +6524,11 @@ window.addEventListener('pageshow',scheduleApprovedResolutionCheck);
  // missing record, unverified baseline, or unstable cloud inventory.
 let autoPausedRecoveryHardFailure=false,autoPausedRecoveryLastTry=0;
 async function autoRecoverSafelyPausedBrowser(){
- if(syncRestoreJournal()||autoPausedRecoveryHardFailure||syncSafetyRecoveryRunning||conflictAutoApplying||
+ if(syncRestoreJournal()){
+  const finished=await verifyCompletedIncomingRestoreJournal();
+  if(!finished)return; // Incomplete restore remains PAUSED, never discarded.
+ }
+ if(autoPausedRecoveryHardFailure||syncSafetyRecoveryRunning||conflictAutoApplying||
     conflictAutoTriedFailure||busy||autoDeviceRunning||autoDeviceOn()||
     !localStorage.getItem(AUTO_PAUSED_KEY)||document.visibilityState!=='visible'||
     !navigator.onLine||!localStorage.getItem('fieldbook_cloud_live_refresh_token_v2'))return;
@@ -7134,7 +7162,12 @@ finishRedirect();
   }
   localStorage.setItem(migrationKey,'done');
  }
- const resumeSetup=localStorage.getItem(WIZARD_KEY)==='active'&&localStorage.getItem(COMPLETED_KEY)!=='yes';
+ // A stale 'active' flag is not evidence of unfinished setup when the user
+ // explicitly completed the wizard in a prior version (dismissed='yes').
+ const explicitlyFinished=localStorage.getItem(COMPLETED_KEY)==='yes'||
+   (localStorage.getItem(WIZARD_KEY)==='yes'&&localStorage.getItem(ROUTE_KEY)==null);
+ if(explicitlyFinished)localStorage.setItem(COMPLETED_KEY,'yes');
+ const resumeSetup=localStorage.getItem(WIZARD_KEY)==='active'&&!explicitlyFinished;
  root.hidden=!resumeSetup;startAgain.style.display=resumeSetup?'none':'inline-block';
  const savedRoute=localStorage.getItem(ROUTE_KEY);
  if(resumeSetup&&(savedRoute==='new'||savedRoute==='join'))viewRoute(savedRoute);
@@ -7510,14 +7543,27 @@ choose.onchange=async ev=>{
     const expected=clean(item[key]),actual=clean(current[key]);
     // Legacy imports kept birth/death years in the combined dates field.
     // This is less precise storage, not evidence of GEDCOM data loss.
-    if((key==='birthDate'||key==='deathDate')&&!actual&&expected){
-     const years=String(current.dates||'').match(/(?:1[5-9]\d{2}|20\d{2})/g)||[];
-     const position=key==='birthDate'?0:1;
-     const sourceYear=(expected.match(/(?:1[5-9]\d{2}|20\d{2})/)||[])[0];
-     if(sourceYear&&years[position]===sourceYear){legacyDateFields++;continue}
+    if((key==='birthDate'||key==='deathDate')&&expected){
+     const sourceYear=(expected.match(/\b(?:1[5-9]\d{2}|20\d{2})\b/)||[])[0];
+     const actualYear=(actual.match(/\b(?:1[5-9]\d{2}|20\d{2})\b/)||[])[0];
+     if(sourceYear&&actualYear===sourceYear&&actual===sourceYear&&expected!==sourceYear){
+      legacyDateFields++;continue; // Less-precise representation, not missing genealogy data.
+     }
+     if(!actual){
+      const years=String(current.dates||'').match(/(?:1[5-9]\d{2}|20\d{2})/g)||[];
+      const position=key==='birthDate'?0:1;
+      if(sourceYear&&years[position]===sourceYear){legacyDateFields++;continue}
+     }
     }
     // A GEDCOM burial place without a named cemetery is valid. Never call it missing.
     if(key==='cemetery'&&!expected&&!actual){unknownCemeteries++;continue}
+    if(key==='cemetery'&&expected&&!actual){
+     const legacyTown=clean(current.town);
+     // An older importer might have put an explicitly named cemetery in Town.
+     // Report this as location mapping, not a missing or deleted cemetery.
+     const sameLocation=legacyTown.toLocaleLowerCase()===expected.toLocaleLowerCase();
+     differences++;add(item.name,label,expected,legacyTown||'(blank)',sameLocation?'Legacy cemetery stored in Town — mapping review':'Burial place mapping differs — review');continue;
+    }
     if(expected!==actual){differences++;add(item.name,label,expected,actual,key==='cemetery'?'Burial place mapping differs — review':'Different — review')}
    }
    const note=clean(item.gedcomNoteText);
