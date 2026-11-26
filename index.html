@@ -698,7 +698,17 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 #getStartedPanel .welcome-toggle{background:none!important;border:0!important;box-shadow:none!important;text-align:left!important;color:inherit!important;font-size:inherit!important;font-weight:inherit!important;padding:0!important;margin:0!important;min-height:0!important;cursor:pointer}
 #getStartedPanel .welcome-toggle:hover{text-decoration:underline}
 </style>
-</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.23.1 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+
+<style id="v7232CleanupStyles">
+/* GEDCOM updates: one summary, immediately visible person-by-person comparisons. */
+.gedcom-compact-counts{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.gedcom-compact-count{display:inline-block;background:#f3eef8;border:1px solid #dfd1ec;border-radius:9px;padding:7px 12px;font-size:13px;color:#482b65}
+.gedcom-precision-protected{padding:9px 12px;border-left:3px solid #387e65;background:#f0f8f5;color:#245b49;border-radius:5px;font-size:13px}
+.gedcom-update-review .guided-step{margin:12px 0}
+.gedcom-update-review .person-review-heading{font-weight:650}
+#v723BackupsPanel #cloudConnect,#v723BackupsPanel #cloudDisconnect{display:none!important}
+</style>
+</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.23.2 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook" hidden>
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">Import your family tree or join an existing Fieldbook. Complete the steps below.</p>
@@ -975,7 +985,7 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7.23.1 LIVE · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.23.2 LIVE · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog" novalidate><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div>
 <div class="edit-section-title">Person &amp; burial</div><div class="filters edit-fields">
 <div class="wide"><label for="fieldbookEditName">Name <span class="required-mark" aria-label="required">*</span></label><input id="fieldbookEditName" name="name" required><small class="field-inline-error" id="nameRequiredError" hidden>Name is required.</small></div>
@@ -2206,6 +2216,23 @@ async function compareCurrentGedcom(file){
    }
    return left===right;
   }
+  // Compare date *precision* before proposing a replacement.
+  // A year-only GEDCOM export must not overwrite matching complete dates.
+  function datePieces(value){
+   const raw=String(value||'').trim();
+   if(!raw)return [];
+   return raw.split(/\s*[–—]\s*|\s+-\s+/).map(part=>{
+    const year=(part.match(/\b(?:1[0-9]{3}|20[0-9]{2})\b/)||[])[0]||'';
+    return {year,precise:!!year&&part.trim()!==year};
+   });
+  }
+  function datePrecisionDowngrade(current,incoming){
+   const a=datePieces(current),b=datePieces(incoming);
+   return a.length===2&&b.length===2&&a.every((x,i)=>x.year&&x.year===b[i].year)&&
+    a.some((x,i)=>x.precise&&!b[i].precise)&&
+    !a.some((x,i)=>!x.precise&&b[i].precise);
+  }
+  let protectedDateDowngrades=0;
   const readable=k=>k==='nameSuffix'?'Name suffix (including emoji markers)':(FIELD_NAMES[k]||k);
   const fields=['name','nameSuffix','dates','cemetery','town','county','state','findagrave'];
   // Conservative presentation-only normalization. Do not call distinct dates, towns,
@@ -2252,6 +2279,10 @@ async function compareCurrentGedcom(file){
     const currentBase=key==='name'?nameWithoutSuffix(current,effectiveSavedSuffix(currentRecord,incomingRecord.nameSuffix)):current;
     const incomingBase=key==='name'?nameWithoutSuffix(incomingValue,incomingRecord.nameSuffix):incomingValue;
     if(shiftedLocation&&(key==='town'||key==='cemetery')){changed=true;continue;}
+    if(key==='dates'&&datePrecisionDowngrade(currentBase,incomingBase)){
+     // Not a user-actionable update: source has lower precision for matching years.
+     protectedDateDowngrades++;continue;
+    }
     // Compare against the visible, effective value, not just the original imported seed.
     if(sameValue(key,currentBase,incomingBase)){
      if(!sameValue(key,originalBase,incomingBase))resolved.push({id,name:incomingRecord.name,key});
@@ -2283,25 +2314,26 @@ async function compareCurrentGedcom(file){
    }
    const uniqueCount=a=>new Set(a.map(x=>x.id)).size;
   const describe=x=>`${x.name} (${x.id}) · ${readable(x.key)} · Fieldbook: ${x.current||'—'} · GEDCOM: ${x.incoming||'—'}`+(x.reason?` · ${x.reason}`:'');
-  const title=textNode('h3','','GEDCOM comparison — '+file.name);
-  const counts=textNode('div','ged-counts');
-  for(const [n,label] of [
-   [incoming.length,'Burial entries in file'],
-   [newBurials.length,'New people with burials'],
-   [uniqueCount(shifted),'Likely cemetery / town field shifts'],
-   [uniqueCount(fills),'Records with missing fields to fill'],
-   [uniqueCount(reviews),'Records with values to review'],
-   [uniqueCount(formatting),'Formatting-only differences'],
-   [ambiguous.length,'Multiple conflicting burial facts — manual review only'],
-   [missing.length,'Absent from this GEDCOM']
-  ]){
-   const box=textNode('div','ged-count');box.append(textNode('strong','',String(n)),textNode('span','tiny',label));counts.append(box);
+  // Only the actionable categories belong in the everyday summary.
+  const title=textNode('h3','', 'Comparison results');
+  const counts=textNode('div','gedcom-compact-counts');
+  const reviewPeople=new Set([...fills,...reviews].map(x=>x.id));
+  const warningPeople=new Set([...shifted,...ambiguous].map(x=>x.id));
+  const addCount=(number,label)=>{const item=textNode('span','gedcom-compact-count');item.append(textNode('strong','',String(number)),document.createTextNode(' '+label));counts.append(item)};
+  addCount(newBurials.length,'new burial'+(newBurials.length===1?'':'s'));
+  addCount(reviewPeople.size,'person'+(reviewPeople.size===1?'':'s')+' with updates');
+  if(warningPeople.size)addCount(warningPeople.size,'burial conflict'+(warningPeople.size===1?'':'s'));
+  const explanation=textNode('p','hint',
+   'Nothing has changed. Review the proposed updates below, select what you want, then apply.');
+  container.append(title,counts,explanation);
+  if(protectedDateDowngrades){
+   container.append(textNode('p','gedcom-precision-protected',
+    protectedDateDowngrades+' less-precise GEDCOM date value'+(protectedDateDowngrades===1?' was':'s were')+
+    ' ignored because Fieldbook already has matching, more complete dates.'));
   }
-  container.append(title,counts);
-  const shortLegend=textNode('div','compare-explainer','These counts describe differences, not changes already applied. Nothing will be modified until you approve a merge. Conflicting burials require manual review; records absent from a GEDCOM are never deleted.');
-  container.append(shortLegend);
-  const countNote=textNode('p','comparison-context','The GEDCOM contains '+incoming.length+' people with burial facts. Fieldbook currently contains '+existing.length+' GEDCOM-linked burial records. These totals need not match: new records, records absent from this export, and conflicting burials held out can make them different. The categories below show what needs attention.');
-  container.insertBefore(countNote,shortLegend);  
+  if(!newBurials.length&&!fills.length&&!reviews.length&&!shifted.length&&!ambiguous.length){
+   explanation.textContent='Your Fieldbook is up to date. No changes were made.';
+  }
   const diagnostics=document.createElement('details');diagnostics.className='cemetery-group';
   diagnostics.append(textNode('summary','','Detailed comparison information (optional)'));
   const diagnosticsBody=textNode('div','cemetery-group-people');
@@ -2402,8 +2434,7 @@ async function compareCurrentGedcom(file){
   }
   const minimumOverlap=existing.length>=100?0.85:0.65;
   const idSafetyOK=existing.length>0&&overlap>=Math.min(existing.length,20)&&overlap/existing.length>=minimumOverlap&&mismatches<=Math.max(1,Math.floor(overlap*0.005));
-  const mergeBox=document.createElement('details');mergeBox.className='cemetery-group';
-  const mergeHead=textNode('summary','','Review and approve GEDCOM updates');mergeBox.append(mergeHead);mergeBox.open=true;
+  const mergeBox=document.createElement('section');mergeBox.className='gedcom-update-review';
   const mergeBody=textNode('div','cemetery-group-people');
   mergeBody.append(textNode('p','guided-step-hint','Choose only the changes you want. Existing nonblank information is never overwritten unless you explicitly approve that individual replacement.'));
   const identityDetails=document.createElement('details');identityDetails.className='cemetery-group';
@@ -2449,7 +2480,7 @@ async function compareCurrentGedcom(file){
   for(const [id,items] of replacementGroups)groupPerson(id).replacements.push(...items);
   const totalFields=[...individualReview.values()].reduce((n,g)=>n+g.fills.length+g.replacements.length,0);
   const reviewStep=textNode('section','guided-step');
-  reviewStep.append(textNode('h4','guided-step-title','1. Review people and select changes'));
+  reviewStep.append(textNode('h4','guided-step-title','Review proposed changes'));
   reviewStep.append(textNode('p','guided-step-hint','Review the proposed changes for each person. Selecting Accept all approves every eligible field for that person; you can deselect individual fields. Unchecked values stay unchanged.'));
   reviewStep.append(textNode('p','person-review-note','Please confirm each record is the correct person before selecting changes. GEDCOM IDs help identify matches but are not proof of identity. Your selections are your approval; no separate person-by-person confirmation is required.'));
   const findRow=document.createElement('div');findRow.className='person-review-search';
@@ -2461,7 +2492,7 @@ async function compareCurrentGedcom(file){
   function addPersonCard(name,id,kind,total,build){
    const card=document.createElement('details');card.className='cemetery-group person-review-card';
    const heading=document.createElement('summary');
-   const headerText=textNode('span','person-review-heading',name+' ('+id+')');
+   const headerText=textNode('span','person-review-heading',name);
    const pill=textNode('span','person-review-pill',kind+' · '+total+(kind==='New burial'?'':' field'+(total===1?'':'s')));
    heading.append(headerText,pill);card.append(heading);
    const body=textNode('div','cemetery-group-people');build(body,heading);card.append(body);
@@ -2551,17 +2582,18 @@ async function compareCurrentGedcom(file){
   identityMore.append(textNode('summary','','Identity differences and safety checks ('+identityDifferences.length+')'));
   const identityContent=textNode('div','cemetery-group-people');identityContent.append(identityDetails);identityMore.append(identityContent);
   if(identityDifferences.length||!idSafetyOK)reviewStep.append(identityMore);
-  const apply=document.createElement('button');apply.type='button';apply.className='secondary';apply.textContent='Export rollback backup, then apply selected changes';
+  const apply=document.createElement('button');apply.type='button';apply.className='secondary';  apply.textContent='Apply selected changes';
   apply.disabled=!idSafetyOK||Boolean(legacyUnlinked.length)||!personCards.length;
   const mergeStatus=textNode('p','hint','No changes made. Select fields in the person cards above.');
   const approvalStep=textNode('section','guided-step');
-  approvalStep.append(textNode('h4','guided-step-title','2. Back up and apply selected changes'));
-  approvalStep.append(textNode('p','guided-step-hint','Only checked changes will be applied. You will be asked to save a full rollback backup and confirm. Photos, notes, visits, plot and GPS remain protected.'));
+  approvalStep.append(textNode('h4','guided-step-title','Apply selected changes'));
+  approvalStep.append(textNode('p','guided-step-hint','Only the changes you select will be applied. Fieldbook will require a recovery backup and confirmation before saving.')); 
   approvalStep.append(apply,mergeStatus);
   const summary=textNode('div','guided-status',newBurials.length+' new burial'+(newBurials.length===1?'':'s')+' · '+individualReview.size+' existing people with '+totalFields+' proposed fields · '+ambiguous.length+' conflicting burial people held for review');
   const safetyMessage=textNode('p','hint',idSafetyOK?'Person ID safety check passed: '+overlap+' matched IDs; '+mismatches+' name differences (review names before approval).':'MERGE DISABLED: GEDCOM ID safety check failed ('+overlap+' matching IDs; '+mismatches+' name differences). No merge can be applied.');
-  mergeBody.replaceChildren(summary,safetyMessage,reviewStep,approvalStep);
-  mergeBox.replaceChildren(textNode('summary','','Review and apply updates'),mergeBody);
+  mergeBody.replaceChildren(reviewStep,approvalStep);
+  if(!idSafetyOK||legacyUnlinked.length)mergeBody.insertBefore(safetyMessage,mergeBody.firstChild);
+  mergeBox.replaceChildren(mergeBody);
   if(legacyUnlinked.length){
    const warning=textNode('div','notice','Merge blocked: '+legacyUnlinked.length+' unlinked legacy burial record(s) require identity review: '+legacyUnlinked.slice(0,10).map(x=>x.name+' ('+x.id+')').join('; ')+'. Manually added Fieldbook discoveries do not cause this block.');
    mergeBody.insertBefore(warning,mergeBody.firstChild);
@@ -2570,13 +2602,13 @@ async function compareCurrentGedcom(file){
    const notice=textNode('p','hint','Protected independent discoveries: '+preservedDiscoveries.length+' (including their notes, photographs, visits and history). They will not be compared as GEDCOM people, deleted, or modified by this update.');
    mergeBody.insertBefore(notice,mergeBody.firstChild);
   }
-  mergeBox.open=Boolean(personCards.length);
+  if(personCards.length<=4){for(const {card} of personCards)card.open=true;}
   container.append(mergeBox);
   diagnostics.classList.add('compare-tech');
   diagnostics.querySelector('summary').textContent='Find a person / investigate a difference (optional)';
   diagnosticsBody.insertBefore(inspector,diagnosticsBody.firstChild);
   diagnosticsBody.querySelector('p.hint').textContent='Search for a person to see saved and incoming values. Detailed categories below are for troubleshooting.';
-  container.append(diagnostics);
+  // Internal comparison diagnostics are intentionally omitted from everyday user interface.
   apply.onclick=async()=>{
    const selectedNew=new Set(newSelections.filter(x=>x.checkbox.checked&&!x.checkbox.disabled).map(x=>x.id));
    const doAdd=selectedNew.size>0,doFill=false;
@@ -6959,6 +6991,7 @@ finishRedirect();
  if(statusCard&&intro)intro.insertAdjacentElement('afterend',statusCard);
  const WIZARD_KEY='fieldbook_live_v715_welcome_dismissed';
  const ROUTE_KEY='fieldbook_live_v715_welcome_route';
+ const COMPLETED_KEY='fieldbook_live_v7232_setup_finished';
  let route='';let setupReady=false;let lastTransition='';
  const step=n=>$('onboardStep'+n);
  const openStep=n=>{const el=step(n);if(el&&!el.hidden)el.open=true;};
@@ -7014,6 +7047,7 @@ finishRedirect();
   }
  };
  function refresh(initial=false){
+  if(localStorage.getItem(COMPLETED_KEY)==='yes'&&root.hidden)return;
   const imported=haveRecords(),fileReady=sourceSelected(),hasHome=homeChosen(),connected=isConnected(),verified=deviceVerified();
   step(1).hidden=route!=='new';
   step(2).hidden=route!=='new'||(!fileReady&&!imported);
@@ -7035,9 +7069,9 @@ finishRedirect();
   if(isSyncOn())onboardAction.textContent='Sync ON. You can finish setup.';
   $('onboardFinish').hidden=!route||(route==='new'?!imported:!verified);
   $('onboardFinish').textContent=verified?'Finish setup':'Finish setup — local only';
-  $('onboardSummary').textContent=!route?'Choose how you want to get started.':route==='join'?
+  $('onboardSummary').textContent=localStorage.getItem(COMPLETED_KEY)==='yes'?'Setup finished. Your Fieldbook is ready.':!route?'Choose how you want to get started.':route==='join'?
    (verified?isSyncOn()?'This device is ready and sync is ON. You can finish setup.':'This device is ready. Turn on sync here or finish setup.':connected?'Cloud connected. Select Add this device to my Fieldbook.':'Connect the same OneDrive account used by your first device.'):
-   (!fileReady&&!imported?'Start by choosing your GEDCOM.':!hasHome?'Choose your Home Person.':!imported?'Load burial entries from the GEDCOM into this device’s local storage.':!connected?'Your burial records are ready. Cloud and sync are optional.':!verified?'Connected! You can set up sync or finish using one device.':isSyncOn()?'Setup complete. Sync is ON. You can finish.':'Setup complete. Turn on sync here or finish.');
+   (!fileReady&&!imported?'Start by choosing your GEDCOM.':!hasHome?'Choose your Home Person.':!imported?'Load burial entries from the GEDCOM into this device’s local storage.':!connected?'Your burial records are ready. Cloud and sync are optional.':!verified?'Connected! You can set up sync or finish using one device.':isSyncOn()?'All steps are ready. Click Finish setup.':'Cloud setup is ready. Turn on sync or finish using one device.');
   const label=$('onboardStatusLabel');if(label)label.textContent=isSyncOn()?'SETUP READY':verified?'DEVICE READY':connected?'CLOUD CONNECTED':'SETUP PROGRESS';
   let next=0;
   if(!route)next=0;
@@ -7051,15 +7085,35 @@ finishRedirect();
   }
   setupReady=true;
  }
- function showWizard(){localStorage.setItem(WIZARD_KEY,'active');root.hidden=false;startAgain.style.display='none';refresh(true);root.scrollIntoView({behavior:'smooth',block:'start'})}
- function dismissWizard(){localStorage.setItem(WIZARD_KEY,'yes');root.hidden=true;startAgain.style.display='inline-block';$('relativePanel')?.scrollIntoView({behavior:'smooth',block:'start'})}
+ function showWizard(){
+   // Reopening completed setup for inspection does not restart onboarding.
+   if(localStorage.getItem(COMPLETED_KEY)!=='yes')localStorage.setItem(WIZARD_KEY,'active');
+   root.hidden=false;startAgain.style.display='none';
+   if(localStorage.getItem(COMPLETED_KEY)==='yes'){route='';$('onboardNewSteps').hidden=true;for(let n=1;n<=5;n++)step(n).open=false;
+    for(const id of ['onboardNew','onboardJoin']){$(id).className='secondary';$(id).setAttribute('aria-pressed','false')}
+    $('onboardSummary').textContent='Setup finished. You can close this section or choose a setup path to make changes.';
+    $('onboardStatusLabel').textContent='SETUP COMPLETE';$('onboardFinish').hidden=true; }
+   else refresh(true);
+   root.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+ function dismissWizard(){localStorage.setItem(COMPLETED_KEY,'yes');localStorage.setItem(WIZARD_KEY,'yes');localStorage.removeItem(ROUTE_KEY);route='';root.hidden=true;startAgain.style.display='inline-block';$('relativePanel')?.scrollIntoView({behavior:'smooth',block:'start'})}
  $('onboardFinish').onclick=dismissWizard;startAgain.onclick=showWizard;
  function observe(id){const target=$(id);if(target)new MutationObserver(()=>refresh()).observe(target,{subtree:true,childList:true,characterData:true,attributes:false})}
  for(const id of ['gedcomStatus','homeSelected','gedcomImportHint','guidedSetupStatus','cloudState','autoDeviceSyncStatus','sPeople'])observe(id);
  window.addEventListener('focus',()=>refresh());window.addEventListener('pageshow',()=>refresh());
  // Resume explicit unfinished onboarding across OneDrive OAuth redirects/reloads.
  // Never auto-open after Finish Setup or for users who did not start setup.
- const resumeSetup=localStorage.getItem(WIZARD_KEY)==='active';
+ // Migrate established installations from earlier versions, where completion
+ // could be left 'active' by a refresh despite having already joined a verified sync.
+ // For fresh onboarding in this version the user must still choose Finish setup.
+ const migrationKey='fieldbook_live_v7232_onboarding_migration';
+ if(!localStorage.getItem(migrationKey)){
+  if(localStorage.getItem(COMPLETED_KEY)!=='yes'&&haveRecords()&&homeChosen()&&deviceVerified()&&isSyncOn()){
+   localStorage.setItem(COMPLETED_KEY,'yes');localStorage.setItem(WIZARD_KEY,'yes');localStorage.removeItem(ROUTE_KEY);
+  }
+  localStorage.setItem(migrationKey,'done');
+ }
+ const resumeSetup=localStorage.getItem(WIZARD_KEY)==='active'&&localStorage.getItem(COMPLETED_KEY)!=='yes';
  root.hidden=!resumeSetup;startAgain.style.display=resumeSetup?'none':'inline-block';
  const savedRoute=localStorage.getItem(ROUTE_KEY);
  if(resumeSetup&&(savedRoute==='new'||savedRoute==='join'))viewRoute(savedRoute);
@@ -7303,6 +7357,10 @@ if(cloudPanel){
   const preview=$('cloudPreview');if(preview)preview.hidden=true;
   const warning=make('p','hint','Restoring replaces this device’s data. OneDrive backup files are readable and are not encrypted by Fieldbook.');
   cloudPanel.append(warning);
+  const connectionHelp=make('p','hint','Cloud storage is disconnected. Use the cloud control in the header to connect before using cloud backups.');
+  cloudPanel.insertBefore(connectionHelp,warning);
+  const refreshHelp=()=>{connectionHelp.hidden=!!localStorage.getItem('fieldbook_cloud_live_refresh_token_v2')};
+  refreshHelp();window.addEventListener('fieldbook-live-cloud-status',refreshHelp);window.addEventListener('storage',refreshHelp);
   // Hide old technical/automatic-backup UI but keep underlying processes and their settings unchanged.
   for(const e of [...cloudPanel.querySelectorAll('.compact-fold')])hide(e);
   for(const e of [...cloudPanel.querySelectorAll('p')])if(/Experimental remembered sign-in|private beta|Microsoft refresh token|Technical information about sign-in|Required SPA redirect URI/i.test(e.textContent||''))hide(e);
@@ -7312,8 +7370,15 @@ if(cloudPanel){
   if(autoBox?.checked){autoBox.checked=false;autoBox.dispatchEvent(new Event('change',{bubbles:true}))}
   const auto=autoBox?.closest('.home-panel');hide(auto);
   const connect=$('cloudConnect'),disconnect=$('cloudDisconnect');
+  // Header and guided onboarding own cloud authentication controls. Keep IDs for those handlers.
+  if(connect){connect.hidden=true;connect.style.display='none'}
+  if(disconnect){disconnect.hidden=true;disconnect.style.display='none'}
   const tokenKey='fieldbook_cloud_live_refresh_token_v2';
-  const buttonsStatus=()=>{const connected=!!localStorage.getItem(tokenKey);if(connect)connect.hidden=connected;if(disconnect)disconnect.hidden=!connected};
+  const buttonsStatus=()=>{
+   // Connection management is exclusively in the header. Keep backing buttons hidden.
+   if(connect)connect.hidden=true;if(disconnect)disconnect.hidden=true;
+   const state=$('cloudState');if(state)state.hidden=false;
+  };
   buttonsStatus();window.addEventListener('fieldbook-live-cloud-status',buttonsStatus);window.addEventListener('storage',buttonsStatus);
   if(cloudState)new MutationObserver(buttonsStatus).observe(cloudState,{childList:true,characterData:true,subtree:true});
   const listBtn=$('cloudList');if(listBtn&&saved){
@@ -7379,7 +7444,7 @@ if(wizard){
   }
   for(const step of wizard.querySelectorAll('.onboard-step'))step.open=false;
   const newBtn=$('onboardNew'),joinBtn=$('onboardJoin');
-  const finished=localStorage.getItem('fieldbook_live_v715_welcome_dismissed')!=='active';
+  const finished=localStorage.getItem('fieldbook_live_v7232_setup_finished')==='yes'||localStorage.getItem('fieldbook_live_v715_welcome_dismissed')!=='active';
   if(finished){for(const b of [newBtn,joinBtn])if(b){b.className='secondary';b.setAttribute('aria-pressed','false')} }
   // Existing onboarding logic continues to choose a step when a user explicitly starts/resumes setup.
 }
