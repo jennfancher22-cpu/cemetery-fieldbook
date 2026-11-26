@@ -675,7 +675,30 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 .tree-change-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px;margin:8px 0}.tree-change-table th,.tree-change-table td{border:1px solid #dfd7e5;padding:7px;white-space:pre-wrap;overflow-wrap:anywhere;text-align:left;vertical-align:top}.tree-change-table th{background:#f4eff7}.change-check{display:flex;align-items:center;gap:8px}.change-check input{width:18px;height:18px;min-height:18px}
 #v723BackupsPanel,#v723DataToolsPanel{margin-top:13px}.v723-subfold{margin:10px 0}.v723-subfold .data-subbody{padding:12px}
 #dataProtectionPanel,#simpleDataHub{display:none!important}
-</style></head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.23.0 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+</style>
+<style id="v7231Styles">
+/* Small visible editor help symbols, with a more forgiving invisible tap area. */
+#editor .field-help-toggle{width:16px!important;height:16px!important;min-width:16px!important;min-height:16px!important;max-width:16px!important;line-height:14px!important;font-size:10px!important;padding:0!important;border:1px solid #c9bdd6!important;background:#f7f4fa!important;position:relative!important;overflow:visible!important;box-shadow:none!important}
+#editor .field-help-toggle::after{content:"";position:absolute;inset:-6px}
+#editor .editor-help-row{gap:5px}
+#v723BackupsPanel .v723-subfold .data-subbody,#v723DataToolsPanel .v723-subfold .data-subbody{font-size:13px;line-height:1.45}
+#v723BackupsPanel .data-subbody>.hint:first-child,#v723DataToolsPanel .data-subbody>.hint:first-child{font-size:13px;line-height:1.45}
+#v723BackupsPanel .hub-help,#cloudRedirectHelp,#v723BackupsPanel .compact-disclaimer,#v723BackupsPanel .compact-fold.obsolete-fold{display:none!important}
+#v723BackupsPanel .old-backup-explanation,#v723DataToolsPanel .old-update-explanation{display:none!important}
+#cloudBackups{max-height:440px;overflow:auto}
+#v723BackupsPanel #cloudConnect[hidden],#v723BackupsPanel #cloudDisconnect[hidden]{display:none!important}
+#changeLogPanel .change-view-title{display:none}
+#changeLogPanel .data-subbody .report-count{margin-top:4px}
+#v723BackupsPanel #cloudAutoEnabled{display:none}
+#v723DataToolsPanel #dataToolsFold{border:0;margin:0;padding:0}
+#v723DataToolsPanel #dataToolsFold>.data-subbody{padding:0}
+#v723DataToolsPanel #startOverFold{border:0;padding:0;margin:0}
+#v723DataToolsPanel #startOverFold>.data-subbody{padding:0}
+#v723BackupsPanel #cloudBackups .tiny{font-size:12px}
+#getStartedPanel .welcome-toggle{background:none!important;border:0!important;box-shadow:none!important;text-align:left!important;color:inherit!important;font-size:inherit!important;font-weight:inherit!important;padding:0!important;margin:0!important;min-height:0!important;cursor:pointer}
+#getStartedPanel .welcome-toggle:hover{text-decoration:underline}
+</style>
+</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.23.1 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook" hidden>
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">Import your family tree or join an existing Fieldbook. Complete the steps below.</p>
@@ -737,7 +760,7 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 <section class="panel" id="nearbyPanel"><details class="finder-fold" id="nearbyFold"><summary>📍 Find cemeteries nearby <span class="finder-sub">Search by distance</span></summary><div class="finder-body"><p class="hint">Straight-line distance, not driving distance. Works offline with saved cemetery coordinates. Choose a starting town or try your phone location.</p><div class="filters nearby-compact"><div><label for="startPlace">Starting point</label><select id="startPlace"><option value="39.7684,-86.1581">Indianapolis, IN</option><option value="38.9592,-85.8903" selected>Seymour, IN</option><option value="39.6128,-86.3742">Mooresville, IN</option><option value="39.2014,-85.9214">Columbus, IN</option><option value="custom">Custom coordinates</option></select></div><div><label for="radius">Within</label><select id="radius"><option>10</option><option selected>25</option><option>50</option><option>100</option><option>250</option><option>500</option></select></div><div><label for="startLat">Latitude</label><input id="startLat" type="number" step="any" placeholder="39.123"></div><div><label for="startLon">Longitude</label><input id="startLon" type="number" step="any" placeholder="-86.123"></div></div><div class="buttons" style="margin-top:10px"><button class="secondary" id="nearSearch">Find nearby cemeteries</button><button class="secondary" id="myLocation">Use phone GPS</button></div><div id="geoNote" class="hint" role="status"></div><div id="nearResults"></div></div></details></section><section class="panel" id="relativePanel"><details class="finder-fold" id="relativeFold" open><summary>🔎 Find a relative or cemetery <span class="finder-sub">Search names &amp; filters</span></summary><div class="finder-body"><div class="filters"><div class="wide"><input id="q" type="search" placeholder="Search name, cemetery, town, family line…" aria-label="Search"></div><div><label for="stateFilter">State</label><select id="stateFilter"><option value="">All states</option></select></div><div><label for="county">County</label><select id="county"><option value="">All counties</option></select></div><div><label for="cem">Cemetery</label><select id="cem"><option value="">All cemeteries</option></select></div><div><label for="status">Visit filter</label><select id="status"><option value="">All records</option><option value="unvisited">Not visited</option><option value="nophoto">Photo needed</option><option value="nogps">GPS needed</option></select></div></div><div class="buttons" style="margin-top:12px"><button id="add">+ Add discovery</button><button class="secondary" id="clear">Clear filters</button><button class="outline" id="showAll">Show all records</button><button class="secondary" type="button" id="showMatches" hidden style="display:none!important">Show filtered results</button></div></div></details></section>
 <section class="panel" id="burialPanel"><div class="resulthead"><h2 style="margin:0">Burial records</h2><span class="tiny" id="count"></span></div><div class="burial-list-controls"><span class="hint">Tap a name to view details and edit.</span><div class="inline-controls"><button class="secondary" id="hideResultsTop" type="button">Hide results</button><button class="secondary" id="clearResultsTop" type="button">Clear filters</button></div></div><div id="out"></div><div class="burial-list-controls"><button id="more" class="secondary" hidden>Show more</button><div class="inline-controls"><button class="secondary" id="hideResultsBottom" type="button">Hide results</button><button class="secondary" id="clearResultsBottom" type="button">Clear filters</button></div></div></section>
 <section class="panel" id="changeLogPanel"><details id="changeLogMain" class="finder-fold"><summary>📋 Cemetery change log <span class="finder-sub" id="changeCount"></span></summary><div class="finder-body"><p class="hint">Review outstanding updates or your full activity history.</p>
-<details id="treeChangeSection" class="data-subfold"><summary>Changes to enter in tree</summary><div class="data-subbody"><p class="hint">Review each person here, or print the same information for Family Tree Maker.</p><button type="button" class="secondary" id="viewTreeChanges" hidden>Changes to enter in tree</button><div class="buttons"><button id="downloadChangeCsv" class="secondary">Print / Save changes PDF</button></div><div id="changeList" hidden></div></div></details>
+<details id="treeChangeSection" class="data-subfold"><summary>Changes to enter in tree</summary><div class="data-subbody"><p class="hint">Review each person here or save the same information for your genealogy database.</p><button type="button" class="secondary" id="viewTreeChanges" hidden>Changes to enter in tree</button><div class="buttons"><button id="downloadChangeCsv" class="secondary">Print / Save changes PDF</button></div><div id="changeList" hidden></div></div></details>
 <details id="historyChangeSection" class="data-subfold"><summary>Complete activity history</summary><div class="data-subbody"><p class="hint">All recorded activity, including completed changes.</p><button type="button" id="viewHistory" class="secondary" hidden>Complete activity history</button><div class="buttons"><button id="downloadHistoryCsv" class="secondary">Export full history (Excel)</button></div><div id="changeHistoryList"></div></div></details>
 <div id="changeTools" hidden><button id="hideChangeLog" hidden type="button">Hide reports</button></div></div></details></section>
 <section class="panel" id="simpleDataHub" aria-label="Backup and device synchronization">
@@ -764,7 +787,7 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 <p id="syncConflictStatus" class="hint" role="status">Synchronization is paused. No records changed.</p>
 <div id="syncConflictItems"></div>
 </section>
-<details id="gedcomSourceIntegrityAudit" class="data-subfold" style="margin-top:10px"><summary>GEDCOM source-note integrity audit <span class="tool-subnote">Read-only · all burial records</span></summary><div class="data-subbody"><p class="hint">Choose the original GEDCOM exported from Family Tree Maker. Fieldbook compares burial source notes by GEDCOM ID without editing records or uploading the GEDCOM. Missing text is flagged for review; intentional revisions are never silently overwritten.</p><div class="buttons"><button type="button" id="auditGedcomBurialNotesButton" class="secondary">Choose GEDCOM to audit</button><input type="file" id="auditGedcomBurialNotesFile" accept=".ged,.gedcom,text/plain" hidden><button type="button" id="exportGedcomNotesAudit" class="secondary" disabled>Export audit CSV</button></div><p id="gedcomSourceIntegrityStatus" class="hint" role="status" aria-live="polite">No audit run. No records modified.</p><div id="gedcomSourceIntegrityDetails" class="tiny"></div></div></details>
+<details id="gedcomSourceIntegrityAudit" class="data-subfold" style="margin-top:10px"><summary>GEDCOM source-note integrity audit <span class="tool-subnote">Read-only · all burial records</span></summary><div class="data-subbody"><p class="hint">Choose a GEDCOM exported from your genealogy database. Fieldbook compares imported person and burial fields, checks original source notes, and validates Fieldbook-only data. Nothing is changed or uploaded.</p><div class="buttons"><button type="button" id="auditGedcomBurialNotesButton" class="secondary">Choose GEDCOM to audit</button><input type="file" id="auditGedcomBurialNotesFile" accept=".ged,.gedcom,text/plain" hidden><button type="button" id="exportGedcomNotesAudit" class="secondary" disabled>Export audit CSV</button></div><p id="gedcomSourceIntegrityStatus" class="hint" role="status" aria-live="polite">No audit run. No records modified.</p><div id="gedcomSourceIntegrityDetails" class="tiny"></div></div></details>
 <details id="originalGedcomNoteRepair" class="data-subfold" style="margin-top:10px"><summary>Recover original GEDCOM Burial Notes (William Poland)</summary><div class="data-subbody"><p class="hint">The original GEDCOM text is preserved in this build. This recovery adds it without deleting the two LIVE sync test notes or changing other burial records. Run this on ONE connected device only; then allow automatic synchronization to update the other device. A verified OneDrive recovery backup is required first.</p><div class="buttons"><button type="button" id="repairWilliamGedcomNote">Restore missing source note</button></div><p id="repairWilliamNoteStatus" class="hint" role="status" aria-live="polite"></p><details><summary>Show original GEDCOM note</summary><p id="repairWilliamNotePreview" style="white-space:pre-wrap"></p></details></div></details>
 <details id="syncDiagnosticsFold" class="data-subfold" style="margin-top:10px"><summary>Sync diagnostics <span class="tool-subnote">Recent checks, pauses and upgrade status</span></summary><div class="data-subbody"><p id="syncDiagnosticsSummary" class="hint" role="status">No diagnostics recorded.</p><div id="syncDiagnosticsHistory" class="tiny" style="white-space:pre-wrap;overflow-wrap:anywhere"></div><div class="buttons" style="margin-top:9px"><button type="button" id="copySyncDiagnostics" class="secondary">Copy diagnostic summary</button><button type="button" id="traceNoteSync" class="secondary" hidden>Trace note sync (read-only)</button></div><pre id="noteSyncTraceResult" style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px" role="status" hidden></pre><p class="hint">Stored only in this LIVE browser. Includes status and error messages, not family records or cloud credentials. This history survives a refresh and is cleared by Reset LIVE Fieldbook.</p></div></details>
 </div><div class="home-panel" id="syncWorkflowPanel" style="border:2px solid #c1b1cd;border-radius:12px;padding:13px;margin:10px 0 14px">
@@ -796,8 +819,8 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 <div id="gedcomImportAction" class="home-panel"><h3 style="margin-top:0">3 · Import burial entries</h3><p class="hint" id="gedcomImportHint">The burial entries will be imported from your GEDCOM into private storage on this device. Choose your Home Person before importing.</p><div class="buttons" id="gedcomImportButtons"><button type="button" class="secondary" disabled>Choose a GEDCOM file first</button></div></div>
 </div></details>
 <details class="data-subfold" id="dataToolsFold"><summary>2 · Update from GEDCOM <span class="tool-subnote">Compare, review, approve changes</span></summary><div class="data-subbody">
-<p class="update-intro"><strong>Keep Fieldbook up to date:</strong> Select your new GEDCOM, review only the proposed changes, then back up and apply your choices. Previous repairs and diagnostics are under Advanced Tools.</p>
-<div class="home-panel" id="safeReimportPanel"><h3 style="margin-top:0">Update from Family Tree Maker</h3>
+<p class="update-intro"><strong>Keep Fieldbook up to date:</strong> Select your new GEDCOM, review only the proposed changes, then back up and apply your choices. </p>
+<div class="home-panel" id="safeReimportPanel"><h3 style="margin-top:0">Update from Genealogy Database</h3>
 <p class="hint">Choose your latest GEDCOM. You will review proposed changes before any data is saved. Existing visits, photos, notes and GPS are protected.</p>
 <div class="buttons"><button type="button" class="secondary" id="compareGedcomButton">Compare a newer GEDCOM</button><input id="compareGedcomFile" type="file" accept=".ged,.gedcom,text/plain" hidden></div>
 <div id="compareGedcomStatus" class="hint" role="status">Choose a GEDCOM to begin. No records are changed by a comparison.</div>
@@ -952,7 +975,7 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7.23.0 LIVE · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.23.1 LIVE · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog" novalidate><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div>
 <div class="edit-section-title">Person &amp; burial</div><div class="filters edit-fields">
 <div class="wide"><label for="fieldbookEditName">Name <span class="required-mark" aria-label="required">*</span></label><input id="fieldbookEditName" name="name" required><small class="field-inline-error" id="nameRequiredError" hidden>Name is required.</small></div>
@@ -1056,7 +1079,7 @@ function outstandingTreeChanges(){
 function renderChangeLog(){
  const pending=outstandingTreeChanges();
  const pendingPeople=new Set(pending.map(x=>x.personId||x.person||x.id));
- $('changeCount').textContent=pendingPeople.size+' people to enter in tree';
+ $('changeCount').textContent=pendingPeople.size+' '+(pendingPeople.size===1?'person':'people')+' to enter in tree';
  const el=$('changeList');if(el.hidden)return;
  el.replaceChildren();const inTree=changeView==='tree';
  el.append(textNode('h3','change-view-title',inTree?'Changes to enter in tree':'Complete activity history'));
@@ -1067,7 +1090,7 @@ function renderChangeLog(){
   if(!groups.has(key))groups.set(key,{person:x.person||'Unknown person',items:[],key});
   groups.get(key).items.push(x);
  }
- el.append(textNode('p','report-count',groups.size+' people · '+entries.length+' recorded '+(inTree?'outstanding changes':'events')+'. Select a person to see details.'));
+ el.append(textNode('p','report-count',groups.size+' '+(groups.size===1?'person':'people')+' · '+entries.length+' recorded '+(inTree?'outstanding changes':'events')+'. Select a person to see details.'));
  for(const group of groups.values()){
   const box=document.createElement('details');box.className='person-group';
   const summary=document.createElement('summary');
@@ -2386,7 +2409,7 @@ async function compareCurrentGedcom(file){
   const identityDetails=document.createElement('details');identityDetails.className='cemetery-group';
   identityDetails.append(textNode('summary','','Review GEDCOM ID / name differences ('+identityDifferences.length+')'));
   const identityList=textNode('div','cemetery-group-people');identityList.style.maxHeight='260px';identityList.style.overflow='auto';
-  identityList.append(textNode('p','hint','A name difference is not proof that an ID changed: spelling, middle names, and marriage names can also change. Verify each individual in Family Tree Maker before approving a merge. Name changes are not applied automatically; verified changes can be approved individually below.'));
+  identityList.append(textNode('p','hint','A name difference is not proof that an ID changed: spelling, middle names, and marriage names can also change. Verify each individual in your genealogy database before approving a merge. Name changes are not applied automatically; verified changes can be approved individually below.'));
   if(!identityDifferences.length)identityList.append(textNode('p','tiny','None. All matched GEDCOM IDs have the same normalized base name.'));
   for(const x of identityDifferences)identityList.append(textNode('div','ged-example',x.id+' · Fieldbook: '+x.oldName+' · New GEDCOM: '+x.newName));
   identityDetails.append(identityList);mergeBody.append(identityDetails);
@@ -7039,7 +7062,7 @@ finishRedirect();
  const resumeSetup=localStorage.getItem(WIZARD_KEY)==='active';
  root.hidden=!resumeSetup;startAgain.style.display=resumeSetup?'none':'inline-block';
  const savedRoute=localStorage.getItem(ROUTE_KEY);
- if(savedRoute==='new'||savedRoute==='join')viewRoute(savedRoute);
+ if(resumeSetup&&(savedRoute==='new'||savedRoute==='join'))viewRoute(savedRoute);
  Promise.resolve(typeof largeDataReady==='undefined'?null:largeDataReady)
   .then(()=>refresh(true)).catch(()=>refresh(true));
  refresh(true);
@@ -7223,12 +7246,194 @@ for(const id of ['q','stateFilter','county','cem','status'])$(id)?.addEventListe
 // Two report sections: switch their existing renderer when an accordion is opened.
 const tree=$('treeChangeSection'),history=$('historyChangeSection');
 const list=$('changeList');
-function showReport(which){if(which==='tree'){$('viewTreeChanges')?.click();tree?.querySelector('.data-subbody')?.append(list);if(history)history.open=false}else{$('viewHistory')?.click();history?.querySelector('.data-subbody')?.append(list);if(tree)tree.open=false}}
+function showReport(which){if(which==='tree'){$('viewTreeChanges')?.click();tree?.querySelector('.data-subbody')?.insertBefore(list,tree?.querySelector('.data-subbody')?.querySelector('.buttons')||null);if(history)history.open=false}else{$('viewHistory')?.click();history?.querySelector('.data-subbody')?.insertBefore(list,history?.querySelector('.data-subbody')?.querySelector('.buttons')||null);if(tree)tree.open=false}}
 tree?.addEventListener('toggle',()=>{if(tree.open)showReport('tree')});history?.addEventListener('toggle',()=>{if(history.open)showReport('history')});
 // Offer explicit manual collapse independent of Finish Setup, while retaining setup progress.
-const welcome=$('getStartedPanel');if(welcome){const close=document.createElement('button');close.type='button';close.className='secondary';close.textContent='Collapse setup';close.style.margin='8px 0';welcome.insertBefore(close,welcome.firstChild);close.onclick=()=>{welcome.hidden=true;$('reopenSetup').style.display='inline-block'};}
+// v7.23.1: setup heading provides the single collapse affordance.
 // No date refresh controls in the final editor. Full dates now come from GEDCOM import.
 // Keep hidden refresh DOM elements for existing editor callbacks; no permanent button displayed.
 // Sync activity only reads status when manually opened. Existing recovery controls are kept.
 })();
-</script></body></html>
+</script>
+<script id="v7231FinalCleanup">
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const make=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n};
+const inner=id=>$(id)?.querySelector(':scope > .data-subbody');
+function hide(el){if(el)el.hidden=true}
+function erase(el){if(el)el.remove()}
+function setLabel(id,label){const el=$(id);if(el)el.textContent=label}
+// BACKUPS: keep original handlers and cloud nodes, expose only their user-facing actions.
+const localPanel=$('v723BackupsPanel')?.querySelector('.v723-subfold:nth-of-type(1) .data-subbody');
+const cloudPanel=$('v723BackupsPanel')?.querySelector('.v723-subfold:nth-of-type(2) .data-subbody');
+if(localPanel){
+  for(const el of [...localPanel.children]){
+    if(el.matches('p, .compact-fold')||el.classList.contains('notice')||el.id==='cloudRedirectHelp')hide(el);
+  }
+  for(const el of [...localPanel.querySelectorAll('p,h3,h4,.compact-fold')]){
+    const t=(el.textContent||'').trim();
+    if(/OneDrive|cloud backup|v6\.1|Beta experiment|SPA redirect URI|Upgrading|Technical information|Backup instructions and safety notes|Connect your personal/i.test(t) && !el.contains($('backup')) && !el.contains($('restore'))){
+      // Only hide entire legacy informational blocks, never the required action containers.
+      if(!el.querySelector('button,input'))hide(el);
+    }
+  }
+  const info=make('p','hint','Save a complete copy of this device’s Fieldbook data. Restoring a local backup replaces this device’s current records; it does not merge changes.');
+  localPanel.prepend(info);
+  const actions=$('backup')?.closest('.buttons');if(actions)localPanel.append(actions);
+  const backupStatus=$('lastbackup');if(backupStatus){backupStatus.hidden=false;localPanel.append(backupStatus)}
+  for(const h of [...localPanel.querySelectorAll('h3')])if(/Backups and field notes|OneDrive backups/i.test(h.textContent||''))h.remove();
+  // Preserve restore file input and other handlers without displaying technical controls.
+}
+if(cloudPanel){
+  const cloudActions=$('cloudConnect')?.closest('.buttons');
+  const cloudState=$('cloudState');
+  const cloudButtons=$('cloudList')?.closest('.buttons');
+  const saved=$('cloudBackups');
+  if(cloudActions)cloudPanel.append(cloudActions);
+  if(cloudState)cloudPanel.append(cloudState);
+  if(cloudButtons)cloudPanel.append(cloudButtons);
+  if(saved)cloudPanel.append(saved);
+  for(const el of [...cloudPanel.children]){
+    if(el!==cloudActions&&el!==cloudState&&el!==cloudButtons&&el!==saved && (el.tagName==='DETAILS'||el.classList.contains('home-panel')))hide(el);
+  }
+  const explanation=make('p','hint','Save a backup to your personal OneDrive, or download or restore an earlier copy.');
+  cloudPanel.prepend(explanation);
+  for(const p of [...cloudPanel.querySelectorAll('p')])if(p!==explanation&&/Available when you connect your personal OneDrive/i.test(p.textContent||''))hide(p);
+  const preview=$('cloudPreview');if(preview)preview.hidden=true;
+  const warning=make('p','hint','Restoring replaces this device’s data. OneDrive backup files are readable and are not encrypted by Fieldbook.');
+  cloudPanel.append(warning);
+  // Hide old technical/automatic-backup UI but keep underlying processes and their settings unchanged.
+  for(const e of [...cloudPanel.querySelectorAll('.compact-fold')])hide(e);
+  for(const e of [...cloudPanel.querySelectorAll('p')])if(/Experimental remembered sign-in|private beta|Microsoft refresh token|Technical information about sign-in|Required SPA redirect URI/i.test(e.textContent||''))hide(e);
+  const autoBox=$('cloudAutoEnabled');
+  // Retiring the optional automatic-backup setting must not leave an invisible enabled timer.
+  // Device synchronization and its verified recovery backups are separate and remain enabled.
+  if(autoBox?.checked){autoBox.checked=false;autoBox.dispatchEvent(new Event('change',{bubbles:true}))}
+  const auto=autoBox?.closest('.home-panel');hide(auto);
+  const connect=$('cloudConnect'),disconnect=$('cloudDisconnect');
+  const tokenKey='fieldbook_cloud_live_refresh_token_v2';
+  const buttonsStatus=()=>{const connected=!!localStorage.getItem(tokenKey);if(connect)connect.hidden=connected;if(disconnect)disconnect.hidden=!connected};
+  buttonsStatus();window.addEventListener('fieldbook-live-cloud-status',buttonsStatus);window.addEventListener('storage',buttonsStatus);
+  if(cloudState)new MutationObserver(buttonsStatus).observe(cloudState,{childList:true,characterData:true,subtree:true});
+  const listBtn=$('cloudList');if(listBtn&&saved){
+    let visible=false;const old=listBtn.onclick;
+    listBtn.onclick=function(e){if(visible){visible=false;saved.hidden=true;listBtn.textContent='View cloud backups';return}visible=true;listBtn.textContent='Hide cloud backups';saved.hidden=false;if(old)return old.call(this,e)};
+  }
+  const help=$('cloudBackups');if(help){
+    const observer=new MutationObserver(()=>{for(const p of help.querySelectorAll('p'))if(/Includes cloud-created backups and full Fieldbook backups manually placed/i.test(p.textContent||''))p.textContent='Choose a backup to download or restore. Restoring replaces this device’s current data.'});
+    observer.observe(help,{childList:true,subtree:true});
+  }
+}
+// DATA TOOLS: flatten the update and reset, keep their existing IDs and handlers.
+const data=$('v723DataToolsPanel');
+const sections=data?[...data.querySelectorAll(':scope > details > .finder-body > .v723-subfold')]:[];
+const auditSection=sections.find(e=>e.querySelector('summary')?.textContent.trim()==='Data Integrity Audit');
+const updateSection=sections.find(e=>e.querySelector(':scope > summary')?.textContent.includes('Update from GEDCOM'));
+const resetSection=sections.find(e=>e.querySelector(':scope > summary')?.textContent==='Start Over');
+const extraSection=sections.find(e=>e.querySelector(':scope > summary')?.textContent==='Additional data checks');
+erase(extraSection);
+if(updateSection){
+  updateSection.querySelector(':scope > summary').textContent='Update from Genealogy Database';
+  const body=updateSection.querySelector(':scope > .data-subbody');
+  const fold=$('dataToolsFold');if(body&&fold){
+    const contents=fold.querySelector(':scope > .data-subbody');
+    if(contents)while(contents.firstChild)body.append(contents.firstChild);
+    fold.remove();
+  }
+  for(const p of body?.querySelectorAll('p')||[])if(/Previous repairs and diagnostics are under Advanced Tools/i.test(p.textContent||''))p.textContent=p.textContent.replace(/Previous repairs and diagnostics are under Advanced Tools\.?/i,'').trim();
+  for(const title of body?.querySelectorAll('h3')||[])if(/Family Tree Maker/i.test(title.textContent||''))title.textContent='Update from Genealogy Database';
+}
+if(resetSection){
+  const body=resetSection.querySelector(':scope > .data-subbody');
+  const fold=$('startOverFold');const panel=$('resetFieldbookPanel');
+  if(panel&&body)body.append(panel);
+  if(fold)fold.remove();
+  for(const h of panel?.querySelectorAll('h3,h4')||[])if(/Start over \/ reset Fieldbook data/i.test(h.textContent||''))h.remove();
+  for(const info of body?.querySelectorAll('p.hint')||[])if(/Cloud storage must be disconnected first/i.test(info.textContent||''))info.textContent='Start Over clears this device’s local Fieldbook data. If cloud storage is being used, it must be disconnected first. Other devices and cloud files are not deleted.';
+}
+if(auditSection){
+  const body=auditSection.querySelector(':scope > .data-subbody');
+  erase($('v723IntegrityOther'));
+  for(const p of body?.querySelectorAll('p.hint')||[])if(/source notes by GEDCOM|Family Tree Maker/i.test(p.textContent||''))p.textContent='Choose a GEDCOM exported from your genealogy database. Fieldbook compares imported information with your saved records and checks Fieldbook-only data for consistency. This audit never changes your records.';
+  const action=$('auditGedcomBurialNotesButton');if(action)action.textContent='Choose GEDCOM to audit';
+  hide($('exportGedcomNotesAudit'));
+}
+// CHANGE LOG: review first, export at bottom, no duplicate view heading.
+const tree=$('treeChangeSection'),history=$('historyChangeSection');
+for(const sec of [tree,history]){
+  if(!sec)continue;
+  const body=sec.querySelector(':scope > .data-subbody');
+  const actions=sec===tree?$('downloadChangeCsv'):$('downloadHistoryCsv');
+  if(body&&actions){const buttons=actions.closest('.buttons');if(buttons)body.append(buttons)}
+}
+// GET STARTED: heading toggles, manual choice required for a new setup.
+const wizard=$('getStartedPanel');
+if(wizard){
+  const title=wizard.querySelector(':scope > h2');
+  if(title){
+    const button=make('button','welcome-toggle',title.textContent);
+    button.type='button';button.setAttribute('aria-label','Collapse Getting Started');
+    title.replaceChildren(button);
+    button.onclick=()=>{wizard.hidden=true;const open=$('reopenSetup');if(open)open.style.display='inline-block'};
+  }
+  for(const step of wizard.querySelectorAll('.onboard-step'))step.open=false;
+  const newBtn=$('onboardNew'),joinBtn=$('onboardJoin');
+  const finished=localStorage.getItem('fieldbook_live_v715_welcome_dismissed')!=='active';
+  if(finished){for(const b of [newBtn,joinBtn])if(b){b.className='secondary';b.setAttribute('aria-pressed','false')} }
+  // Existing onboarding logic continues to choose a step when a user explicitly starts/resumes setup.
+}
+})();
+</script>
+<script id="v7231ComprehensiveAudit">
+(function(){
+'use strict';
+const choose=document.getElementById('auditGedcomBurialNotesFile');
+const status=document.getElementById('gedcomSourceIntegrityStatus');
+const details=document.getElementById('gedcomSourceIntegrityDetails');
+const exportBtn=document.getElementById('exportGedcomNotesAudit');
+const button=document.getElementById('auditGedcomBurialNotesButton');
+if(!choose||!status||!details||!button)return;
+let rows=[];
+const clean=v=>String(v??'').replace(/\s+/g,' ').trim();
+const findKey=r=>String(r.gedcomId||((/^ged-/.test(r.id||''))?'@'+r.id.slice(4)+'@':'' )).toUpperCase();
+const add=(name,field,expected,actual,result)=>rows.push({name,field,expected:String(expected??''),actual:String(actual??''),result});
+choose.onchange=async ev=>{
+ const file=ev.target.files?.[0];if(!file)return;
+ button.disabled=true;details.replaceChildren();rows=[];
+ try{
+  await largeDataReady;
+  status.textContent='Checking GEDCOM information and saved Fieldbook data…';
+  const source=parseGedcomBurials(await file.text()),saved=all();
+  const index=new Map(),seen=new Set();let duplicates=0;
+  for(const rec of saved){const key=findKey(rec);if(key){if(index.has(key))duplicates++;else index.set(key,rec)}if(seen.has(rec.id))add(rec.name||'', 'Fieldbook record ID',rec.id,rec.id,'Duplicate');seen.add(rec.id)}
+  const fields=[['Name','name'],['Birth date','birthDate'],['Death date','deathDate'],['Burial date','burialDate'],['State','state'],['County','county'],['Town','town'],['Cemetery','cemetery'],['Find a Grave URL','findagrave']];
+  let sourceNotes=0,notePresent=0,checked=0,differences=0,missing=0;
+  for(const item of source){
+   checked++;const current=index.get(findKey(item));
+   if(!current){missing++;add(item.name,'Burial record',item.cemetery,'Missing','Record missing');continue}
+   for(const [label,key] of fields){const a=clean(item[key]),b=clean(current[key]);if(a!==b){differences++;add(item.name,label,a,b,'Different — review')}}
+   const note=clean(item.gedcomNoteText);
+   if(note){sourceNotes++;if(clean(current.notes).includes(note))notePresent++;else{differences++;add(item.name,'Original GEDCOM burial note',note,current.notes||'','Missing or revised — review')}}
+   // These fields may not exist in a GEDCOM. Validate their Fieldbook state without calling it missing genealogical data.
+   for(const field of ['visited','photo','gps'])if(typeof current[field]!=='boolean')add(item.name,'Fieldbook '+field,'Boolean',typeof current[field],'Unusual type');
+   if(current.plot!=null&&typeof current.plot!=='string')add(item.name,'Plot','Text',typeof current.plot,'Unusual type');
+   for(const field of ['relation','side','line','notes','findagrave'])if(current[field]!=null&&typeof current[field]!=='string')add(item.name,'Fieldbook '+field,'Text',typeof current[field],'Unusual type');
+  }
+  for(const rec of saved){if(!clean(rec.name))add('(unnamed)','Required name','Nonempty',rec.name,'Missing');if(!clean(rec.cemetery))add(rec.name,'Required cemetery','Nonempty',rec.cemetery,'Missing');if(rec.findagrave&& !/^https?:\/\//i.test(String(rec.findagrave)))add(rec.name,'Find a Grave URL','HTTP(S) URL',rec.findagrave,'Unusual format')}
+  const photoRows=await getPhotos();const photoIds=new Set(),personIds=new Set(saved.map(r=>r.id));
+  for(const photo of photoRows){if(photoIds.has(photo.id))add('Photo','Photo ID','Unique',photo.id,'Duplicate');photoIds.add(photo.id);if(!personIds.has(photo.person))add('Photo','Linked burial','Existing record',photo.person,'Orphaned attachment');if(!photo.data)add('Photo','Image data','Present','Missing','Missing data')}
+  if(typeof geoEdits==='object'&&geoEdits)for(const [key,coords] of Object.entries(geoEdits))if(!Array.isArray(coords)||coords.length!==2||!coords.every((v,i)=>Number.isFinite(v)&&Math.abs(v)<=(i===0?90:180)))add(key,'Cemetery GPS','Valid coordinates',JSON.stringify(coords),'Invalid coordinates');
+  if(typeof changeLog!=='undefined')for(const event of changeLog){if(!event.id||!event.at)add(event.person||'History','Activity history','ID and timestamp',JSON.stringify(event).slice(0,150),'Incomplete event')}
+  const issues=rows.length;
+  status.textContent=`Read-only audit complete: ${checked} GEDCOM burials compared; ${notePresent}/${sourceNotes} original burial source notes present; ${saved.length} saved burials and ${photoRows.length} photographs checked; ${issues} item(s) to review. No records changed.`;
+  if(issues){const heading=document.createElement('p');heading.textContent=`Showing ${Math.min(40,issues)} of ${issues} findings. Differences may be intentional; review before correcting anything.`;details.append(heading);for(const r of rows.slice(0,40)){const row=document.createElement('p');row.textContent=`${r.name} — ${r.field}: ${r.result}`;details.append(row)}}
+  else{const message=document.createElement('p');message.textContent='No inconsistencies found in the checks performed.';details.append(message)}
+  if(exportBtn){exportBtn.disabled=!rows.length;exportBtn.hidden=!rows.length;exportBtn.textContent='Export audit findings (CSV)'}
+ }catch(err){status.textContent='Audit could not complete. No records changed: '+(err?.message||err)}
+ finally{button.disabled=false;ev.target.value=''}
+};
+if(exportBtn)exportBtn.onclick=()=>{if(!rows.length)return;const val=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const names=['name','field','expected','actual','result'];const csv=[names.join(','),...rows.map(x=>names.map(k=>val(x[k])).join(','))].join('\r\n');download(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}),'fieldbook-integrity-audit-'+new Date().toISOString().slice(0,10)+'.csv')};
+})();
+</script>
+</body></html>
