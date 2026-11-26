@@ -720,7 +720,7 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 #editor .checkrow input{flex:0 0 auto;width:17px;height:17px;min-height:17px}
 @media(max-width:480px){#editor .checkrow{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
-</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.23.4 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.23.5 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook" hidden>
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">Import your family tree or join an existing Fieldbook. Complete the steps below.</p>
@@ -997,7 +997,7 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7.23.4 LIVE · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.23.5 LIVE · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog" novalidate><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div>
 <div class="edit-section-title">Person &amp; burial</div><div class="filters edit-fields">
 <div class="wide"><label for="fieldbookEditName">Name <span class="required-mark" aria-label="required">*</span></label><input id="fieldbookEditName" name="name" required><small class="field-inline-error" id="nameRequiredError" hidden>Name is required.</small></div>
@@ -2814,18 +2814,34 @@ $('gedcomFile').onchange=async e=>{
     alert('Initial import requires an EMPTY Fieldbook. Existing LIVE burial records will remain until you choose an action. Use Update from GEDCOM after legacy records are matched to GEDCOM IDs.');return;
    }
    if(!confirm('Import '+entries.length+' burial entries ('+withSuffix+' with preserved suffixes; '+ambiguous.length+' conflicting-burial people excluded) from '+file.name+' with '+(allGedcomPeople.find(p=>p.id===homePersonId)?.name||homePersonId)+' as Home Person? This changes ONLY this browser dataset.'))return;
+   // Data commit and screen refresh MUST be different error boundaries. A missing
+   // optional screen element must never label a successful IndexedDB commit as a
+   // failed import (or prompt the user to import the same GEDCOM twice).
    try{
     await saveLargeData(entries,directory);
-    // Remove any old small-storage copies only AFTER IndexedDB commits.
+   }catch(err){alert('GEDCOM records were not saved: '+(err?.message||err));return;}
+   // Data is committed. Keep the in-memory state aligned with the saved copy.
+   seed=entries;allGedcomPeople=directory;pendingGedcom=null;
+   try{
     localStorage.removeItem(SEED_KEY);
     localStorage.removeItem(GED_PEOPLE_KEY);
     localStorage.setItem(HOME_PERSON_KEY,homePersonId);
-    seed=entries;allGedcomPeople=directory;pendingGedcom=null;
-    refreshHomeDisplay();searchHomePeople();refreshOptions();render();
-    $('privateSeedStatus').textContent=seed.length+' GEDCOM burial records loaded';
-    status.textContent='Import complete: '+seed.length+' burial entries. Your Home Person and full people directory are saved. Export a full backup to protect your data.';
-    preview.hidden=true;$('gedcomImportHint').textContent='Import complete: '+seed.length+' burial records loaded. To import a different GEDCOM, choose its file in Step 1. Safe re-import into an existing dataset is not available yet.';$('gedcomImportButtons').replaceChildren();
-   }catch(err){alert('Import could not be saved: '+err.message)}
+   }catch(err){console.warn('GEDCOM saved, but a small setup setting could not be updated',err);}
+   const safeSet=(id,value)=>{const target=$(id);if(target)target.textContent=value};
+   const safeRefresh=(name,fn)=>{try{fn()}catch(err){console.warn('GEDCOM saved; optional '+name+' refresh did not complete',err)}};
+   safeRefresh('home person',refreshHomeDisplay);
+   safeRefresh('home person search',searchHomePeople);
+   safeRefresh('filter options',refreshOptions);
+   safeRefresh('burial list',render);
+   safeSet('privateSeedStatus',seed.length+' GEDCOM burial records loaded');
+   safeSet('gedcomImportHint','Import complete: '+seed.length+' burial records loaded. Choose a new GEDCOM in Step 1 to compare updates later.');
+   safeSet('gedcomStatus','Import complete: '+seed.length+' burial entries. Your Home Person and full people directory are saved.');
+   safeSet('onboardSummary','Imported '+seed.length+' burial entries. Continue with optional cloud setup or finish setup.');
+   if(status)status.textContent='Import complete: '+seed.length+' burial entries. Your Home Person and full people directory are saved. Export a full backup to protect your data.';
+   preview.hidden=true;
+   const actions=$('gedcomImportButtons');if(actions)actions.replaceChildren();
+   // A hard reload, if necessary, is now safe: it reads the committed database.
+
   };
   $('gedcomImportButtons').replaceChildren(btn);$('gedcomImportHint').textContent='Your GEDCOM preview is ready. After choosing your Home Person in Step 2, use this button to import the burial entries. Initial import requires an empty Fieldbook.';preview.hidden=false;
   status.textContent='People directory ready ('+directory.length+' people). Step 2: Select your Home Person below. Step 3: Import burial entries from this same GEDCOM.';
@@ -6002,7 +6018,7 @@ autoDeviceNow.onclick=()=>{
 };
 // Always retain the exact current status before navigation/reload. No silent auto-enable.
 window.addEventListener('pagehide',()=>{
- try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.23.4',event:'pagehide'}))}catch(_){}
+ try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.23.5',event:'pagehide'}))}catch(_){}
 });
 window.addEventListener('online',()=>{if(autoDeviceOn())autoDeviceCycle()});
 document.addEventListener('visibilitychange',()=>{if(autoDeviceOn()&&document.visibilityState==='visible'&&Date.now()-autoDeviceLastRun>8000)autoDeviceCycle()});
