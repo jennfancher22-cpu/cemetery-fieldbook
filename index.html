@@ -720,7 +720,7 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 #editor .checkrow input{flex:0 0 auto;width:17px;height:17px;min-height:17px}
 @media(max-width:480px){#editor .checkrow{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
-</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.23.6 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
+</head><body><header><div class="wrap"><div class="topline"><h1>🪦 Cemetery Fieldbook</h1><span class="badge" style="background:#eee1fa;color:#57317d">V7.23.7 · LIVE</span></div><div class="sub">Find family graves · Capture discoveries · Track your visits</div><div class="header-controls"><button type="button" id="headerCloudStatus" aria-label="Connect cloud storage"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 16.6a4.5 4.5 0 0 0-.7-8.8A7 7 0 0 0 6 9.5 4.5 4.5 0 0 0 7 18h12"/></svg><span id="headerCloudText">Cloud disconnected</span></button><div class="sync-status-stack"><button type="button" id="headerSyncStatus" aria-label="Turn synchronization on or off"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 7l2 5M4 12l2 5a7 7 0 0 0 12.5-2"/></svg><span id="headerSyncText">Sync OFF</span></button><div class="sync-timestamps" aria-live="polite"><span id="headerLastChecked">Last checked: Never</span><span id="headerLastSynced">Last synced: Never</span></div></div></div></div></header><main>
 <section class="panel" id="getStartedPanel" aria-label="Get started with Cemetery Fieldbook" hidden>
  <h2>🌱 Welcome to Cemetery Fieldbook</h2>
  <p class="welcome-sub">Import your family tree or join an existing Fieldbook. Complete the steps below.</p>
@@ -997,7 +997,7 @@ button.outline{color:#603986;border-color:#c5ade0}a{color:#633b8e}
 </div>
 <div class="home-panel" id="findagraveRepairPanel"><h3 style="margin-top:0">Restore missing Find a Grave links</h3><p class="hint">If an imported person is missing a memorial link, select the same GEDCOM you imported. Fieldbook will match people by GEDCOM ID and fill <strong>only empty Find a Grave URL fields</strong>. Your photographs, notes, relationships, and visit records will not be replaced.</p><div class="buttons"><button type="button" class="secondary" id="repairFagButton">Choose GEDCOM to repair links</button><input type="file" id="repairFagFile" accept=".ged,.gedcom,text/plain" hidden></div><p id="repairFagStatus" class="hint" role="status"></p></div><h3>Load your private burial list</h3><p class="hint">Legacy import: load a private Fieldbook burial-list JSON only when restoring an older backup that lacks its original burial records. New full backups include the entire burial dataset, photos, and fieldwork.</p><div class="buttons"><button id="importPrivateSeed" class="secondary">Load my burial list</button><input id="privateSeedFile" type="file" accept=".json,application/json" hidden></div><p class="tiny" id="privateSeedStatus">No private burial list loaded on this device yet.</p></div></details>
 </div></details></section>
-<footer>Fieldbook v7.23.6 LIVE · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
+<footer>Fieldbook v7.23.7 LIVE · Optional private cloud backups and automatic device synchronization · Full recovery backups · Private records stay on your device</footer></main>
 <dialog id="editor"><form id="editForm" method="dialog" novalidate><div class="dialogbody"><div class="dialogtop"><h2 id="editTitle">Burial entry</h2><button type="button" class="secondary" id="close" aria-label="Close">✕</button></div>
 <div class="edit-section-title">Person &amp; burial</div><div class="filters edit-fields">
 <div class="wide"><label for="fieldbookEditName">Name <span class="required-mark" aria-label="required">*</span></label><input id="fieldbookEditName" name="name" required><small class="field-inline-error" id="nameRequiredError" hidden>Name is required.</small></div>
@@ -1098,6 +1098,29 @@ function outstandingTreeChanges(){
  }
  return result.sort((a,b)=>String(b.at).localeCompare(String(a.at)));
 }
+// A saved record update is one tree-entry action, even when its changes are
+// displayed as separate net fields. Keep the historical events unchanged.
+function treeDisplayGroups(items){
+ const result=[],byEvent=new Map();
+ for(const x of items){
+  const source=x._sourceEvent||x;
+  const key=source.id||x.id;
+  if(x.type==='Record updated'&&key){
+   if(byEvent.has(key)){byEvent.get(key)._displayParts.push(x);continue;}
+   const view={...x,_displayParts:[x]};byEvent.set(key,view);result.push(view);
+  }else result.push({...x,_displayParts:[x]});
+ }
+ return result;
+}
+// Present a purely appended fieldwork note as its addition, not as a repeat
+// of the entire imported GEDCOM note. Other edits retain full before/after.
+function treeDisplayFact(d){
+ if(d.field==='Burial Notes'&&d.oldValue&&d.newValue.startsWith(d.oldValue)){
+  const added=d.newValue.slice(d.oldValue.length).trim();
+  if(added)return {field:'Burial Notes — appended text',oldValue:'',newValue:added};
+ }
+ return d;
+}
 function renderChangeLog(){
  const pending=outstandingTreeChanges();
  const pendingPeople=new Set(pending.map(x=>x.personId||x.person||x.id));
@@ -1112,23 +1135,43 @@ function renderChangeLog(){
   if(!groups.has(key))groups.set(key,{person:x.person||'Unknown person',items:[],key});
   groups.get(key).items.push(x);
  }
- el.append(textNode('p','report-count',groups.size+' '+(groups.size===1?'person':'people')+' · '+entries.length+' recorded '+(inTree?'outstanding changes':'events')+'. Select a person to see details.'));
+ el.append(textNode('p','report-count',groups.size+' '+(groups.size===1?'person':'people')+' · '+(inTree?[...groups.values()].reduce((n,g)=>n+treeDisplayGroups(g.items).length,0):entries.length)+' recorded '+(inTree?'outstanding updates':'events')+'. Select a person to see details.'));
  for(const group of groups.values()){
   const box=document.createElement('details');box.className='person-group';
   const summary=document.createElement('summary');
   const title=document.createElement('span');title.append(textNode('div','group-title',group.person));
-  title.append(textNode('div','group-sub',group.items.length+' '+(inTree?'outstanding changes':'events')+' · '+new Date(group.items[0].at).toLocaleDateString()));
+  title.append(textNode('div','group-sub',(inTree?treeDisplayGroups(group.items).length:group.items.length)+' '+(inTree?'outstanding updates':'events')+' · '+new Date(group.items[0].at).toLocaleDateString()));
   summary.append(title);box.append(summary);
   const body=textNode('div','group-body');
-  for(const x of group.items){
+  const displayItems=inTree?treeDisplayGroups(group.items):group.items;
+  for(const x of displayItems){
    const item=textNode('div','group-item');
    item.append(textNode('div','tiny',new Date(x.at).toLocaleString()+' · '+x.type));
    if(inTree){
-    const facts=x.type==='New discovery'?discoveryExportDetails(x,all().find(p=>p.id===x.personId)):x.type==='Discovery deleted'&&x.deletedRecord?Object.entries(x.deletedRecord).filter(([k,v])=>v!==null&&v!==undefined&&v!=='').map(([k,v])=>({field:FIELD_NAMES[k]||k,oldValue:typeof v==='boolean'?(v?'Yes':'No'):String(v),newValue:''})):exportDetails(x.detail);
-    const table=document.createElement('table');table.className='tree-change-table';
-    const headings=document.createElement('tr');for(const h of (x.type==='New discovery'?['Field','Value']:x.type==='Discovery deleted'?['Previous field','Value']:['Changed field','Before','After'])){const th=document.createElement('th');th.textContent=h;headings.append(th)}table.append(headings);
-    for(const d of facts){if(!d.field)continue;const tr=document.createElement('tr');for(const value of (x.type==='New discovery'?[d.field,d.newValue]:x.type==='Discovery deleted'?[d.field,d.oldValue]:[d.field,d.oldValue,d.newValue])){const td=document.createElement('td');td.textContent=value??'';tr.append(td)}table.append(tr)}item.append(table);
-    const done=changeLabel('Entered in tree',v=>{if(x._netField){for(const h of changeLog)if(h.personId===x.personId&&h.type==='Record updated'&&exportDetails(h.detail).some(d=>d.field===x._netField))h.enteredFTM=v;}else (x._sourceEvent||x).enteredFTM=v;saveLog();renderChangeLog()},false);item.append(done);
+    const members=x._displayParts||[x];
+    if(x.type==='Photo attached'){
+     item.append(textNode('div','meta','Photograph to attach: '+(x.detail||'Attached photograph')));
+    }else{
+     const facts=members.flatMap(part=>{
+      if(part.type==='New discovery')return discoveryExportDetails(part,all().find(p=>p.id===part.personId));
+      if(part.type==='Discovery deleted'&&part.deletedRecord)return Object.entries(part.deletedRecord).filter(([k,v])=>v!==null&&v!==undefined&&v!=='').map(([k,v])=>({field:FIELD_NAMES[k]||k,oldValue:typeof v==='boolean'?(v?'Yes':'No'):String(v),newValue:''}));
+      return exportDetails(part.detail).map(treeDisplayFact);
+     }).filter(d=>d.field);
+     if(facts.length){
+      const table=document.createElement('table');table.className='tree-change-table';
+      const headings=document.createElement('tr');for(const h of (x.type==='New discovery'?['Field','Value']:x.type==='Discovery deleted'?['Previous field','Value']:['Changed field','Before','After'])){const th=document.createElement('th');th.textContent=h;headings.append(th)}table.append(headings);
+      for(const d of facts){const tr=document.createElement('tr');for(const value of (x.type==='New discovery'?[d.field,d.newValue]:x.type==='Discovery deleted'?[d.field,d.oldValue]:[d.field,d.oldValue,d.newValue])){const td=document.createElement('td');td.textContent=value??'';tr.append(td)}table.append(tr)}item.append(table);
+     }else item.append(textNode('div','meta',x.detail||x.type));
+    }
+    const done=changeLabel(members.length>1?'Entered in tree (entire saved update)':'Entered in tree',v=>{
+     // Completing an update marks its constituent historical event, not
+     // merely one displayed field. Each net field keeps its original logic.
+     for(const part of members){
+      if(part._netField){for(const h of changeLog)if(h.personId===part.personId&&h.type==='Record updated'&&exportDetails(h.detail).some(d=>d.field===part._netField))h.enteredFTM=v;}
+      else (part._sourceEvent||part).enteredFTM=v;
+     }
+     saveLog();renderChangeLog();
+    },false);item.append(done);
    }else item.append(textNode('div','meta',x.detail||''));
    if(x._netField&&x._historyCount>1)item.append(textNode('div','tiny','Net result after '+x._historyCount+' edits; earlier edits remain in history.'));
    if(!inTree){
@@ -1370,7 +1413,7 @@ function fieldbookReportHTML(){
      else values.get(key).after=d.newValue;
     }
    }
-   const relevant=[...values.values()].filter(d=>d.before!==d.after&&!['stone','stone found'].includes(d.field.toLowerCase()));
+   const relevant=[...values.values()].filter(d=>d.before!==d.after&&!['stone','stone found'].includes(d.field.toLowerCase())).map(d=>{const shown=treeDisplayFact({field:d.field,oldValue:d.before,newValue:d.after});return {field:shown.field,before:shown.oldValue,after:shown.newValue}});
    if(relevant.length){body='<table><thead><tr><th>Changed field</th><th>Before</th><th>After</th></tr></thead><tbody>'+relevant.map(d=>'<tr><th>'+escape(d.field)+'</th><td class="multiline">'+escape(d.before)+'</td><td class="multiline">'+escape(d.after)+'</td></tr>').join('')+'</tbody></table>';}
    if(photos.length)body+='<p><b>Photographs to attach:</b> '+escape(photos.join('; '))+'</p>';
   }
@@ -6018,7 +6061,7 @@ autoDeviceNow.onclick=()=>{
 };
 // Always retain the exact current status before navigation/reload. No silent auto-enable.
 window.addEventListener('pagehide',()=>{
- try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.23.6',event:'pagehide'}))}catch(_){}
+ try{localStorage.setItem(AUTO_DIAG_BOOT_KEY,JSON.stringify({at:new Date().toISOString(),enabled:autoDeviceOn(),paused:!!localStorage.getItem(AUTO_PAUSED_KEY),version:'v7.23.7',event:'pagehide'}))}catch(_){}
 });
 window.addEventListener('online',()=>{if(autoDeviceOn())autoDeviceCycle()});
 document.addEventListener('visibilitychange',()=>{if(autoDeviceOn()&&document.visibilityState==='visible'&&Date.now()-autoDeviceLastRun>8000)autoDeviceCycle()});
