@@ -1,0 +1,11 @@
+GraveHopper LIVE v7.23.10 — Cemetery directions in burial search
+
+Enhancement
+- Added a “Maps / directions” link to every cemetery group in Find a relative or cemetery.
+- The link remains visible when the cemetery group is collapsed.
+- Uses saved cemetery GPS coordinates when available, opening Google Maps directions.
+- When coordinates are not available, opens a Google Maps search using cemetery name and locality.
+- Opens Maps in a new tab/window so the GraveHopper search remains available.
+- Reuses the same link helper for Find cemeteries nearby to keep behavior consistent.
+
+No burial data, GEDCOM records, photos, fieldwork notes, or sync data are changed by this UI enhancement.
